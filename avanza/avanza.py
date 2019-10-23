@@ -3,7 +3,7 @@ import hashlib
 import requests
 import pyotp
 
-from constants import CONSTANTS
+from .constants import CONSTANTS
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
