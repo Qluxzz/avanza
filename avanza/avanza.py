@@ -39,6 +39,8 @@ class Avanza:
             json=data
         )
 
+        response.raise_for_status()
+
         response_body = response.json()
 
         # No second factor required, continue with normal login
@@ -70,6 +72,8 @@ class Avanza:
             }
         )
 
+        response.raise_for_status()
+
         response_body = response.json()
 
         return response_body, credentials
@@ -85,8 +89,7 @@ class Avanza:
 
         response = method_call(f'{BASE_URL}{path}')
 
-        if not response:
-            return
+        response.raise_for_status()
 
         return response.json()
 
