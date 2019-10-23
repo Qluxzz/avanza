@@ -20,7 +20,7 @@ Here are the steps to get your TOTP Secret:
 
 ## Example
 
-Authenticate and fetch currently held positions:
+Authenticate and fetch account overview:
 
 ```python
 from avanza import Avanza
