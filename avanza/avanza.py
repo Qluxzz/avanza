@@ -95,6 +95,20 @@ class Avanza:
     def get_overview(self):
         return self.__call('GET', CONSTANTS['paths']['OVERVIEW_PATH'])
 
+    def get_account_overview(self, account_id):
+        return self.__call(
+            'GET',
+            CONSTANTS['paths']['ACCOUNT_OVERVIEW_PATH'].format(
+                account_id
+            )
+        )
+
+    def get_watchlists(self):
+        return self.__call('GET', CONSTANTS['paths']['WATCHLISTS_PATH'])
+
+    def get_positions(self):
+        return self.__call('GET', CONSTANTS['paths']['POSITIONS_PATH'])
+
     def get_insights_report(self, time_period, account_id):
         return self.__call(
             'GET',
@@ -102,4 +116,16 @@ class Avanza:
                 time_period,
                 account_id
             )
+        )
+
+    def get_deals_and_orders(self):
+        return self.__call(
+            'GET',
+            CONSTANTS['paths']['DEALS_AND_ORDERS_PATH']
+        )
+
+    def get_inspiration_lists(self):
+        return self.__call(
+            'GET',
+            CONSTANTS['paths']['INSPIRATION_LIST_PATH'].format('')
         )
