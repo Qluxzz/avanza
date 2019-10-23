@@ -24,16 +24,14 @@ Authenticate and fetch currently held positions:
 
 ```python
 from avanza import Avanza
-avanza = Avanza()
-
-avanza.authenticate({
-  username: 'MY_USERNAME',
-  password: 'MY_PASSWORD',
-  totpSecret: 'MY_TOTP_SECRET'
+avanza = Avanza({
+    'username': 'MY_USERNAME',
+    'password': 'MY_PASSWORD',
+    'totpSecret': 'MY_TOTP_SECRET'
 })
 
-positions = avanza.getPositions()
-print(positions)
+overview = avanza.get_overview()
+print(overview)
 ```
 
 ## LICENSE
