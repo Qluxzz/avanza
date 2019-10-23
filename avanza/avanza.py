@@ -82,7 +82,7 @@ class Avanza:
         method_call = {
             'GET': self._session.get,
             'POST': self._session.post
-        }[method]
+        }.get(method)
 
         if method_call is None:
             raise ValueError(f'Unknown method type {method}')
