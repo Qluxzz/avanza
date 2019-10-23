@@ -57,8 +57,7 @@ class Avanza:
     def __validate_2fa(self, credentials):
         totp = pyotp.TOTP(credentials['totpSecret'], digest=hashlib.sha1)
 
-        totp_code = totp.now(
-        ) if credentials['totpSecret'] else credentials['totp']
+        totp_code = totp.now() if credentials['totpSecret'] else credentials['totp']
 
         if totp_code is None:
             raise ValueError('Missing totp or totpSecret')
