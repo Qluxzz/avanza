@@ -49,7 +49,7 @@ class Avanza:
 
         if tfa_method != 'TOTP':
             raise ValueError(
-                f"Unsupported two factor method {tfa_method}"
+                f'Unsupported two factor method {tfa_method}'
             )
 
         return self.__validate_2fa(credentials)
@@ -63,7 +63,7 @@ class Avanza:
             raise ValueError('Missing totp or totpSecret')
 
         response = self._session.post(
-            '{}{}'.format(BASE_URL, CONSTANTS['paths']['TOTP_PATH']),
+            f"{BASE_URL}{CONSTANTS['paths']['TOTP_PATH']}",
             json={
                 'method': 'TOTP',
                 'totpCode': totp_code
