@@ -12,8 +12,8 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Package meta-data.
-NAME = 'avanza-api'
-DESCRIPTION = 'A Python version of the unoffical JavaScript API for Avanza'
+NAME = 'avanza'
+DESCRIPTION = 'A Python library for the unofficial Avanza API'
 URL = 'https://github.com/Qluxzz/avanza'
 EMAIL = 'andre.eric.andersson@gmail.com'
 AUTHOR = 'André Andersson'
@@ -21,8 +21,8 @@ REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '0.1.0'
 
 REQUIRED = [
-    'requests',
-    'pyotp'
+    'requests>=2',
+    'pyotp>=2'
 ]
 
 EXTRAS = {}
