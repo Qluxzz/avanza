@@ -26,12 +26,10 @@ MAX_INACTIVE_MINUTES = 60 * 24
 class Avanza:
     def __init__(self, credentials):
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
-        self._authenticated = False
         self._session = requests.Session()
 
         response_body, credentials = self.__authenticate(credentials)
 
-        self._authenticated = True
         self._credentials = credentials
         self._authentication_session = response_body['authenticationSession']
         self._push_subscription_id = response_body['pushSubscriptionId']
