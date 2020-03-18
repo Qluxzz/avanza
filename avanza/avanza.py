@@ -206,6 +206,15 @@ class Avanza:
             )
         )
 
+    def get_chart_data(self, order_book_id: str, period: TimePeriod):
+        return self.__call(
+            HttpMethod.GET,
+            Route.CHARTDATA_PATH.value.format(
+                order_book_id,
+                period.value.lower()
+            )
+        )
+
     def place_order(
         self,
         account_id: str,
