@@ -31,7 +31,50 @@ avanza = Avanza({
 })
 
 overview = avanza.get_overview()
-print(overview)
+```
+
+Get info about a certain account
+```python
+from avanza import Avanza, TimePeriod
+
+avanza = Avanza({
+    'username': 'MY_USERNAME',
+    'password': 'MY_PASSWORD',
+    'totpSecret': 'MY_TOTP_SECRET'
+})
+
+accountId = 'XXXXXXX'
+
+report = avanza.get_insights_report(
+    accountId,
+    TimePeriod.ONE_WEEK
+)
+```
+
+Place an order
+```python
+from avanza import Avanza, OrderType
+
+avanza = Avanza({
+    'username': 'MY_USERNAME',
+    'password': 'MY_PASSWORD',
+    'totpSecret': 'MY_TOTP_SECRET'
+})
+
+account_id = 'XXXXXXX'
+order_book_id = 'XXXXXX'
+buy_price = 13.37
+valid_until = date.fromisoformat('2011-11-11')
+volume = 42
+
+result = avanza.place_order(
+    account_id,
+    order_book_id,
+    OrderType.BUY,
+    buy_price,
+    valid_until,
+    volume
+)
 ```
 
 ## LICENSE
