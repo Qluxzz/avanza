@@ -262,7 +262,7 @@ class Avanza:
                 instrument_type.value,
                 account_id,
                 order_id
-        )
+            )
         )
 
     def delete_order(
