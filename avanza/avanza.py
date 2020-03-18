@@ -198,6 +198,13 @@ class Avanza:
             Route.INSPIRATION_LIST_PATH.value.format('')
         )
 
+    def get_inspiration_list(self, list_type: ListType):
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSPIRATION_LIST_PATH.value.format(
+                list_type.value
+            )
+        )
 
     def place_order(
         self,
