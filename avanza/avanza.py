@@ -92,7 +92,7 @@ class Avanza:
 
         return response_body, credentials
 
-    def __call(self, method: HttpMethod, path: str):
+    def __call(self, method: HttpMethod, path: str, options=None):
         method_call = {
             HttpMethod.GET: self._session.get,
             HttpMethod.POST: self._session.post,
@@ -105,6 +105,7 @@ class Avanza:
 
         response = method_call(
             f'{BASE_URL}{path}',
+            json=options,
             headers={
                 'X-AuthenticationSession': self._authentication_session,
                 'X-SecurityToken': self._security_token
@@ -156,4 +157,54 @@ class Avanza:
             HttpMethod.GET,
             Route.INSPIRATION_LIST_PATH.value.format('')
         )
+
+
+    def place_order(
+        self,
+        account_id: str,
+        order_book_id: str,
+        order_type: OrderType,
+        price: float,
+        valid_until: date,
+        volume: int
+    ):
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH.value,
+            {
+                'accountId': account_id,
+                'orderbookId': order_book_id,
+                'orderType': order_type.value,
+                'price': price,
+                'validUntil': valid_until.isoformat(),
+                'volume': volume
+            }
+        )
+
+    def get_order(
+        self,
+        instrument_type: InstrumentType,
+        account_id: str,
+        order_id: str
+    ):
+        return self.__call(
+            HttpMethod.GET,
+            Route.ORDER_GET_PATH.value.format(
+                instrument_type.value,
+                account_id,
+                order_id
+        )
+        )
+
+    def delete_order(
+        self,
+        account_id: str,
+        order_id: str
+    ):
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.ORDER_DELETE_PATH.value.format(
+                account_id,
+                order_id
+            )
         )
