@@ -86,6 +86,8 @@ class Avanza:
 
         response.raise_for_status()
 
+        self._security_token = response.headers.get('X-SecurityToken')
+
         response_body = response.json()
 
         return response_body, credentials
@@ -101,7 +103,13 @@ class Avanza:
         if method_call is None:
             raise ValueError(f'Unknown method type {method}')
 
-        response = method_call(f'{BASE_URL}{path}')
+        response = method_call(
+            f'{BASE_URL}{path}',
+            headers={
+                'X-AuthenticationSession': self._authentication_session,
+                'X-SecurityToken': self._security_token
+            }
+        )
 
         response.raise_for_status()
 
