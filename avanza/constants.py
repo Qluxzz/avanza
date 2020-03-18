@@ -1,81 +1,91 @@
-CONSTANTS = {
-    'paths': {},
-    'public': {}
-}
+import enum
 
-# Paths
-CONSTANTS['paths']['POSITIONS_PATH'] =             '/_mobile/account/positions'
-CONSTANTS['paths']['OVERVIEW_PATH'] =              '/_mobile/account/overview'
-CONSTANTS['paths']['ACCOUNT_OVERVIEW_PATH'] =      '/_mobile/account/{}/overview'
-CONSTANTS['paths']['DEALS_AND_ORDERS_PATH'] =      '/_mobile/account/dealsandorders'
-CONSTANTS['paths']['WATCHLISTS_PATH'] =            '/_mobile/usercontent/watchlist'
-CONSTANTS['paths']['WATCHLISTS_ADD_DELETE_PATH'] = '/_api/usercontent/watchlist/{}/orderbooks/{}'
-CONSTANTS['paths']['STOCK_PATH'] =                 '/_mobile/market/stock/{}'
-CONSTANTS['paths']['FUND_PATH'] =                  '/_mobile/market/fund/{}'
-CONSTANTS['paths']['CERTIFICATE_PATH'] =           '/_mobile/market/certificate/{}'
-CONSTANTS['paths']['INSTRUMENT_PATH'] =            '/_mobile/market/{}/{}'
-CONSTANTS['paths']['ORDERBOOK_PATH'] =             '/_mobile/order/{}'
-CONSTANTS['paths']['ORDERBOOK_LIST_PATH'] =        '/_mobile/market/orderbooklist/{}'
-CONSTANTS['paths']['CHARTDATA_PATH'] =             '/_mobile/chart/orderbook/{}'
-CONSTANTS['paths']['ORDER_PLACE_DELETE_PATH'] =    '/_api/order'
-CONSTANTS['paths']['ORDER_EDIT_PATH'] =            '/_api/order/{}/{}'
-CONSTANTS['paths']['ORDER_GET_PATH'] =             '/_mobile/order/{}'
-CONSTANTS['paths']['SEARCH_PATH'] =                '/_mobile/market/search/{}'
-CONSTANTS['paths']['AUTHENTICATION_PATH'] =        '/_api/authentication/sessions/usercredentials'
-CONSTANTS['paths']['TOTP_PATH'] =                  '/_api/authentication/sessions/totp'
-CONSTANTS['paths']['INSPIRATION_LIST_PATH'] =      '/_mobile/marketing/inspirationlist/{}'
-CONSTANTS['paths']['TRANSACTIONS_PATH'] =          '/_mobile/account/transactions/{}'
-CONSTANTS['paths']['INSIGHTS_PATH'] =              '/_cqbe/insights/?timePeriod={}&accountIds={}'
+class TransactionType(enum.Enum):
+    OPTIONS = 'options'
+    FOREX = 'forex'
+    DEPOSIT_WITHDRAW = 'deposit-withdraw'
+    BUY_SELL = 'buy-sell'
+    DIVIDEND = 'dividend'
+    INTEREST = 'interest'
+    FOREIGN_TAX = 'foreign-tax'
 
-# Search
-CONSTANTS['public']['STOCK'] =               'stock'
-CONSTANTS['public']['FUND'] =                'fund'
-CONSTANTS['public']['BOND'] =                'bond'
-CONSTANTS['public']['OPTION'] =              'option'
-CONSTANTS['public']['FUTURE_FORWARD'] =      'future_forward'
-CONSTANTS['public']['CERTIFICATE'] =         'certificate'
-CONSTANTS['public']['WARRANT'] =             'warrant'
-CONSTANTS['public']['ETF'] =                 'exchange_traded_fund'
-CONSTANTS['public']['INDEX'] =               'index'
-CONSTANTS['public']['PREMIUM_BOND'] =        'premium_bond'
-CONSTANTS['public']['SUBSCRIPTION_OPTION'] = 'subscription_option'
-CONSTANTS['public']['EQUITY_LINKED_BOND'] =  'equity_linked_bond'
-CONSTANTS['public']['CONVERTIBLE'] =         'convertible'
+class ChannelType(enum.Enum):
+    ACCOUNTS = 'accounts'
+    QUOTES = 'quotes'
+    ORDERDEPTHS = 'orderdepths'
+    TRADES = 'trades'
+    BROKERTRADESUMMARY = 'brokertradesummary'
+    POSITIONS = 'positions'
+    ORDERS = 'orders'
+    DEALS = 'deals'
 
-# Chart data
-CONSTANTS['public']['TODAY'] =         'TODAY'
-CONSTANTS['public']['ONE_MONTH'] =     'ONE_MONTH'
-CONSTANTS['public']['THREE_MONTHS'] =  'THREE_MONTHS'
-CONSTANTS['public']['ONE_WEEK'] =      'ONE_WEEK'
-CONSTANTS['public']['THIS_YEAR'] =     'THIS_YEAR'
-CONSTANTS['public']['ONE_YEAR'] =      'ONE_YEAR'
-CONSTANTS['public']['FIVE_YEARS'] =    'FIVE_YEARS'
 
-# Marketing
-CONSTANTS['public']['HIGHEST_RATED_FUNDS'] = 'HIGHEST_RATED_FUNDS'
-CONSTANTS['public']['LOWEST_FEE_INDEX_FUNDS'] = 'LOWEST_FEE_INDEX_FUNDS'
-CONSTANTS['public']['BEST_DEVELOPMENT_FUNDS_LAST_THREE_MONTHS'] = 'BEST_DEVELOPMENT_FUNDS_LAST_THREE_MONTHS'
-CONSTANTS['public']['MOST_OWNED_FUNDS'] = 'MOST_OWNED_FUNDS'
+class TimePeriod(enum.Enum):
+    TODAY = 'TODAY'
+    ONE_WEEK = 'ONE_WEEK'
+    ONE_MONTH = 'ONE_MONTH'
+    THREE_MONTHS = 'THREE_MONTHS'
+    THIS_YEAR = 'THIS_YEAR'
+    ONE_YEAR = 'ONE_YEAR'
+    FIVE_YEARS = 'FIVE_YEARS'
 
-# Transactions
-CONSTANTS['public']['OPTIONS'] =          'options'
-CONSTANTS['public']['FOREX'] =            'forex'
-CONSTANTS['public']['DEPOSIT_WITHDRAW'] = 'deposit-withdraw'
-CONSTANTS['public']['BUY_SELL'] =         'buy-sell'
-CONSTANTS['public']['DIVIDEND'] =         'dividend'
-CONSTANTS['public']['INTEREST'] =         'interest'
-CONSTANTS['public']['FOREIGN_TAX'] =      'foreign-tax'
 
-# Channels
-CONSTANTS['public']['ACCOUNTS'] =           'accounts'
-CONSTANTS['public']['QUOTES'] =             'quotes'
-CONSTANTS['public']['ORDERDEPTHS'] =        'orderdepths'
-CONSTANTS['public']['TRADES'] =             'trades'
-CONSTANTS['public']['BROKERTRADESUMMARY'] = 'brokertradesummary'
-CONSTANTS['public']['POSITIONS'] =          'positions'
-CONSTANTS['public']['ORDERS'] =             'orders'
-CONSTANTS['public']['DEALS'] =              'deals'
+class ListType(enum.Enum):
+    HIGHEST_RATED_FUNDS = 'HIGHEST_RATED_FUNDS'
+    LOWEST_FEE_INDEX_FUNDS = 'LOWEST_FEE_INDEX_FUNDS'
+    BEST_DEVELOPMENT_FUNDS_LAST_THREE_MONTHS = 'BEST_DEVELOPMENT_FUNDS_LAST_THREE_MONTHS'
+    MOST_OWNED_FUNDS = 'MOST_OWNED_FUNDS'
 
-# Order types
-CONSTANTS['public']['BUY'] =  'BUY'
-CONSTANTS['public']['SELL'] = 'SELL'
+
+class InstrumentType(enum.Enum):
+    STOCK = 'stock'
+    FUND = 'fund'
+    BOND = 'bond'
+    OPTION = 'option'
+    FUTURE_FORWARD = 'future_forward'
+    CERTIFICATE = 'certificate'
+    WARRANT = 'warrant'
+    EXCHANGE_TRADED_FUND = 'exchange_traded_fund'
+    INDEX = 'index'
+    PREMIUM_BOND = 'premium_bond'
+    SUBSCRIPTION_OPTION = 'subscription_option'
+    EQUITY_LINKED_BOND = 'equity_linked_bond'
+    CONVERTIBLE = 'convertible'
+
+
+class OrderType(enum.Enum):
+    BUY = 'BUY'
+    SELL = 'SELL'
+
+
+class HttpMethod(enum.Enum):
+    POST = 1
+    GET = 2
+    PUT = 3
+    DELETE = 4
+
+
+class Route(enum.Enum):
+    ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
+    AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
+    CERTIFICATE_PATH = '/_mobile/market/certificate/{}'
+    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}?timePeriod={}'
+    DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
+    FUND_PATH = '/_mobile/market/fund/{}'
+    INSIGHTS_PATH = '/_cqbe/insights/?timePeriod={}&accountIds={}'
+    INSPIRATION_LIST_PATH = '/_mobile/marketing/inspirationlist/{}'
+    INSTRUMENT_PATH = '/_mobile/market/{}/{}'
+    ORDER_EDIT_PATH = '/_api/order/{}/{}'
+    ORDER_GET_PATH = '/_mobile/order/{}?accountId={}&orderId={}'
+    ORDER_PLACE_PATH = '/_api/order'
+    ORDER_DELETE_PATH = '/_api/order?accountId={}&orderId={}'
+    ORDERBOOK_LIST_PATH = '/_mobile/market/orderbooklist/{}'
+    ORDERBOOK_PATH = '/_mobile/order/{}?orderbookId={}'
+    OVERVIEW_PATH = '/_mobile/account/overview'
+    POSITIONS_PATH = '/_mobile/account/positions'
+    SEARCH_PATH = '/_mobile/market/search/{}'
+    STOCK_PATH = '/_mobile/market/stock/{}'
+    TOTP_PATH = '/_api/authentication/sessions/totp'
+    TRANSACTIONS_PATH = '/_mobile/account/transactions/{}'
+    WATCHLISTS_ADD_DELETE_PATH = '/_api/usercontent/watchlist/{}/orderbooks/{}'
+    WATCHLISTS_PATH = '/_mobile/usercontent/watchlist'

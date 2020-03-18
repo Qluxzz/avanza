@@ -1,9 +1,22 @@
+
+from typing import Iterable
+
 import hashlib
 
 import requests
 import pyotp
 
-from .constants import CONSTANTS
+from datetime import date
+
+from .constants import (
+    TimePeriod,
+    ListType,
+    InstrumentType,
+    OrderType,
+    HttpMethod,
+    Route
+)
+
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -35,7 +48,7 @@ class Avanza:
         }
 
         response = self._session.post(
-            f"{BASE_URL}{CONSTANTS['paths']['AUTHENTICATION_PATH']}",
+            f"{BASE_URL}{Route.AUTHENTICATION_PATH.value}",
             json=data
         )
 
@@ -64,7 +77,7 @@ class Avanza:
             raise ValueError('Failed to get totp code')
 
         response = self._session.post(
-            f"{BASE_URL}{CONSTANTS['paths']['TOTP_PATH']}",
+            f"{BASE_URL}{Route.TOTP_PATH.value}",
             json={
                 'method': 'TOTP',
                 'totpCode': totp_code
@@ -77,10 +90,12 @@ class Avanza:
 
         return response_body, credentials
 
-    def __call(self, method, path):
+    def __call(self, method: HttpMethod, path: str):
         method_call = {
-            'GET': self._session.get,
-            'POST': self._session.post
+            HttpMethod.GET: self._session.get,
+            HttpMethod.POST: self._session.post,
+            HttpMethod.PUT: self._session.put,
+            HttpMethod.DELETE: self._session.delete
         }.get(method)
 
         if method_call is None:
@@ -93,39 +108,44 @@ class Avanza:
         return response.json()
 
     def get_overview(self):
-        return self.__call('GET', CONSTANTS['paths']['OVERVIEW_PATH'])
+        return self.__call(HttpMethod.GET, Route.OVERVIEW_PATH.value)
 
-    def get_account_overview(self, account_id):
+    def get_account_overview(self, account_id: str):
         return self.__call(
-            'GET',
-            CONSTANTS['paths']['ACCOUNT_OVERVIEW_PATH'].format(
+            HttpMethod.GET,
+            Route.ACCOUNT_OVERVIEW_PATH.value.format(
                 account_id
             )
         )
 
     def get_watchlists(self):
-        return self.__call('GET', CONSTANTS['paths']['WATCHLISTS_PATH'])
+        return self.__call(HttpMethod.GET, Route.WATCHLISTS_PATH.value)
 
     def get_positions(self):
-        return self.__call('GET', CONSTANTS['paths']['POSITIONS_PATH'])
+        return self.__call(HttpMethod.GET, Route.POSITIONS_PATH.value)
 
-    def get_insights_report(self, time_period, account_id):
+    def get_insights_report(
+        self,
+        account_id: str,
+        time_period: TimePeriod
+    ):
         return self.__call(
-            'GET',
-            CONSTANTS['paths']['INSIGHTS_PATH'].format(
-                time_period,
+            HttpMethod.GET,
+            Route.INSIGHTS_PATH.value.format(
+                time_period.value,
                 account_id
             )
         )
 
     def get_deals_and_orders(self):
         return self.__call(
-            'GET',
-            CONSTANTS['paths']['DEALS_AND_ORDERS_PATH']
+            HttpMethod.GET,
+            Route.DEALS_AND_ORDERS_PATH.value
         )
 
     def get_inspiration_lists(self):
         return self.__call(
-            'GET',
-            CONSTANTS['paths']['INSPIRATION_LIST_PATH'].format('')
+            HttpMethod.GET,
+            Route.INSPIRATION_LIST_PATH.value.format('')
+        )
         )
