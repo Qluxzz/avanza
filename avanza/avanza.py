@@ -55,10 +55,10 @@ class Avanza:
         response_body = response.json()
 
         # No second factor required, continue with normal login
-        if response_body['twoFactorLogin'] is None:
+        if response_body.get('twoFactorLogin') is None:
             return response_body, credentials
 
-        tfa_method = response_body['twoFactorLogin']['method']
+        tfa_method = response_body['twoFactorLogin'].get('method')
 
         if tfa_method != 'TOTP':
             raise ValueError(
