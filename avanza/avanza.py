@@ -146,6 +146,19 @@ class Avanza:
             )
         )
 
+    def get_instrument(
+        self,
+        instrument_type: InstrumentType,
+        instrument_id: int
+    ):
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSTRUMENT_PATH.value.format(
+                instrument_type.value,
+                instrument_id
+            )
+        )
+
     def get_order_book(
         self,
         order_book_id: str,
