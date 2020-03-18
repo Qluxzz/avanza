@@ -128,6 +128,24 @@ class Avanza:
     def get_watchlists(self):
         return self.__call(HttpMethod.GET, Route.WATCHLISTS_PATH.value)
 
+    def add_to_watchlist(self, instrument_id: int, watchlist_id: int):
+        return self.__call(
+            HttpMethod.PUT,
+            Route.WATCHLISTS_ADD_DELETE_PATH.value.format(
+                watchlist_id,
+                instrument_id
+            )
+        )
+
+    def remove_from_watchlist(self, instrument_id: int, watchlist_id: int):
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.WATCHLISTS_ADD_DELETE_PATH.value.format(
+                watchlist_id,
+                instrument_id
+            )
+        )
+
     def get_order_book(
         self,
         order_book_id: str,
