@@ -128,6 +128,30 @@ class Avanza:
     def get_watchlists(self):
         return self.__call(HttpMethod.GET, Route.WATCHLISTS_PATH.value)
 
+    def get_order_book(
+        self,
+        order_book_id: str,
+        instrument_type: InstrumentType
+    ):
+        return self.__call(
+            HttpMethod.GET,
+            Route.ORDERBOOK_PATH.value.format(
+                instrument_type.value,
+                order_book_id
+            )
+        )
+
+    def get_order_books(
+        self,
+        order_book_ids: Iterable[str]
+    ):
+        return self.__call(
+            HttpMethod.GET,
+            Route.ORDERBOOK_LIST_PATH.value.format(
+                ','.join(order_book_ids)
+            )
+        )
+
     def get_positions(self):
         return self.__call(HttpMethod.GET, Route.POSITIONS_PATH.value)
 
