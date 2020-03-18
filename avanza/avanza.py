@@ -37,7 +37,7 @@ class Avanza:
 
     def __authenticate(self, credentials):
         if not MIN_INACTIVE_MINUTES <= self._authenticationTimeout <= MAX_INACTIVE_MINUTES:
-            return ValueError(f'Session timeout not in range {MIN_INACTIVE_MINUTES} - {MAX_INACTIVE_MINUTES} minutes')
+            raise ValueError(f'Session timeout not in range {MIN_INACTIVE_MINUTES} - {MAX_INACTIVE_MINUTES} minutes')
 
         data = {
             'maxInactiveMinutes': self._authenticationTimeout,
