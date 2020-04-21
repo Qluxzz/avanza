@@ -1,5 +1,5 @@
 
-from typing import Iterable
+from typing import Callable, Sequence, Any
 
 import hashlib
 
@@ -174,7 +174,7 @@ class Avanza:
 
     def get_order_books(
         self,
-        order_book_ids: Iterable[str]
+        order_book_ids: Sequence[str]
     ):
         return self.__call(
             HttpMethod.GET,
