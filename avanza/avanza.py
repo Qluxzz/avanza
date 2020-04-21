@@ -9,12 +9,13 @@ import pyotp
 from datetime import date
 
 from .constants import (
-    TimePeriod,
-    ListType,
-    InstrumentType,
-    OrderType,
+    ChannelType,
     HttpMethod,
-    Route
+    InstrumentType,
+    ListType,
+    OrderType,
+    Route,
+    TimePeriod
 )
 
 
