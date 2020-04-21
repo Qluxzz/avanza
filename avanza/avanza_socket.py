@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import json
 import websockets
 from typing import Any, Callable, Sequence
@@ -8,6 +9,8 @@ from .constants import (
 )
 
 WEBSOCKET_URL = 'wss://www.avanza.se/_push/cometd'
+
+logger = logging.getLogger("avanza_socket")
 
 
 class AvanzaSocket:
@@ -44,33 +47,33 @@ class AvanzaSocket:
             WEBSOCKET_URL,
             extra_headers={'Cookie': self._cookies}
         ) as self._socket:
-            await self.__send_connect_message()
+            await self.__send_handshake_message()
             await self.__socket_message_handler()
 
+    async def __send_handshake_message(self):
+        await self.__send({
+            'advice': {
+                'timeout': 60000,
+                'interval': 0
+            },
+            'channel': '/meta/handshake',
+            'ext': {'subscriptionId': self._push_subscription_id},
+            'minimumVersion': '1.0',
+            'supportedConnectionTypes': [
+                'websocket',
+                'long-polling',
+                'callback-polling'
+            ],
+            'version': '1.0'
+        })
+
     async def __send_connect_message(self):
-        if self._client_id is None:
-            await self.__send({
-                'advice': {
-                    'timeout': 60000,
-                    'interval': 0
-                },
-                'channel': '/meta/handshake',
-                'ext': {'subscriptionId': self._push_subscription_id},
-                'minimumVersion': '1.0',
-                'supportedConnectionTypes': [
-                    'websocket',
-                    'long-polling',
-                    'callback-polling'
-                ],
-                'version': '1.0'
-            })
-        else:
-            await self.__send({
-                'channel': '/meta/connect',
-                'clientId': self._client_id,
-                'connectionType': 'websocket',
-                'id': self._message_count
-            })
+        await self.__send({
+            'channel': '/meta/connect',
+            'clientId': self._client_id,
+            'connectionType': 'websocket',
+            'id': self._message_count
+        })
 
     async def __socket_subscribe(
         self,
@@ -88,12 +91,16 @@ class AvanzaSocket:
         })
 
     async def __send(self, message):
-        await self._socket.send(json.dumps([
+        wrapped_message = [
             {
                 **message,
                 'id': str(self._message_count)
             }
-        ]))
+        ]
+
+        logger.info(f'Outgoing message: {wrapped_message}')
+
+        await self._socket.send(json.dumps(wrapped_message))
 
         self._message_count = self._message_count + 1
 
@@ -110,7 +117,7 @@ class AvanzaSocket:
 
         advice = message.get('advice')
         if advice and advice.get('reconnect') == 'handshake':
-            await self.__send_connect_message()
+            await self.__send_handshake_message()
 
     async def __connect(self, message: dict):
         successful = message.get('successful', False)
@@ -145,8 +152,7 @@ class AvanzaSocket:
                 )
 
     async def __disconnect(self, message):
-        if self._client_id:
-            await self.__send_connect_message()
+        await self.__send_handshake_message()
 
     async def __register_subscription(self, message):
         subscription = message.get('subscription')
@@ -168,8 +174,10 @@ class AvanzaSocket:
             message_channel = message.get('channel')
             error = message.get('error')
 
+            logger.info(f'Incoming message: {message}')
+
             if error:
-                print(error)
+                logger.error(error)
 
             action = message_action.get(message_channel)
             # Use user subscribed action
