@@ -18,6 +18,7 @@ from .constants import (
     TimePeriod
 )
 
+from .avanza_socket import AvanzaSocket
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -35,6 +36,11 @@ class Avanza:
         self._authentication_session = response_body['authenticationSession']
         self._push_subscription_id = response_body['pushSubscriptionId']
         self._customer_id = response_body['customerId']
+
+        self._socket = AvanzaSocket(
+            self._push_subscription_id,
+            self._session.cookies.get_dict()
+        )
 
     def __authenticate(self, credentials):
         if not MIN_INACTIVE_MINUTES <= self._authenticationTimeout <= MAX_INACTIVE_MINUTES:
@@ -114,6 +120,32 @@ class Avanza:
         response.raise_for_status()
 
         return response.json()
+
+    async def subscribe_to_id(
+        self,
+        channel: ChannelType,
+        id: str,
+        callback: Callable[[str, dict], Any]
+    ):
+        await self.subscribe_to_ids(channel, [id], callback)
+
+    async def subscribe_to_ids(
+        self,
+        channel: ChannelType,
+        ids: Sequence[str],
+        callback: Callable[[str, dict], Any]
+    ):
+        if not callable(callback):
+            raise ValueError('callback parameter has to be a function!')
+
+        if not self._socket._connected:
+            await self._socket.init()
+
+        await self._socket.subscribe_to_ids(
+            channel,
+            ids,
+            callback
+        )
 
     def get_overview(self):
         return self.__call(HttpMethod.GET, Route.OVERVIEW_PATH.value)
