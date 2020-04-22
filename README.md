@@ -83,7 +83,7 @@ import asyncio
 from avanza import Avanza, ChannelType
 
 def callback(data):
-    # Do something with the order depths data here
+    # Do something with the quotes data here
     print(data)
 
 async def subscribe_to_channel(avanza: Avanza):
