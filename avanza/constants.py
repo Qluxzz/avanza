@@ -1,5 +1,6 @@
 import enum
 
+
 class TransactionType(enum.Enum):
     OPTIONS = 'options'
     FOREX = 'forex'
@@ -8,6 +9,7 @@ class TransactionType(enum.Enum):
     DIVIDEND = 'dividend'
     INTEREST = 'interest'
     FOREIGN_TAX = 'foreign-tax'
+
 
 class ChannelType(enum.Enum):
     ACCOUNTS = 'accounts'

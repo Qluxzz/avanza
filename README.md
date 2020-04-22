@@ -77,6 +77,38 @@ result = avanza.place_order(
 )
 ```
 
+Subscribe to real time data
+```python
+import asyncio
+from avanza import Avanza, ChannelType
+
+def callback(data):
+    # Do something with the order depths data here
+    print(data)
+
+async def subscribe_to_channel(avanza: Avanza):
+    await avanza.subscribe_to_id(
+        ChannelType.QUOTES,
+        "19002" # OMX Stockholm 30
+        callback
+    )
+
+def main():
+    avanza = Avanza({
+        'username': 'MY_USERNAME',
+        'password': 'MY_PASSWORD',
+        'totpSecret': 'MY_TOTP_SECRET'
+    })
+
+    asyncio.get_event_loop().run_until_complete(
+        subscribe_to_channel(avanza)
+    )
+    asyncio.get_event_loop().run_forever()
+
+if __name__ == "__main__":
+    main()
+```
+
 ## LICENSE
 
 MIT license. See the LICENSE file for details.

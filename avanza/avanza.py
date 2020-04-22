@@ -1,5 +1,5 @@
 
-from typing import Iterable
+from typing import Callable, Sequence, Any
 
 import hashlib
 
@@ -9,14 +9,16 @@ import pyotp
 from datetime import date
 
 from .constants import (
-    TimePeriod,
-    ListType,
-    InstrumentType,
-    OrderType,
+    ChannelType,
     HttpMethod,
-    Route
+    InstrumentType,
+    ListType,
+    OrderType,
+    Route,
+    TimePeriod
 )
 
+from .avanza_socket import AvanzaSocket
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -34,6 +36,11 @@ class Avanza:
         self._authentication_session = response_body['authenticationSession']
         self._push_subscription_id = response_body['pushSubscriptionId']
         self._customer_id = response_body['customerId']
+
+        self._socket = AvanzaSocket(
+            self._push_subscription_id,
+            self._session.cookies.get_dict()
+        )
 
     def __authenticate(self, credentials):
         if not MIN_INACTIVE_MINUTES <= self._authenticationTimeout <= MAX_INACTIVE_MINUTES:
@@ -114,6 +121,32 @@ class Avanza:
 
         return response.json()
 
+    async def subscribe_to_id(
+        self,
+        channel: ChannelType,
+        id: str,
+        callback: Callable[[str, dict], Any]
+    ):
+        await self.subscribe_to_ids(channel, [id], callback)
+
+    async def subscribe_to_ids(
+        self,
+        channel: ChannelType,
+        ids: Sequence[str],
+        callback: Callable[[str, dict], Any]
+    ):
+        if not callable(callback):
+            raise ValueError('callback parameter has to be a function!')
+
+        if not self._socket._connected:
+            await self._socket.init()
+
+        await self._socket.subscribe_to_ids(
+            channel,
+            ids,
+            callback
+        )
+
     def get_overview(self):
         return self.__call(HttpMethod.GET, Route.OVERVIEW_PATH.value)
 
@@ -128,7 +161,11 @@ class Avanza:
     def get_watchlists(self):
         return self.__call(HttpMethod.GET, Route.WATCHLISTS_PATH.value)
 
-    def add_to_watchlist(self, instrument_id: int, watchlist_id: int):
+    def add_to_watchlist(
+        self,
+        instrument_id: int,
+        watchlist_id: int
+    ):
         return self.__call(
             HttpMethod.PUT,
             Route.WATCHLISTS_ADD_DELETE_PATH.value.format(
@@ -137,7 +174,11 @@ class Avanza:
             )
         )
 
-    def remove_from_watchlist(self, instrument_id: int, watchlist_id: int):
+    def remove_from_watchlist(
+        self,
+        instrument_id: int,
+        watchlist_id: int
+    ):
         return self.__call(
             HttpMethod.DELETE,
             Route.WATCHLISTS_ADD_DELETE_PATH.value.format(
@@ -174,7 +215,7 @@ class Avanza:
 
     def get_order_books(
         self,
-        order_book_ids: Iterable[str]
+        order_book_ids: Sequence[str]
     ):
         return self.__call(
             HttpMethod.GET,
