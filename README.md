@@ -89,7 +89,7 @@ def callback(data):
 async def subscribe_to_channel(avanza: Avanza):
     await avanza.subscribe_to_id(
         ChannelType.QUOTES,
-        "19002" # OMX Stockholm 30
+        "19002", # OMX Stockholm 30
         callback
     )
 
