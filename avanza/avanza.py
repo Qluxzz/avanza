@@ -264,7 +264,7 @@ class Avanza:
     ) -> None:
         """ Add an instrument to the specified watchlist
         
-            This function returns an empty dict if the request was 200 OK,
+            This function returns None if the request was 200 OK,
             but there is no guarantee that the instrument was added to the list,
             verify this by calling get_watchlists()
         """
@@ -283,7 +283,7 @@ class Avanza:
     ) -> None:
         """ Remove an instrument to the specified watchlist
         
-            This function returns an empty dict if the request was 200 OK,
+            This function returns None if the request was 200 OK,
             but there is no guarantee that the instrument was removed from the list,
             verify this by calling get_watchlists()
         """
