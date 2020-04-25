@@ -112,7 +112,7 @@ class Avanza:
         # Some routes like add/remove instrument from a watchlist
         # only returns 200 OK with no further data about if the operation succeded
         if len(response.content) == 0:
-            return {}
+            return None
 
         return response.json()
 
