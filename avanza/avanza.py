@@ -261,7 +261,7 @@ class Avanza:
         self,
         instrument_id: str,
         watchlist_id: str
-    ):
+    ) -> None:
         """ Add an instrument to the specified watchlist
         
             This function returns an empty dict if the request was 200 OK,
@@ -280,7 +280,7 @@ class Avanza:
         self,
         instrument_id: str,
         watchlist_id: str
-    ):
+    ) -> None:
         """ Remove an instrument to the specified watchlist
         
             This function returns an empty dict if the request was 200 OK,
