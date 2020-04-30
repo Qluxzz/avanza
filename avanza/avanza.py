@@ -263,7 +263,7 @@ class Avanza:
         watchlist_id: str
     ) -> None:
         """ Add an instrument to the specified watchlist
-        
+
             This function returns None if the request was 200 OK,
             but there is no guarantee that the instrument was added to the list,
             verify this by calling get_watchlists()
@@ -282,7 +282,7 @@ class Avanza:
         watchlist_id: str
     ) -> None:
         """ Remove an instrument to the specified watchlist
-        
+
             This function returns None if the request was 200 OK,
             but there is no guarantee that the instrument was removed from the list,
             verify this by calling get_watchlists()
@@ -295,12 +295,11 @@ class Avanza:
             )
         )
 
-    def get_instrument(
+    def get_fund_info(
         self,
-        instrument_type: InstrumentType,
-        instrument_id: str
+        fund_id: str
     ):
-        """ Get instrument information
+        """ Get info about a fund
 
         Returns:
             {
@@ -320,14 +319,17 @@ class Avanza:
                 'changeSinceTurnOfTheYear': float,
                 'description': str,
                 'domicile': str,
-                'fundCompany': {'homePage': str, 'name': str},
+                'fundCompany': {
+                    'homePage': str,
+                    'name': str
+                },
                 'hasInvestmentFees': bool,
                 'id': str,
                 'isin': str,
                 'loanFactor': float,
                 'managementFee': float,
                 'name': str,
-                'normanAmount': str,
+                'normanAmount': float,
                 'numberOfOwners': int,
                 'numberOfPriceAlerts': int,
                 'otherFees': str,
@@ -359,6 +361,320 @@ class Avanza:
                 'type': str
             }
         """
+
+        return self.get_instrument(
+            InstrumentType.FUND,
+            fund_id
+        )
+
+    def get_stock_info(
+        self,
+        stock_id: str
+    ):
+        """ Returns info about a stock
+
+        Returns:
+            {
+                'annualMeetings': [
+                    {
+                        'eventDate': str,
+                        'extra': bool
+                    }
+                ],
+                'brokerTradeSummary': {
+                    'items': [
+                        {
+                            'brokerCode': str,
+                            'buyVolume': int,
+                            'netBuyVolume': int,
+                            'sellVolume': int
+                        }
+                    ],
+                    'orderbookId': str
+                },
+                'buyPrice': float,
+                'change': float,
+                'changePercent': float,
+                'company': {
+                    'CEO': str,
+                    'chairman': str,
+                    'description': str,
+                    'id': str,
+                    'marketCapital': int,
+                    'marketCapitalCurrency': str,
+                    'name': str,
+                    'sector': str,
+                    'stocks': [
+                        {
+                            'name': str,
+                            'totalNumberOfShares': int
+                        }
+                    ],
+                    'totalNumberOfShares': int
+                },
+                'companyReports': [{
+                    'eventDate': str,
+                    'reportType': str
+                }],
+                'country': str,
+                'currency': str,
+                'dividends': [{
+                    'amountPerShare': float,
+                    'currency': str,
+                    'exDate': str,
+                    'paymentDate': str
+                }],
+                'flagCode': str,
+                'hasInvestmentFees': bool,
+                'highestPrice': float,
+                'id': str,
+                'isin': str,
+                'keyRatios': {
+                    'directYield': float,
+                    'priceEarningsRatio': float,
+                    'volatility': float
+                },
+                'lastPrice': float,
+                'lastPriceUpdated': str,
+                'latestTrades': [],
+                'loanFactor': float,
+                'lowestPrice': float,
+                'marketMakerExpected': bool,
+                'marketPlace': str,
+                'marketTrades': bool,
+                'name': str,
+                'numberOfOwners': int,
+                'numberOfPriceAlerts': int,
+                'orderDepthLevels': [
+                    {
+                        'buy': {
+                            'percent': float,
+                            'price': float,
+                            'volume': int
+                        },
+                        'sell': {
+                            'percent': float,
+                            'price': float,
+                            'volume': int
+                        }
+                    }
+                ],
+                'orderDepthReceivedTime': str,
+                'positions': [],
+                'positionsTotalValue': float,
+                'priceAtStartOfYear': float,
+                'priceFiveYearsAgo': float,
+                'priceOneMonthAgo': float,
+                'priceOneWeekAgo': float,
+                'priceOneYearAgo': float,
+                'priceSixMonthsAgo': float,
+                'priceThreeMonthsAgo': float,
+                'priceThreeYearsAgo': float,
+                'pushPermitted': bool,
+                'quoteUpdated': str,
+                'relatedStocks': [{
+                    'flagCode': str,
+                    'id': str,
+                    'lastPrice': float,
+                    'name': str,
+                    'priceOneYearAgo': float
+                }],
+                'sellPrice': float,
+                'shortSellable': bool,
+                'superLoan': bool,
+                'tickerSymbol': str,
+                'totalValueTraded': float,
+                'totalVolumeTraded': int,
+                'tradable': bool
+            }
+        """
+
+        return self.get_instrument(
+            InstrumentType.STOCK,
+            stock_id
+        )
+
+    def get_certificate_info(
+        self,
+        certificate_id: str
+    ):
+        """ Returns info about a certificate
+
+        Returns:
+            {
+                'administrationFee': float,
+                'assetRootCategory': str,
+                'assetSubCategory': str,
+                'assetSubSubCategory': str,
+                'change': float,
+                'changePercent': float,
+                'currency': str,
+                'direction': str,
+                'flagCode': str,
+                'hasInvestmentFees': bool,
+                'highestPrice': float,
+                'id': str,
+                'isin': str,
+                'issuerName': str,
+                'lastPrice': float,
+                'lastPriceUpdated': str,
+                'leverage': float,
+                'lowestPrice': float,
+                'marketPlace': str,
+                'name': str,
+                'numberOfPriceAlerts': int,
+                'positions': List,
+                'positionsTotalValue': float,
+                'priceAtStartOfYear': float,
+                'priceOneMonthAgo': float,
+                'priceOneWeekAgo': float,
+                'priceOneYearAgo': float,
+                'priceSixMonthsAgo': float,
+                'priceThreeMonthsAgo': float,
+                'priipDocumentUrl': str,
+                'prospectus': str,
+                'pushPermitted': bool,
+                'quoteUpdated': str,
+                'shortName': str,
+                'tickerSymbol': str,
+                'totalValueTraded': float,
+                'totalVolumeTraded': int,
+                'tradable': bool,
+                'underlyingCurrency': str
+            }
+        """
+
+        return self.get_instrument(
+            InstrumentType.CERTIFICATE,
+            certificate_id
+        )
+
+    def get_warrant_info(
+        self,
+        warrant_id: str
+    ):
+        """ Returns info about a warrant
+
+        Returns:
+            {
+                'callIndicator': str,
+                'change': float,
+                'changePercent': float,
+                'currency': str,
+                'direction': str,
+                'endDate': str,
+                'finalTerms': str,
+                'flagCode': str,
+                'hasInvestmentFees': bool,
+                'highestPrice': float,
+                'id': str,
+                'isin': str,
+                'issuerName': str,
+                'lastPrice': float,
+                'lastPriceUpdated': str,
+                'lowestPrice': float,
+                'marketPlace': str,
+                'name': str,
+                'numberOfPriceAlerts': int,
+                'parity': float,
+                'positions': [],
+                'positionsTotalValue': float,
+                'priceAtStartOfYear': float,
+                'priceOneMonthAgo': float,
+                'priceOneWeekAgo': float,
+                'priceOneYearAgo': float,
+                'priceSixMonthsAgo': float,
+                'priceThreeMonthsAgo': float,
+                'priipDocumentUrl': str,
+                'pushPermitted': bool,
+                'quoteUpdated': str,
+                'strikePrice': int,
+                'tickerSymbol': str,
+                'totalValueTraded': float,
+                'totalVolumeTraded': int,
+                'tradable': bool,
+                'underlyingCurrency': str,
+                'underlyingOrderbook': {
+                    'change': float,
+                    'changePercent': float,
+                    'currency': str,
+                    'flagCode': str,
+                    'highestPrice': float,
+                    'id': str,
+                    'lastPrice': float,
+                    'lastPriceUpdated': str,
+                    'lowestPrice': float,
+                    'name': str,
+                    'tickerSymbol': str,
+                    'totalVolumeTraded': int,
+                    'type': str,
+                    'updated': str
+                },
+                'warrantType': str
+            }
+        """
+
+        return self.get_instrument(
+            InstrumentType.WARRANT,
+            warrant_id
+        )
+
+    def get_index_info(
+        self,
+        index_id: str
+    ):
+        """ Returns info about an index
+
+        Returns:
+            {
+                'change': float,
+                'changePercent': float,
+                'currency': str,
+                'description': str,
+                'flagCode': str
+                'highestPrice': float,
+                'id': str,
+                'lastPrice': float,
+                'lastPriceUpdated': str,
+                'lowestPrice': float,
+                'name': str,
+                'numberOfPriceAlerts': int,
+                'priceAtStartOfYear': float,
+                'priceFiveYearsAgo': float,
+                'priceOneMonthAgo': float,
+                'priceOneWeekAgo': float,
+                'priceOneYearAgo': float,
+                'priceSixMonthsAgo': float,
+                'priceThreeMonthsAgo': float,
+                'priceThreeYearsAgo': float,
+                'pushPermitted': bool,
+                'quoteUpdated': str,
+                'title': str
+            }
+        """
+
+        return self.get_instrument(
+            InstrumentType.INDEX,
+            index_id
+        )
+
+    def get_instrument(
+        self,
+        instrument_type: InstrumentType,
+        instrument_id: str
+    ):
+        """
+            Get instrument info
+            For more info on return models for this function see functions
+            [
+                get_stock_info(),
+                get_fund_info(),
+                get_certificate_info(),
+                get_index_info(),
+                get_warrant_info()
+            ]
+        """
+
         return self.__call(
             HttpMethod.GET,
             Route.INSTRUMENT_PATH.value.format(
@@ -698,7 +1014,7 @@ class Avanza:
         This returns lists similar to the ones found on:
 
         https://www.avanza.se/aktier/aktieinspiration.html
-        
+
         https://www.avanza.se/fonder/fondinspiration.html
 
         Returns:
@@ -779,7 +1095,7 @@ class Avanza:
 
     def get_chart_data(self, order_book_id: str, period: TimePeriod):
         """ Return chart data for an order book for the specified time period
-        
+
         Returns:
             {
                 'ceiling': float,
