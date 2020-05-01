@@ -91,3 +91,8 @@ class Route(enum.Enum):
     TRANSACTIONS_PATH = '/_mobile/account/transactions/{}'
     WATCHLISTS_ADD_DELETE_PATH = '/_api/usercontent/watchlist/{}/orderbooks/{}'
     WATCHLISTS_PATH = '/_mobile/usercontent/watchlist'
+    MONTHLY_SAVINGS_PATH = '/_mobile/transfer/monthly-savings/{}'
+    MONTHLY_SAVINGS_PAUSE_PATH = '/_api/transfer/monthly-savings/{}/{}/pause'
+    MONTHLY_SAVINGS_RESUME_PATH = '/_api/transfer/monthly-savings/{}/{}/resume'
+    MONTHLY_SAVINGS_REMOVE_PATH = '/_api/transfer/monthly-savings/{}/{}/'
+    MONTHLY_SAVINGS_CREATE_PATH = '/_api/transfer/monthly-savings/{}'
