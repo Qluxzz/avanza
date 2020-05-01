@@ -1,7 +1,7 @@
 
 import hashlib
 from datetime import date
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Sequence, Dict
 
 import pyotp
 import requests
@@ -1269,4 +1269,235 @@ class Avanza:
                 account_id,
                 order_id
             )
+        )
+
+    def get_monthly_savings_by_account_id(
+        self,
+        account_id: str
+    ):
+        """ Get monthly savings at avanza for specific account
+
+        Returns:
+            {
+                'monthlySavings': [{
+                    'account': {
+                        'id': str,
+                        'name': str,
+                        'type': str
+                    },
+                    'amount': float,
+                    'cash': {'amount': float, 'percent': float},
+                    'externalAccount': {
+                        'accountNumber': str,
+                        'bankName': str,
+                        'clearingNumber': str
+                    },
+                    'fundDistributions': [{
+                        'amount': float,
+                        'orderbook': {
+                            'buyable': bool,
+                            'id': str,
+                            'name': str
+                        },
+                        'percent': float
+                    },
+                    'id': str,
+                    'name': str,
+                    'purchaseDay': int,
+                    'status': str,
+                    'transferDay': int
+                }],
+                'totalAmount': float
+            }
+        """
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.MONTHLY_SAVINGS_PATH.value.format(account_id)
+        )
+
+    def get_all_monthly_savings(
+        self
+    ):
+        """ Get your monthly savings at Avanza 
+
+        Returns:
+            {
+                'monthlySavings': [{
+                    'account': {
+                        'id': str,
+                        'name': str,
+                        'type': str
+                    },
+                    'amount': float,
+                    'cash': {'amount': float, 'percent': float},
+                    'externalAccount': {
+                        'accountNumber': str,
+                        'bankName': str,
+                        'clearingNumber': str
+                    },
+                    'fundDistributions': [{
+                        'amount': float,
+                        'orderbook': {
+                            'buyable': bool,
+                            'id': str,
+                            'name': str
+                        },
+                        'percent': float
+                    },
+                    'id': str,
+                    'name': str,
+                    'purchaseDay': int,
+                    'status': str,
+                    'transferDay': int
+                }],
+                'totalAmount': float
+            }
+        """
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.MONTHLY_SAVINGS_PATH.value.format('')
+        )
+
+    def pause_monthly_saving(
+        self,
+        account_id: str,
+        monthly_savings_id: str
+    ):
+        """ Pause an active monthly saving
+
+        Returns:
+            'OK'
+
+        """
+
+        return self.__call(
+            HttpMethod.PUT,
+            Route.MONTHLY_SAVINGS_PAUSE_PATH.value.format(
+                account_id,
+                monthly_savings_id
+            )
+        )
+
+    def resume_monthly_saving(
+        self,
+        account_id: str,
+        monthly_savings_id: str
+    ):
+        """ Resume a paused monthly saving
+
+        Returns:
+            'OK'
+
+        """
+
+        return self.__call(
+            HttpMethod.PUT,
+            Route.MONTHLY_SAVINGS_RESUME_PATH.value.format(
+                account_id,
+                monthly_savings_id
+            )
+        )
+
+    def delete_monthly_saving(
+        self,
+        account_id: str,
+        monthly_savings_id: str
+    ) -> None:
+        """ Deletes a monthly saving
+
+        Returns:
+            None
+
+        """
+
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.MONTHLY_SAVINGS_REMOVE_PATH.value.format(
+                account_id,
+                monthly_savings_id
+            )
+        )
+
+    def create_monthly_saving(
+        self,
+        account_id: str,
+        amount: int,
+        transfer_day_of_month: int,
+        purchase_day_of_month: int,
+        clearing_and_account_number: str,
+        fund_distribution: Dict[str, int]
+    ):
+        """ Create a monthly saving at Avanza
+
+        Args:
+            account_id: The Avanza account to which the withdrawn money should be transferred to
+
+            amount: minimum amount 100 (SEK)
+                the amount that should be withdrawn from the external account every month
+
+            transfer_day_of_month: valid range (1-31)
+                when the money should be withdrawn from the external account
+
+            purchase_day_of_month: valid range (1-31)
+                when the funds should be purchased,
+                must occur after the transfer_day_of_month
+
+            clearing_and_account_number: The external account from which the money for the monthly savings should be withdrawn from,
+                has to be formatted as follows 'XXXX-XXXXXXXXX'
+
+            fund_distrubution: the percentage distribution of the funds
+                The key is the funds id and the value is the distribution of the amount in a whole percentage
+                The sum of the percentages has to total 100
+
+                Examples:
+                    {'41567': 100}
+                    {'41567': 50, '878733': 50}
+                    {'41567': 25, '878733': 75}
+
+        Returns:
+            {
+                'monthlySavingId': str,
+                'status': str
+            }
+
+            monthlySavingId has the following format: 'XX^XXXXXXXXXXXXX^XXXXXX'
+            status should have the value 'ACCEPTED' if the monthly saving was created successfully
+        """
+
+        if not 1 <= transfer_day_of_month <= 31:
+            raise ValueError(
+                "transfer_day_of_month is outside the valid range of (1-31)")
+
+        if not 1 <= purchase_day_of_month <= 31:
+            raise ValueError(
+                "purchase_day_of_month is outside the valid range of (1-31)")
+
+        if transfer_day_of_month >= purchase_day_of_month:
+            raise ValueError(
+                "transfer_day_of_month must occur before purchase_day_of_month")
+
+        if len(fund_distribution) == 0:
+            raise ValueError(
+                "No founds were specified in the fund_distribution"
+            )
+
+        if sum(fund_distribution.values()) != 100:
+            raise ValueError("The fund_distribution values must total 100")
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.MONTHLY_SAVINGS_CREATE_PATH.value.format(account_id),
+            {
+                'amount': amount,
+                'autogiro': {
+                    'dayOfMonth': transfer_day_of_month,
+                    'externalClearingAndAccount': clearing_and_account_number
+                },
+                'fundDistribution': {
+                    'dayOfMonth': purchase_day_of_month,
+                    'fundDistributions': fund_distribution
+                }
+            }
         )
