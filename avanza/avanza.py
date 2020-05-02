@@ -683,6 +683,171 @@ class Avanza:
             )
         )
 
+    def search_for_stock(
+        self,
+        query
+    ):
+        """ Search for a stock
+
+        Args:
+            query: can be a ISIN ('US0378331005'),
+                name ('Apple'),
+                tickerSymbol ('AAPL')
+
+        Returns:
+            {
+                "totalNumberOfHits": int,
+                "hits": [{
+                    "instrumentType": "STOCK",
+                    "numberOfHits": int,
+                    "topHits": [{
+                        "currency": str,
+                        "lastPrice": float,
+                        "changePercent": float,
+                        "tradable": bool,
+                        "tickerSymbol": str,
+                        "flagCode": Str,
+                        "name": str,
+                        "id": str
+                    }]
+                }]
+            }
+        """
+        return self.search_for_instrument(
+            InstrumentType.STOCK,
+            query
+        )
+
+    def search_for_fund(
+        self,
+        query: str
+    ):
+        """ Search for a fund
+
+        Args:
+            query: can be a ISIN ('SE0012454338'),
+                name ('Avanza'),
+                tickerSymbol ('Avanza Europa')
+
+        Returns:
+            {
+                'hits': [{
+                    'instrumentType': 'FUND',
+                    'numberOfHits': int,
+                    'topHits': [{
+                        'changeSinceOneDay': float,
+                        'changeSinceOneYear': float,
+                        'changeSinceThreeMonths': float,
+                        'id': str,
+                        'managementFee': float,
+                        'name': str,
+                        'risk': int,
+                        'riskLevel': str,
+                        'tickerSymbol': str,
+                        'tradable': bool
+                    }]
+                }],
+                'totalNumberOfHits': int
+            }
+        """
+
+        return self.search_for_instrument(
+            InstrumentType.FUND,
+            query
+        )
+
+    def search_for_certificate(
+        self,
+        query: str
+    ):
+        """ Search for a certificate
+
+        Args:
+            query: can be a ISIN, name or tickerSymbol
+
+        Returns:
+            {
+                'hits': [{
+                    'instrumentType': 'CERTIFICATE',
+                    'numberOfHits': int,
+                    'topHits': [{
+                        'changePercent': float,
+                        'currency': str,
+                        'flagCode': str,
+                        'id': str,
+                        'lastPrice': float,
+                        'name': str,
+                        'tickerSymbol': str,
+                        'tradable': True
+                    }]
+                }],
+                'totalNumberOfHits': 1
+            }
+        """
+
+        return self.search_for_instrument(
+            InstrumentType.CERTIFICATE,
+            query
+        )
+
+    def search_for_warrant(
+        self,
+        query: str
+    ):
+        """ Search for a warrant
+
+        Args:
+            query: can be a ISIN, name or tickerSymbol
+
+        Returns:
+            {
+                'hits': [{
+                    'instrumentType': 'WARRANT',
+                    'numberOfHits': int,
+                    'topHits': [{
+                        'changePercent': float,
+                        'currency': str,
+                        'flagCode': str,
+                        'id': str,
+                        'lastPrice': float,
+                        'name': str,
+                        'tickerSymbol': str,
+                        'tradable': True
+                    }]
+                }],
+                'totalNumberOfHits': int
+            }
+        """
+
+        return self.search_for_instrument(
+            InstrumentType.WARRANT,
+            query
+        )
+
+    def search_for_instrument(
+        self,
+        instrument_type: InstrumentType,
+        query: str
+    ):
+        """ Search for a specific instrument
+
+        Returns:
+            See the functions [
+                search_for_stock(),
+                search_for_fund(),
+                search_for_certificate(),
+                search_for_warrant()
+            ]
+            for more info about the return models
+        """
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSTRUMENT_SEARCH_PATH.value.format(
+                instrument_type.value.upper(),
+                query
+            )
+        )
+
     def get_order_book(
         self,
         order_book_id: str,
