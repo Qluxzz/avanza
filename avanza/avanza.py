@@ -696,19 +696,19 @@ class Avanza:
 
         Returns:
             {
-                "totalNumberOfHits": int,
-                "hits": [{
-                    "instrumentType": "STOCK",
-                    "numberOfHits": int,
-                    "topHits": [{
-                        "currency": str,
-                        "lastPrice": float,
-                        "changePercent": float,
-                        "tradable": bool,
-                        "tickerSymbol": str,
-                        "flagCode": Str,
-                        "name": str,
-                        "id": str
+                'totalNumberOfHits': int,
+                'hits': [{
+                    'instrumentType': 'STOCK',
+                    'numberOfHits': int,
+                    'topHits': [{
+                        'currency': str,
+                        'lastPrice': float,
+                        'changePercent': float,
+                        'tradable': bool,
+                        'tickerSymbol': str,
+                        'flagCode': Str,
+                        'name': str,
+                        'id': str
                     }]
                 }]
             }
