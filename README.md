@@ -16,7 +16,7 @@ Here are the steps to get your TOTP Secret:
 1. Click "Aktivera" on the next screen.
 1. Select "Annan app för tvåfaktorsinloggning".
 1. Click "Kan du inte scanna QR-koden?" to reveal your TOTP Secret.
-1. Done! From now on all you have to do is supply your secret in the `authenticate()` function as in the example below.
+1. Done! From now on all you have to do is supply your secret in the constructor as in the examples below.
 
 ## Example
 
