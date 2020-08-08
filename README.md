@@ -6,6 +6,12 @@ Please note that this is only a proof of concept, hence not meant to be used by 
 
 It might also be valuable to note that I am not affiliated with Avanza Bank AB in any way. The underlying API can be taken down or changed without warning at any point in time.
 
+## Installation
+[![](https://img.shields.io/pypi/v/avanza-api?style=flat-square&logo=pypi "Shiprock, New Mexico by Beau Rogers")](https://pypi.org/project/avanza-api/)
+```python 
+pip install avanza-api
+```
+
 ## Getting a TOTP Secret
 
 **NOTE: Since May 2018 two-factor authentication is required to log in.**
