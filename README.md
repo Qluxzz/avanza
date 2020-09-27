@@ -29,7 +29,7 @@ Here are the steps to get your TOTP Secret:
 import hashlib
 import pyotp
 totp = pyotp.TOTP('MY_TOTP_SECRET', digest=hashlib.sha1)
-totp.now()
+print(totp.now())
 ```
 ## Example
 
