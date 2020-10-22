@@ -58,7 +58,7 @@ avanza = Avanza({
 
 report = avanza.get_insights_report(
     accountId='XXXXXXX',
-    TimePeriod.ONE_WEEK
+    time_period=TimePeriod.ONE_WEEK
 )
 ```
 
@@ -75,7 +75,7 @@ avanza = Avanza({
 result = avanza.place_order(
     account_id='XXXXXXX',
     order_book_id='XXXXXX',
-    OrderType.BUY,
+    order_type=OrderType.BUY,
     buy_price=13.37,
     valid_until=date.fromisoformat('2011-11-11')
     volume=42
