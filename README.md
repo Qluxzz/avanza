@@ -56,10 +56,8 @@ avanza = Avanza({
     'totpSecret': 'MY_TOTP_SECRET'
 })
 
-accountId = 'XXXXXXX'
-
 report = avanza.get_insights_report(
-    accountId,
+    accountId='XXXXXXX',
     TimePeriod.ONE_WEEK
 )
 ```
@@ -74,19 +72,13 @@ avanza = Avanza({
     'totpSecret': 'MY_TOTP_SECRET'
 })
 
-account_id = 'XXXXXXX'
-order_book_id = 'XXXXXX'
-buy_price = 13.37
-valid_until = date.fromisoformat('2011-11-11')
-volume = 42
-
 result = avanza.place_order(
-    account_id,
-    order_book_id,
+    account_id='XXXXXXX',
+    order_book_id='XXXXXX',
     OrderType.BUY,
-    buy_price,
-    valid_until,
-    volume
+    buy_price=13.37,
+    valid_until=date.fromisoformat('2011-11-11')
+    volume=42
 )
 ```
 
