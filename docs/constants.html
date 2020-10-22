@@ -112,6 +112,7 @@ class Route(enum.Enum):
     ORDER_DELETE_PATH = &#39;/_api/order?accountId={}&amp;orderId={}&#39;
     ORDER_GET_PATH = &#39;/_mobile/order/{}?accountId={}&amp;orderId={}&#39;
     ORDER_PLACE_PATH = &#39;/_api/order&#39;
+    ORDER_EDIT_PATH = &#39;/_api/order/{}/{}&#39;
     ORDERBOOK_LIST_PATH = &#39;/_mobile/market/orderbooklist/{}&#39;
     ORDERBOOK_PATH = &#39;/_mobile/order/{}?orderbookId={}&#39;
     OVERVIEW_PATH = &#39;/_mobile/account/overview&#39;
@@ -413,6 +414,7 @@ class Route(enum.Enum):
     ORDER_DELETE_PATH = &#39;/_api/order?accountId={}&amp;orderId={}&#39;
     ORDER_GET_PATH = &#39;/_mobile/order/{}?accountId={}&amp;orderId={}&#39;
     ORDER_PLACE_PATH = &#39;/_api/order&#39;
+    ORDER_EDIT_PATH = &#39;/_api/order/{}/{}&#39;
     ORDERBOOK_LIST_PATH = &#39;/_mobile/market/orderbooklist/{}&#39;
     ORDERBOOK_PATH = &#39;/_mobile/order/{}?orderbookId={}&#39;
     OVERVIEW_PATH = &#39;/_mobile/account/overview&#39;
@@ -489,6 +491,10 @@ class Route(enum.Enum):
 <div class="desc"></div>
 </dd>
 <dt id="avanza.constants.Route.ORDER_DELETE_PATH"><code class="name">var <span class="ident">ORDER_DELETE_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.ORDER_EDIT_PATH"><code class="name">var <span class="ident">ORDER_EDIT_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -727,6 +733,7 @@ class Route(enum.Enum):
 <li><code><a title="avanza.constants.Route.ORDERBOOK_LIST_PATH" href="#avanza.constants.Route.ORDERBOOK_LIST_PATH">ORDERBOOK_LIST_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDERBOOK_PATH" href="#avanza.constants.Route.ORDERBOOK_PATH">ORDERBOOK_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_DELETE_PATH" href="#avanza.constants.Route.ORDER_DELETE_PATH">ORDER_DELETE_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.ORDER_EDIT_PATH" href="#avanza.constants.Route.ORDER_EDIT_PATH">ORDER_EDIT_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_GET_PATH" href="#avanza.constants.Route.ORDER_GET_PATH">ORDER_GET_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_PLACE_PATH" href="#avanza.constants.Route.ORDER_PLACE_PATH">ORDER_PLACE_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.OVERVIEW_PATH" href="#avanza.constants.Route.OVERVIEW_PATH">OVERVIEW_PATH</a></code></li>

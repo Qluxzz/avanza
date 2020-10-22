@@ -1342,6 +1342,45 @@ class Avanza:
             }
         )
 
+    def edit_order(
+        self,
+        instrument_type: InstrumentType,
+        order_id: str,
+        account_id: str,
+        order_book_id: str,
+        order_type: OrderType,
+        price: float,
+        valid_until: date,
+        volume: int
+    ):
+
+        &#34;&#34;&#34; Update an existing order
+
+        Returns:
+            {
+                messages: List[str],
+                orderId: str,
+                requestId: str,
+                status: str
+            }
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.PUT,
+            Route.ORDER_EDIT_PATH.value.format(
+                instrument_type.value,
+                order_id
+            ),
+            {
+                &#39;accountId&#39;: account_id,
+                &#39;orderbookId&#39;: order_book_id,
+                &#39;orderType&#39;: order_type.value,
+                &#39;price&#39;: price,
+                &#39;validUntil&#39;: valid_until.isoformat(),
+                &#39;volume&#39;: volume
+            }
+        )
+
     def get_order(
         self,
         account_id: str,
@@ -3014,6 +3053,45 @@ class Avanza:
             }
         )
 
+    def edit_order(
+        self,
+        instrument_type: InstrumentType,
+        order_id: str,
+        account_id: str,
+        order_book_id: str,
+        order_type: OrderType,
+        price: float,
+        valid_until: date,
+        volume: int
+    ):
+
+        &#34;&#34;&#34; Update an existing order
+
+        Returns:
+            {
+                messages: List[str],
+                orderId: str,
+                requestId: str,
+                status: str
+            }
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.PUT,
+            Route.ORDER_EDIT_PATH.value.format(
+                instrument_type.value,
+                order_id
+            ),
+            {
+                &#39;accountId&#39;: account_id,
+                &#39;orderbookId&#39;: order_book_id,
+                &#39;orderType&#39;: order_type.value,
+                &#39;price&#39;: price,
+                &#39;validUntil&#39;: valid_until.isoformat(),
+                &#39;volume&#39;: volume
+            }
+        )
+
     def get_order(
         self,
         account_id: str,
@@ -3604,6 +3682,66 @@ status: str</dd>
             account_id,
             order_id
         )
+    )</code></pre>
+</details>
+</dd>
+<dt id="avanza.avanza.Avanza.edit_order"><code class="name flex">
+<span>def <span class="ident">edit_order</span></span>(<span>self, instrument_type: <a title="avanza.constants.InstrumentType" href="constants.html#avanza.constants.InstrumentType">InstrumentType</a>, order_id: str, account_id: str, order_book_id: str, order_type: <a title="avanza.constants.OrderType" href="constants.html#avanza.constants.OrderType">OrderType</a>, price: float, valid_until: datetime.date, volume: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Update an existing order</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt>{</dt>
+<dt><code>
+messages</code></dt>
+<dd>List[str],
+orderId: str,
+requestId: str,
+status: str</dd>
+</dl>
+<p>}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def edit_order(
+    self,
+    instrument_type: InstrumentType,
+    order_id: str,
+    account_id: str,
+    order_book_id: str,
+    order_type: OrderType,
+    price: float,
+    valid_until: date,
+    volume: int
+):
+
+    &#34;&#34;&#34; Update an existing order
+
+    Returns:
+        {
+            messages: List[str],
+            orderId: str,
+            requestId: str,
+            status: str
+        }
+    &#34;&#34;&#34;
+
+    return self.__call(
+        HttpMethod.PUT,
+        Route.ORDER_EDIT_PATH.value.format(
+            instrument_type.value,
+            order_id
+        ),
+        {
+            &#39;accountId&#39;: account_id,
+            &#39;orderbookId&#39;: order_book_id,
+            &#39;orderType&#39;: order_type.value,
+            &#39;price&#39;: price,
+            &#39;validUntil&#39;: valid_until.isoformat(),
+            &#39;volume&#39;: volume
+        }
     )</code></pre>
 </details>
 </dd>
@@ -6345,6 +6483,7 @@ tickerSymbol ('AAPL')</dd>
 <li><code><a title="avanza.avanza.Avanza.create_monthly_saving" href="#avanza.avanza.Avanza.create_monthly_saving">create_monthly_saving</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.delete_monthly_saving" href="#avanza.avanza.Avanza.delete_monthly_saving">delete_monthly_saving</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.delete_order" href="#avanza.avanza.Avanza.delete_order">delete_order</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.edit_order" href="#avanza.avanza.Avanza.edit_order">edit_order</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_account_overview" href="#avanza.avanza.Avanza.get_account_overview">get_account_overview</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_all_monthly_savings" href="#avanza.avanza.Avanza.get_all_monthly_savings">get_all_monthly_savings</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_certificate_info" href="#avanza.avanza.Avanza.get_certificate_info">get_certificate_info</a></code></li>
