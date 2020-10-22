@@ -1315,6 +1315,45 @@ class Avanza:
             }
         )
 
+    def edit_order(
+        self,
+        instrument_type: InstrumentType,
+        order_id: str,
+        account_id: str,
+        order_book_id: str,
+        order_type: OrderType,
+        price: float,
+        valid_until: date,
+        volume: int
+    ):
+
+        """ Update an existing order
+
+        Returns:
+            {
+                messages: List[str],
+                orderId: str,
+                requestId: str,
+                status: str
+            }
+        """
+
+        return self.__call(
+            HttpMethod.PUT,
+            Route.ORDER_EDIT_PATH.value.format(
+                instrument_type.value,
+                order_id
+            ),
+            {
+                'accountId': account_id,
+                'orderbookId': order_book_id,
+                'orderType': order_type.value,
+                'price': price,
+                'validUntil': valid_until.isoformat(),
+                'volume': volume
+            }
+        )
+
     def get_order(
         self,
         account_id: str,
