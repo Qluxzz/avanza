@@ -122,7 +122,7 @@ class AvanzaSocket:
     async def __connect(self, message: dict):
         successful = message.get('successful', False)
         advice = message.get('advice', {})
-        reconnect = advice.get('reconnect') not in [None, 'none']
+        reconnect = advice.get('reconnect') == 'retry'
         interval = advice.get('interval')
 
         connect_successful = successful and (
