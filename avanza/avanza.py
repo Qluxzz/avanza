@@ -8,7 +8,7 @@ import requests
 
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
-                        OrderType, Route, TimePeriod)
+                        OrderType, Route, TimePeriod, TransactionType)
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -98,13 +98,19 @@ class Avanza:
         if method_call is None:
             raise ValueError(f'Unknown method type {method}')
 
+        data = {}
+        if method == HttpMethod.GET:
+            data['params'] = options
+        else:
+            data['json'] = options
+
         response = method_call(
             f'{BASE_URL}{path}',
-            json=options,
             headers={
                 'X-AuthenticationSession': self._authentication_session,
                 'X-SecurityToken': self._security_token
-            }
+            },
+            **data
         )
 
         response.raise_for_status()
@@ -1704,4 +1710,114 @@ class Avanza:
                     'fundDistributions': fund_distribution
                 }
             }
+        )
+
+    def get_transactions(self,
+                         account_id: str=None,
+                         transaction_type: TransactionType=None,
+                         transactions_from: date=None,
+                         transactions_to: date=None,
+                         min_amount: int=None,
+                         max_amount: int=None,
+                         order_book_ids: Sequence[str]=[]):
+        """ Get transactions, optionally apply search criteria.
+
+        Args:
+            account_id: A valid account id.
+
+            transaction_type: A transaction type.
+                Any combination of account id and transaction type is valid.
+                E.g. it is fully optional to provide account_id and/or transaction_type.
+
+            transactions_from: Fetch transactions from this date.
+
+            transactions_to: Fetch transactions to this date.
+
+            min_amount: Only fetch transactions of at least this value.
+
+            max_amount: Only fetch transactions of at most this value.
+
+            order_book_ids: Only fetch transactions involving this/these orderbooks.
+
+        Returns:
+            {
+                'transactions': [
+                    {
+                        'account': {
+                            'type': str,
+                            'name': str,
+                            'id': int
+                        },
+                        'noteId': str,
+                        'transactionType': str,
+                        'verificationDate': str,
+                        'sum': float,
+                        'description': str,
+                        'currency': str,
+                        'amount': float,
+                        'orderbook': {
+                            'isin': str,
+                            'currency': str,
+                            'name': str,
+                            'id': int,
+                            'type': str
+                        },
+                        'price': float,
+                        'volume': float,
+                        'id': str
+                    },
+                ],
+                'totalNumberOfTransactions': int,
+                'totalAmounts': {
+                    str: {
+                        'total': float,
+                        'BUY': {
+                            'total': float,
+                            'orderbooks': [
+                                {
+                                    'total': float,
+                                    'isin': str,
+                                    'currency': str,
+                                    'name': str,
+                                    'flagCode': str,
+                                    'id': int,
+                                    'type': str
+                                },
+                            ]
+                        },
+                        'SELL': {
+                            'total': float,
+                            'orderbooks': [
+                                {
+                                    'total': float,
+                                    'isin': str,
+                                    'currency': str,
+                                    'name': str,
+                                    'flagCode': str,
+                                    'id': int,
+                                    'type': str
+                                },
+                            ]
+                        }
+                    }
+                }
+            }
+        """
+        options = {}
+
+        if transactions_from:
+            options['from'] = transactions_from.isoformat()
+        if transactions_to:
+            options['to'] = transactions_to.isoformat()
+        if min_amount:
+            options['minAmount'] = min_amount
+        if max_amount:
+            options['maxAmount'] = max_amount
+        if order_book_ids:
+            options['orderbookId'] = ','.join(order_book_ids)
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.TRANSACTIONS_PATH.value.format('/'.join(filter(None, [account_id, transaction_type.value if transaction_type else None]))),
+            options
         )
