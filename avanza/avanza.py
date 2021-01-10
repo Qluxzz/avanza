@@ -98,24 +98,20 @@ class Avanza:
         if method_call is None:
             raise ValueError(f'Unknown method type {method}')
 
+        data = {}
         if method == HttpMethod.GET:
-            response = method_call(
-                f'{BASE_URL}{path}',
-                params=options,
-                headers={
-                    'X-AuthenticationSession': self._authentication_session,
-                    'X-SecurityToken': self._security_token
-                }
-            )
+            data['params'] = options
         else:
-            response = method_call(
-                f'{BASE_URL}{path}',
-                json=options,
-                headers={
-                    'X-AuthenticationSession': self._authentication_session,
-                    'X-SecurityToken': self._security_token
-                }
-            )
+            data['json'] = options
+
+        response = method_call(
+            f'{BASE_URL}{path}',
+            headers={
+                'X-AuthenticationSession': self._authentication_session,
+                'X-SecurityToken': self._security_token
+            },
+            **data
+        )
 
         response.raise_for_status()
 
