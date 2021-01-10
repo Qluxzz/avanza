@@ -1732,9 +1732,9 @@ class Avanza:
 
             transactions_to: Fetch transactions to this date.
 
-            min_amount: Only fetch transactions of at most this value.
+            min_amount: Only fetch transactions of at least this value.
 
-            max_amount: Only fetch transactions of at least this value.
+            max_amount: Only fetch transactions of at most this value.
 
             order_book_ids: Only fetch transactions involving this/these orderbooks.
 
