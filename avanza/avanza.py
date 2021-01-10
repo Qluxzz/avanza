@@ -98,14 +98,24 @@ class Avanza:
         if method_call is None:
             raise ValueError(f'Unknown method type {method}')
 
-        response = method_call(
-            f'{BASE_URL}{path}',
-            json=options,
-            headers={
-                'X-AuthenticationSession': self._authentication_session,
-                'X-SecurityToken': self._security_token
-            }
-        )
+        if method == HttpMethod.GET:
+            response = method_call(
+                f'{BASE_URL}{path}',
+                params=options,
+                headers={
+                    'X-AuthenticationSession': self._authentication_session,
+                    'X-SecurityToken': self._security_token
+                }
+            )
+        else:
+            response = method_call(
+                f'{BASE_URL}{path}',
+                json=options,
+                headers={
+                    'X-AuthenticationSession': self._authentication_session,
+                    'X-SecurityToken': self._security_token
+                }
+            )
 
         response.raise_for_status()
 
@@ -1704,4 +1714,109 @@ class Avanza:
                     'fundDistributions': fund_distribution
                 }
             }
+        )
+
+    def get_transactions(self,
+                         account_or_transaction_type: str,
+                         transactions_from: date,
+                         transactions_to: date,
+                         min_amount: int=None,
+                         max_amount: int=None,
+                         order_book_ids: Sequence[str]=[]):
+        """ Get transactions
+
+        Args:
+            account_or_transaction_type: A valid account ID or a transaction type.
+
+            transactions_from: Fetch transactions from this date.
+
+            transactions_to: Fetch transactions to this date.
+
+            min_amount: Only fetch transactions of at most this value.
+
+            max_amount: Only fetch transactions of at least this value.
+
+            order_book_ids: Only fetch transactions involving this/these orderbooks.
+
+        Returns:
+            {
+                'transactions': [
+                    {
+                        'account': {
+                            'type': str,
+                            'name': str,
+                            'id': int
+                        },
+                        'noteId': str,
+                        'transactionType': str,
+                        'verificationDate': str,
+                        'sum': float,
+                        'description': str,
+                        'currency': str,
+                        'amount': float,
+                        'orderbook': {
+                            'isin': str,
+                            'currency': str,
+                            'name': str,
+                            'id': int,
+                            'type': str
+                        },
+                        'price': float,
+                        'volume': float,
+                        'id': str
+                    },
+                ],
+                'totalNumberOfTransactions': int,
+                'totalAmounts': {
+                    str: {
+                        'total': float,
+                        'BUY': {
+                            'total': float,
+                            'orderbooks': [
+                                {
+                                    'total': float,
+                                    'isin': str,
+                                    'currency': str,
+                                    'name': str,
+                                    'flagCode': str,
+                                    'id': int,
+                                    'type': str
+                                },
+                            ]
+                        },
+                        'SELL': {
+                            'total': float,
+                            'orderbooks': [
+                                {
+                                    'total': float,
+                                    'isin': str,
+                                    'currency': str,
+                                    'name': str,
+                                    'flagCode': str,
+                                    'id': int,
+                                    'type': str
+                                },
+                            ]
+                        }
+                    }
+                }
+            }
+        """
+
+        options = {
+                'from': transactions_from.isoformat(),
+                'to': transactions_to.isoformat(),
+            }
+
+        if min_amount:
+            options['minAmount'] = min_amount
+        if max_amount:
+            options['maxAmount'] = max_amount
+        if order_book_ids:
+            options['orderbookId'] = ','.join(order_book_ids)
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.TRANSACTIONS_PATH.value.format(account_or_transaction_type),
+            options
         )
