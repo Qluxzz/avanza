@@ -1803,11 +1803,12 @@ class Avanza:
                 }
             }
         """
-        options = {
-                'from': transactions_from.isoformat(),
-                'to': transactions_to.isoformat(),
-            }
+        options = {}
 
+        if transactions_from:
+            options['from'] = transactions_from.isoformat()
+        if transactions_to:
+            options['to'] = transactions_to.isoformat()
         if min_amount:
             options['minAmount'] = min_amount
         if max_amount:
