@@ -8,7 +8,7 @@ import requests
 
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
-                        OrderType, Route, TimePeriod)
+                        OrderType, Route, TimePeriod, TransactionType)
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -1713,16 +1713,21 @@ class Avanza:
         )
 
     def get_transactions(self,
-                         account_or_transaction_type: str,
-                         transactions_from: date,
-                         transactions_to: date,
+                         account_id: str=None,
+                         transaction_type: TransactionType=None,
+                         transactions_from: date=None,
+                         transactions_to: date=None,
                          min_amount: int=None,
                          max_amount: int=None,
                          order_book_ids: Sequence[str]=[]):
-        """ Get transactions
+        """ Get transactions, optionally apply search criteria.
 
         Args:
-            account_or_transaction_type: A valid account ID or a transaction type.
+            account_id: A valid account id.
+
+            transaction_type: A transaction type.
+                Any combination of account id and transaction type is valid.
+                E.g. it is fully optional to provide account_id and/or transaction_type.
 
             transactions_from: Fetch transactions from this date.
 
@@ -1798,7 +1803,6 @@ class Avanza:
                 }
             }
         """
-
         options = {
                 'from': transactions_from.isoformat(),
                 'to': transactions_to.isoformat(),
@@ -1813,6 +1817,6 @@ class Avanza:
 
         return self.__call(
             HttpMethod.GET,
-            Route.TRANSACTIONS_PATH.value.format(account_or_transaction_type),
+            Route.TRANSACTIONS_PATH.value.format('/'.join(filter(None, [account_id, transaction_type.value if transaction_type else None]))),
             options
         )
