@@ -76,7 +76,7 @@ result = avanza.place_order(
     account_id='XXXXXXX',
     order_book_id='XXXXXX',
     order_type=OrderType.BUY,
-    buy_price=13.37,
+    price=13.37,
     valid_until=date.fromisoformat('2011-11-11')
     volume=42
 )
