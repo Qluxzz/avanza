@@ -79,7 +79,7 @@ class AvanzaSocket:
         self,
         subscription_string,
         callback: Callable[[str, dict], Any]
-    ):
+    ) -> Callable[[], None]:
         self._subscriptions[subscription_string] = {
             'callback': callback
         }
@@ -89,6 +89,23 @@ class AvanzaSocket:
             'clientId': self._client_id,
             'subscription': subscription_string
         })
+
+        return self.__socket_unsubscribe(subscription_string)
+
+    async def __socket_unsubscribe(
+        self,
+        subscription_string
+    ) -> Callable[[], None]:
+        async def unsubscribe():
+            del self._subscriptions[subscription_string]
+
+            await self.__send({
+                'channel': '/meta/unsubscribe',
+                'client': self._client_id,
+                'subscription': subscription_string
+            })
+        
+        return unsubscribe
 
     async def __send(self, message):
         wrapped_message = [
@@ -192,7 +209,7 @@ class AvanzaSocket:
         channel: ChannelType,
         id: str,
         callback: Callable[[str, dict], Any]
-    ):
+    ) -> Callable[[], None]:
         return await self.subscribe_to_ids(channel, [id], callback)
 
     async def subscribe_to_ids(
@@ -200,7 +217,7 @@ class AvanzaSocket:
         channel: ChannelType,
         ids: Sequence[str],
         callback: Callable[[str, dict], Any]
-    ):
+    ) -> Callable[[], None]:
         valid_channels_for_multiple_ids = [
             ChannelType.ORDERS,
             ChannelType.DEALS,
@@ -214,4 +231,4 @@ class AvanzaSocket:
             raise ValueError(f'Multiple ids is not supported for channels other than {valid_channels_for_multiple_ids}')
 
         subscription_string = f'/{channel.value}/{",".join(ids)}'
-        await self.__socket_subscribe(subscription_string, callback)
+        return await self.__socket_subscribe(subscription_string, callback)

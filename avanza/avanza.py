@@ -127,22 +127,22 @@ class Avanza:
         channel: ChannelType,
         id: str,
         callback: Callable[[str, dict], Any]
-    ):
-        await self.subscribe_to_ids(channel, [id], callback)
+    ) -> Callable[[], None]:
+        return await self.subscribe_to_ids(channel, [id], callback)
 
     async def subscribe_to_ids(
         self,
         channel: ChannelType,
         ids: Sequence[str],
         callback: Callable[[str, dict], Any]
-    ):
+    ) -> Callable[[], None]:
         if not callable(callback):
             raise ValueError('callback parameter has to be a function!')
 
         if not self._socket._connected:
             await self._socket.init()
 
-        await self._socket.subscribe_to_ids(
+        return await self._socket.subscribe_to_ids(
             channel,
             ids,
             callback
