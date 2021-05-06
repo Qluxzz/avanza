@@ -57,7 +57,7 @@ avanza = Avanza({
 })
 
 report = avanza.get_insights_report(
-    accountId='XXXXXXX',
+    account_id='XXXXXXX',
     time_period=TimePeriod.ONE_WEEK
 )
 ```
