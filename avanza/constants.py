@@ -69,6 +69,7 @@ class HttpMethod(enum.Enum):
 
 class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
+    ACCOUNTS_POSITIONS_PATH = '/_cqbe/ff/overview/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
     CHARTDATA_PATH = '/_mobile/chart/orderbook/{}?timePeriod={}'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
