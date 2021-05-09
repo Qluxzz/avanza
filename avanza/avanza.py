@@ -250,6 +250,188 @@ class Avanza:
             )
         )
 
+    def get_accounts_positions(self):
+        """Get investment positions for all account
+
+        Returns:
+            {
+                'withOrderbook':[{
+                    'account':{
+                        'id': str,
+                        'type': str,
+                        'name': str,
+                        'urlParameterId': str,
+                        'hasCredit':bool
+                    },
+                    'instrument':{
+                        'type': str,
+                        'name': str,
+                        'orderbook':{
+                            'id': str,
+                            'flagCode': str,
+                            'name': str,
+                            'type': str,
+                            'tradeStatus': str,
+                            'quote':{
+                                'highest':{
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'lowest':{
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'buy':{
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'sell':{
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'latest':{
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'turnover':{
+                                'volume':{
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'value': ?float
+                            },
+                            'lastDeal':{
+                                'date': str,
+                                'time': ?str
+                            }
+                        },
+                        'currency': str,
+                        'isin': str,
+                        'volumeFactor': float
+                    },
+                    'volume':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                    },
+                    'value':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                    },
+                    'averageAcquiredPrice':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                    },
+                    'acquiredValue':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                    },
+                    'lastTradingDayPerformance':{
+                       'absolute':{
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                       },
+                       'relative':{
+                           'value': float,
+                           'unit': str,
+                           'unitType': str,
+                           'decimalPrecision': int
+                       }
+                    },
+                    'id': str
+                }],
+                'withoutOrderbook':[
+                  {
+                     'account':{
+                        'id': str,
+                        'type': str,
+                        'name': str,
+                        'urlParameterId': str,
+                        'hasCredit': bool
+                     },
+                     'instrument':{
+                        'type': str,
+                        'name': str,
+                        'orderbook': null (if not null, probably same as 'withOrderbook'),
+                        'currency': str,
+                        'isin': str,
+                        'volumeFactor': int
+                     },
+                     'volume':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                     },
+                     'value':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                     },
+                     'averageAcquiredPrice':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                     },
+                     'acquiredValue':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                     },
+                     'lastTradingDayPerformance':null,
+                     'id': str
+                  }
+               ],
+               'cashPositions':[
+                  {
+                     'account':{
+                        'id': str,
+                        'type': str,
+                        'name': str,
+                        'urlParameterId': str,
+                        'hasCredit': bool
+                     },
+                     'totalBalance':{
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                     },
+                     'id': str
+                  },
+               ]
+            }
+        """
+        return self.__call(
+            HttpMethod.GET,
+            Route.ACCOUNTS_POSITIONS_PATH.value
+        )
+
     def get_watchlists(self):
         """ Get your "Bevakningslistor"
 
