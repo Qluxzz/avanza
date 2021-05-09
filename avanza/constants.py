@@ -53,7 +53,7 @@ class InstrumentType(enum.Enum):
     SUBSCRIPTION_OPTION = 'subscription_option'
     EQUITY_LINKED_BOND = 'equity_linked_bond'
     CONVERTIBLE = 'convertible'
-
+    ANY = ''
 
 class OrderType(enum.Enum):
     BUY = 'BUY'
