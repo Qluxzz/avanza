@@ -85,6 +85,8 @@ class Route(enum.Enum):
     ORDER_DELETE_PATH = '/_api/order?accountId={}&orderId={}'
     ORDER_GET_PATH = '/_mobile/order/{}?accountId={}&orderId={}'
     ORDER_PLACE_PATH = '/_api/order'
+    ORDER_PLACE_PATH_BUY_FUND = '/_api/fund-guide/fund-order-page/buy'
+    ORDER_PLACE_PATH_SELL_FUND = '/_api/fund-guide/fund-order-page/sell'
     ORDER_EDIT_PATH = '/_api/order/{}/{}'
     ORDERBOOK_LIST_PATH = '/_mobile/market/orderbooklist/{}'
     ORDERBOOK_PATH = '/_mobile/order/{}?orderbookId={}'

@@ -1503,6 +1503,61 @@ class Avanza:
             }
         )
 
+    def place_order_buy_fund(
+        self,
+        account_id: str,
+        order_book_id: str,
+        amount: float
+    ):
+        """ Place a buy order for a fund
+
+        Returns:
+            {
+                message: str,
+                orderId: str,
+                accountId: str,
+                orderRequestStatus: str
+            }
+        """
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH_BUY_FUND.value,
+            {
+                'orderbookId': order_book_id,
+                'accountId': account_id,
+                'amount': amount
+            }
+        )
+
+    def place_order_sell_fund(
+        self,
+        account_id: str,
+        order_book_id: str,
+        volume: float
+    ):
+        """ Place a sell order for a fund
+
+        Returns:
+            {
+                message: str,
+                orderId: str,
+                accountId: str,
+                orderRequestStatus: str
+            }
+        """
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH_SELL_FUND.value,
+            {
+                'orderbookId': order_book_id,
+                'accountId': account_id,
+                'volume': volume
+            }
+        )
+
+
     def edit_order(
         self,
         instrument_type: InstrumentType,
@@ -1711,7 +1766,7 @@ class Avanza:
     def get_all_monthly_savings(
         self
     ):
-        """ Get your monthly savings at Avanza 
+        """ Get your monthly savings at Avanza
 
         Returns:
             {
