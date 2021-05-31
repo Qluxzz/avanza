@@ -10,6 +10,14 @@ class TransactionType(enum.Enum):
     INTEREST = 'interest'
     FOREIGN_TAX = 'foreign-tax'
 
+class TransactionsDetailsType(enum.Enum):
+    DIVIDEND = 'DIVIDEND'
+    BUY = 'BUY'
+    SELL = 'SELL'
+    WITHDRAW = 'WITHDRAW'
+    DEPOSIT = 'DEPOSIT'
+    UNKNOWN = 'UNKNOWN'
+
 
 class ChannelType(enum.Enum):
     ACCOUNTS = 'accounts'
@@ -82,6 +90,7 @@ class Route(enum.Enum):
     MONTHLY_SAVINGS_PAUSE_PATH = '/_api/transfer/monthly-savings/{}/{}/pause'
     MONTHLY_SAVINGS_REMOVE_PATH = '/_api/transfer/monthly-savings/{}/{}/'
     MONTHLY_SAVINGS_RESUME_PATH = '/_api/transfer/monthly-savings/{}/{}/resume'
+    NOTE_PATH = '/_api/contract-notes/documents/{}/{}/note.pdf'
     ORDER_DELETE_PATH = '/_api/order?accountId={}&orderId={}'
     ORDER_GET_PATH = '/_mobile/order/{}?accountId={}&orderId={}'
     ORDER_PLACE_PATH = '/_api/order'
@@ -94,5 +103,6 @@ class Route(enum.Enum):
     POSITIONS_PATH = '/_mobile/account/positions'
     TOTP_PATH = '/_api/authentication/sessions/totp'
     TRANSACTIONS_PATH = '/_mobile/account/transactions/{}'
+    TRANSACTIONS_DETAILS_PATH = '/_api/transactions'
     WATCHLISTS_ADD_DELETE_PATH = '/_api/usercontent/watchlist/{}/orderbooks/{}'
     WATCHLISTS_PATH = '/_mobile/usercontent/watchlist'

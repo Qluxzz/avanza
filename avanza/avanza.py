@@ -8,7 +8,8 @@ import requests
 
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
-                        OrderType, Route, TimePeriod, TransactionType)
+                        OrderType, Route, TimePeriod, TransactionType,
+                        TransactionsDetailsType)
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -87,7 +88,7 @@ class Avanza:
 
         return response_body, credentials
 
-    def __call(self, method: HttpMethod, path: str, options=None):
+    def __call(self, method: HttpMethod, path: str, options=None, return_content: bool = False):
         method_call = {
             HttpMethod.GET: self._session.get,
             HttpMethod.POST: self._session.post,
@@ -119,6 +120,9 @@ class Avanza:
         # only returns 200 OK with no further data about if the operation succeded
         if len(response.content) == 0:
             return None
+
+        if return_content:
+            return response.content
 
         return response.json()
 
@@ -2057,4 +2061,123 @@ class Avanza:
             HttpMethod.GET,
             Route.TRANSACTIONS_PATH.value.format('/'.join(filter(None, [account_id, transaction_type.value if transaction_type else None]))),
             options
+        )
+
+    def get_transactions_details(
+            self,
+            transaction_details_types: Sequence[TransactionsDetailsType]=[],
+            transactions_from: date=None,
+            transactions_to: date=None,
+            isin: str=None,
+            max_elements: int=1000,
+    ):
+        """ Get transactions, optionally apply criterias.
+
+        Args:
+            transaction_types: One or more transaction types.
+
+            transactions_from: Fetch transactions from this date.
+
+            transactions_to: Fetch transactions to this date.
+
+            isin: Only fetch transactions for specified isin.
+
+            max_elements: Limit result to N transactions.
+
+        Returns:
+            {
+                'firstTransactionDate': str,
+                'transactionsFilter': {
+                    'accountIds: null|str,
+                    'dateRange': {
+                        'from': str,
+                        'to': str
+                    }
+                    'isin': null|str,
+                    'transacitonTypes': null|array[str],
+                }
+                'transactionsAfterFiltering' int,
+                'transactions': [
+                    {
+                        'account': {
+                            'type': str,
+                            'name': str,
+                            'id': int,
+                            'urlParameterId': str,
+                        },
+                        'amount': {
+                            'decimalPrecision': int,
+                            'unit': str,
+                            'unitType': str,
+                            'value': int,
+                        },
+                        'availabilityDate': str,
+                        'comission': null|?,
+                        'currencyRate': null|?,
+                        'date': str,
+                        'description': str,
+                        'foreignTaxRate': null|?,
+                        'id': str,
+                        'instrumentName': str,
+                        'intraday': bool,
+                        'isin': str,
+                        'noteId': null|str
+                        'onCreditAccount': bool,
+                        'orderbook': {
+                            'isin': str,
+                            'currency': str,
+                            'flagCode': null|str,
+                            'name': str,
+                            'id': int,
+                            'type': str,
+                            'volumeFactor': int,
+                            'flagCode': null|str,
+                        },
+                        'priceInAccountCurrency': {
+                            'decimalPrecision': int,
+                            'unit': str,
+                            'unitType': str,
+                            'value': float,
+                        },
+                        'priceInTradedCurrency': {
+                            'decimalPrecision': int,
+                            'unit': str,
+                            'unitType': str,
+                            'value': float,
+                        },
+                        'settlementDate: str,
+                        'type': str,
+                        'volume': {
+                            'decimalPrecision': int,
+                            'unit': str,
+                            'unitType': str,
+                            'value': float,
+                        }
+                    },
+                ],
+            }
+        """
+        options = {}
+        options['maxElements'] = max_elements
+
+        if transaction_details_types:
+            options['transactionTypes'] = ','.join(transaction_details_types)
+        if transactions_from:
+            options['from'] = transactions_from.isoformat()
+        if transactions_to:
+            options['to'] = transactions_to.isoformat()
+        if isin:
+            options['isin'] = isin
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.TRANSACTIONS_DETAILS_PATH.value,
+            options
+        )
+
+    def get_note_as_pdf(self, url_parameter_id: str, note_id: str):
+        return self.__call(
+            HttpMethod.GET,
+            Route.NOTE_PATH.value.format(url_parameter_id, note_id),
+            return_content=True
         )
