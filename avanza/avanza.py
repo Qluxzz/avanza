@@ -17,7 +17,23 @@ MAX_INACTIVE_MINUTES = 60 * 24
 
 
 class Avanza:
-    def __init__(self, credentials):
+    def __init__(self, credentials: dict):
+        """
+        Args:
+            credentials: Login credentials.
+                Using TOTP secret:
+                    {
+                        'username': 'MY_USERNAME',
+                        'password': 'MY_PASSWORD',
+                        'totpSecret': 'MY_TOTP_SECRET'
+                    }
+                Using TOTP code:
+                    {
+                        'username': 'MY_USERNAME',
+                        'password': 'MY_PASSWORD',
+                        'totpCode': 'MY_TOTP_CODE'
+                    }
+        """
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
 
@@ -66,8 +82,11 @@ class Avanza:
         return self.__validate_2fa(credentials)
 
     def __validate_2fa(self, credentials):
-        totp = pyotp.TOTP(credentials['totpSecret'], digest=hashlib.sha1)
-        totp_code = totp.now()
+        if 'totpSecret' in credentials:
+            totp = pyotp.TOTP(credentials['totpSecret'], digest=hashlib.sha1)
+            totp_code = totp.now()
+        elif 'totpCode' in credentials:
+            totp_code = credentials['totpCode']
 
         if totp_code is None:
             raise ValueError('Failed to get totp code')
