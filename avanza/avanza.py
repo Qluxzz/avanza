@@ -2200,3 +2200,28 @@ class Avanza:
             Route.NOTE_PATH.value.format(url_parameter_id, note_id),
             return_content=True
         )
+
+    def set_price_alert(
+        self,
+        order_book_id: str,
+        price: float,
+        valid_until: date,
+        notification: bool = True,
+        email: bool = False,
+        sms: bool = False
+    ):
+        """
+        Sets a price alert for specified order book.
+        """
+        
+        return self.__call(
+            HttpMethod.POST,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+            {
+                'price': price,
+                'validUntil': valid_until.isoformat(),
+                "notification": notification,
+                "email": email,
+                "sms": sms
+            }
+        )
