@@ -2200,3 +2200,88 @@ class Avanza:
             Route.NOTE_PATH.value.format(url_parameter_id, note_id),
             return_content=True
         )
+
+    def set_price_alert(
+        self,
+        order_book_id: str,
+        price: float,
+        valid_until: date,
+        notification: bool = True,
+        email: bool = False,
+        sms: bool = False
+    ):
+        """
+        Sets a price alert for the specified orderbook and returns all the existing alerts.
+
+        Returns:
+        [
+            {
+                'alertId': str,
+                'accountId': str,
+                'price': float,
+                'validUntil': str,
+                'direction': str,
+                'email': bool,
+                'notification': bool,
+                'sms': bool,
+            }
+        ]
+        """
+        
+        return self.__call(
+            HttpMethod.POST,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+            {
+                'price': price,
+                'validUntil': valid_until.isoformat(),
+                "notification": notification,
+                "email": email,
+                "sms": sms
+            }
+        )
+
+    def get_price_alert(self, order_book_id: str):
+        """
+        Gets all the price alerts for the specified orderbook.
+
+        Returns:
+        [
+            {
+                'alertId': str,
+                'accountId': str,
+                'price': float,
+                'validUntil': str,
+                'direction': str,
+                'email': bool,
+                'notification': bool,
+                'sms': bool,
+            }
+        ]
+        """
+        return self.__call(
+            HttpMethod.GET,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+        )
+    
+    def delete_price_alert(self, order_book_id: str, alert_id: str):
+        """
+        Deletes a price alert from the specified orderbook and returns the remaining alerts.
+
+        Returns:
+        [
+            {
+                'alertId': str,
+                'accountId': str,
+                'price': float,
+                'validUntil': str,
+                'direction': str,
+                'email': bool,
+                'notification': bool,
+                'sms': bool,
+            }
+        ]
+        """
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id, alert_id)+f"/{alert_id}",
+        )

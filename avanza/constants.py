@@ -101,6 +101,7 @@ class Route(enum.Enum):
     ORDERBOOK_PATH = '/_mobile/order/{}?orderbookId={}'
     OVERVIEW_PATH = '/_mobile/account/overview'
     POSITIONS_PATH = '/_mobile/account/positions'
+    PRICE_ALERT_PATH = '/_cqbe/marketing/service/alert/{}'
     TOTP_PATH = '/_api/authentication/sessions/totp'
     TRANSACTIONS_PATH = '/_mobile/account/transactions/{}'
     TRANSACTIONS_DETAILS_PATH = '/_api/transactions'
