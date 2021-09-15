@@ -102,6 +102,7 @@ class Route(enum.Enum):
     OVERVIEW_PATH = '/_mobile/account/overview'
     POSITIONS_PATH = '/_mobile/account/positions'
     PRICE_ALERT_PATH = '/_cqbe/marketing/service/alert/{}'
+    STOP_LOSS_PATH = '/_cqbe/trading/stoploss'
     TOTP_PATH = '/_api/authentication/sessions/totp'
     TRANSACTIONS_PATH = '/_mobile/account/transactions/{}'
     TRANSACTIONS_DETAILS_PATH = '/_api/transactions'
