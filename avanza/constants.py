@@ -10,6 +10,7 @@ class TransactionType(enum.Enum):
     INTEREST = 'interest'
     FOREIGN_TAX = 'foreign-tax'
 
+
 class TransactionsDetailsType(enum.Enum):
     DIVIDEND = 'DIVIDEND'
     BUY = 'BUY'
@@ -37,7 +38,21 @@ class TimePeriod(enum.Enum):
     THREE_MONTHS = 'THREE_MONTHS'
     THIS_YEAR = 'THIS_YEAR'
     ONE_YEAR = 'ONE_YEAR'
+    THREE_YEARS = 'THREE_YEARS'
     FIVE_YEARS = 'FIVE_YEARS'
+
+
+class Resolution(enum.Enum):
+    MINUTE = 'MINUTE'
+    TWO_MINUTES = 'TWO_MINUTES'
+    FIVE_MINUTES = 'FIVE_MINUTES'
+    TEN_MINUTES = 'TEN_MINUTES'
+    THIRTY_MINUTES = 'THIRTY_MINUTES'
+    HOUR = 'HOUR'
+    DAY = 'DAY'
+    WEEK = 'WEEK'
+    MONTH = 'MONTH'
+    QUARTER = 'QUARTER'
 
 
 class ListType(enum.Enum):
@@ -63,6 +78,7 @@ class InstrumentType(enum.Enum):
     CONVERTIBLE = 'convertible'
     ANY = ''
 
+
 class OrderType(enum.Enum):
     BUY = 'BUY'
     SELL = 'SELL'
@@ -79,7 +95,7 @@ class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
     ACCOUNTS_POSITIONS_PATH = '/_cqbe/ff/overview/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
-    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}?timePeriod={}'
+    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}?timePeriod={}&resolution={}'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
     INSIGHTS_PATH = '/_cqbe/insights/?timePeriod={}&accountIds={}'
     INSPIRATION_LIST_PATH = '/_mobile/marketing/inspirationlist/{}'

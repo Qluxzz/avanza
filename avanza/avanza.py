@@ -9,7 +9,7 @@ import requests
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
                         OrderType, Route, TimePeriod, TransactionType,
-                        TransactionsDetailsType)
+                        TransactionsDetailsType, Resolution)
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -1469,7 +1469,7 @@ class Avanza:
             )
         )
 
-    def get_chart_data(self, order_book_id: str, period: TimePeriod):
+    def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Resolution):
         """ Return chart data for an order book for the specified time period
 
         Returns:
@@ -1489,7 +1489,8 @@ class Avanza:
             HttpMethod.GET,
             Route.CHARTDATA_PATH.value.format(
                 order_book_id,
-                period.value.lower()
+                period.value.lower(),
+                resolution.value.lower()
             )
         )
 
