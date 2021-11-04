@@ -1470,7 +1470,7 @@ class Avanza:
         )
 
     def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Resolution):
-        """ Return chart data for an order book for the specified time period
+        """ Return chart data for an order book for the specified time period with given resolution
 
         Returns:
             {
