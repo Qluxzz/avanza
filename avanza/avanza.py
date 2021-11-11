@@ -1,5 +1,6 @@
 
 import hashlib
+from typing import Optional
 from datetime import date
 from typing import Any, Callable, Sequence, Dict
 
@@ -1469,7 +1470,7 @@ class Avanza:
             )
         )
 
-    def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Resolution):
+    def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Optional[Resolution] = None):
         """ Return chart data for an order book for the specified time period with given resolution
 
         Returns:
@@ -1485,13 +1486,17 @@ class Avanza:
                 'min': float
             }
         """
+        options = {
+            'timePeriod': period.value.lower()
+        }
+
+        if resolution is not None:
+            options['resolution'] = resolution.value.lower()
+
         return self.__call(
             HttpMethod.GET,
-            Route.CHARTDATA_PATH.value.format(
-                order_book_id,
-                period.value.lower(),
-                resolution.value.lower()
-            )
+            Route.CHARTDATA_PATH.value.format(order_book_id),
+            options
         )
 
     def place_order(
@@ -2228,7 +2233,7 @@ class Avanza:
             }
         ]
         """
-        
+
         return self.__call(
             HttpMethod.POST,
             Route.PRICE_ALERT_PATH.value.format(order_book_id),
@@ -2263,7 +2268,7 @@ class Avanza:
             HttpMethod.GET,
             Route.PRICE_ALERT_PATH.value.format(order_book_id),
         )
-    
+
     def delete_price_alert(self, order_book_id: str, alert_id: str):
         """
         Deletes a price alert from the specified orderbook and returns the remaining alerts.
