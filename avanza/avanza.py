@@ -1511,10 +1511,19 @@ class Avanza:
         """ Place an order
 
         Returns:
+            If the order was successfully placed:
+
             {
                 message: str,
                 orderId: str,
-                orderRequestStatus: str
+                orderRequestStatus: 'SUCCESS'
+            }
+
+            If the order was not placed:
+
+            {
+                message: str,
+                orderRequestStatus: 'ERROR'
             }
         """
 
