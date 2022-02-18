@@ -90,7 +90,6 @@ class HttpMethod(enum.Enum):
     PUT = 3
     DELETE = 4
 
-
 class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
     ACCOUNTS_POSITIONS_PATH = '/_cqbe/ff/overview/positions'
@@ -109,7 +108,7 @@ class Route(enum.Enum):
     NOTE_PATH = '/_api/contract-notes/documents/{}/{}/note.pdf'
     ORDER_DELETE_PATH = '/_api/order?accountId={}&orderId={}'
     ORDER_GET_PATH = '/_mobile/order/{}?accountId={}&orderId={}'
-    ORDER_PLACE_PATH = '/_api/order'
+    ORDER_PLACE_PATH = '/_cqbe/trading/order/new'
     ORDER_PLACE_PATH_BUY_FUND = '/_api/fund-guide/fund-order-page/buy'
     ORDER_PLACE_PATH_SELL_FUND = '/_api/fund-guide/fund-order-page/sell'
     ORDER_EDIT_PATH = '/_api/order/{}/{}'
