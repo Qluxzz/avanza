@@ -1512,10 +1512,9 @@ class Avanza:
 
         Returns:
             {
-                messages: List[str],
+                message: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: str
             }
         """
 
@@ -1525,7 +1524,7 @@ class Avanza:
             {
                 'accountId': account_id,
                 'orderbookId': order_book_id,
-                'orderType': order_type.value,
+                'side': order_type.value,
                 'price': price,
                 'validUntil': valid_until.isoformat(),
                 'volume': volume
