@@ -1512,10 +1512,9 @@ class Avanza:
 
         Returns:
             {
-                messages: List[str],
+                message: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: str
             }
         """
 
