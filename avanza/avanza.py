@@ -149,15 +149,17 @@ class Avanza:
         self,
         channel: ChannelType,
         id: str,
-        callback: Callable[[str, dict], Any]
+        callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds = None
     ):
-        await self.subscribe_to_ids(channel, [id], callback)
+        await self.subscribe_to_ids(channel, [id], callback, wait_for_reply_timeout_seconds)
 
     async def subscribe_to_ids(
         self,
         channel: ChannelType,
         ids: Sequence[str],
-        callback: Callable[[str, dict], Any]
+        callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds = None
     ):
         if not callable(callback):
             raise ValueError('callback parameter has to be a function!')
@@ -168,7 +170,8 @@ class Avanza:
         await self._socket.subscribe_to_ids(
             channel,
             ids,
-            callback
+            callback,
+            wait_for_reply_timeout_seconds
         )
 
     def get_overview(self):

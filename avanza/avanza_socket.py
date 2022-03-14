@@ -22,6 +22,7 @@ class AvanzaSocket:
         self._connected = False
         self._subscriptions = {}
         self._cookies = cookies
+        self._subscribe_event = asyncio.Event()
 
     async def init(self):
         asyncio.ensure_future(self.__create_socket())
@@ -30,7 +31,6 @@ class AvanzaSocket:
     async def __wait_for_websocket_to_be_connected(self):
         timeout_count = 40
         timeout_value = 0.250
-
         # Waits for a maximum of 10 seconds for the connection to be complete
         for _ in range(0, timeout_count):
             if self._connected:
@@ -78,17 +78,26 @@ class AvanzaSocket:
     async def __socket_subscribe(
         self,
         subscription_string,
-        callback: Callable[[str, dict], Any]
+        callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds
     ):
         self._subscriptions[subscription_string] = {
             'callback': callback
         }
 
+        self._subscribe_event.clear()
         await self.__send({
             'channel': '/meta/subscribe',
             'clientId': self._client_id,
             'subscription': subscription_string
         })
+
+        # Wait for subscription ack message.
+        if wait_for_reply_timeout_seconds is not None:
+            try:
+                await asyncio.wait_for(self._subscribe_event.wait(), timeout=wait_for_reply_timeout_seconds)
+            except asyncio.TimeoutError:
+                logger.warning('timeout waiting for subscription reply!')
 
     async def __send(self, message):
         wrapped_message = [
@@ -160,6 +169,7 @@ class AvanzaSocket:
             raise ValueError('No subscription channel found on subscription message')
 
         self._subscriptions[subscription]['client_id'] = self._client_id
+        self._subscribe_event.set()
 
     async def __socket_message_handler(self):
         message_action = {
@@ -191,15 +201,17 @@ class AvanzaSocket:
         self,
         channel: ChannelType,
         id: str,
-        callback: Callable[[str, dict], Any]
+        callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds,
     ):
-        return await self.subscribe_to_ids(channel, [id], callback)
+        return await self.subscribe_to_ids(channel, [id], callback, wait_for_reply_timeout_seconds)
 
     async def subscribe_to_ids(
         self,
         channel: ChannelType,
         ids: Sequence[str],
-        callback: Callable[[str, dict], Any]
+        callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds
     ):
         valid_channels_for_multiple_ids = [
             ChannelType.ORDERS,
@@ -214,4 +226,4 @@ class AvanzaSocket:
             raise ValueError(f'Multiple ids is not supported for channels other than {valid_channels_for_multiple_ids}')
 
         subscription_string = f'/{channel.value}/{",".join(ids)}'
-        await self.__socket_subscribe(subscription_string, callback)
+        await self.__socket_subscribe(subscription_string, callback, wait_for_reply_timeout_seconds)
