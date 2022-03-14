@@ -10,6 +10,7 @@ class TransactionType(enum.Enum):
     INTEREST = 'interest'
     FOREIGN_TAX = 'foreign-tax'
 
+
 class TransactionsDetailsType(enum.Enum):
     DIVIDEND = 'DIVIDEND'
     BUY = 'BUY'
@@ -37,7 +38,21 @@ class TimePeriod(enum.Enum):
     THREE_MONTHS = 'THREE_MONTHS'
     THIS_YEAR = 'THIS_YEAR'
     ONE_YEAR = 'ONE_YEAR'
+    THREE_YEARS = 'THREE_YEARS'
     FIVE_YEARS = 'FIVE_YEARS'
+
+
+class Resolution(enum.Enum):
+    MINUTE = 'MINUTE'
+    TWO_MINUTES = 'TWO_MINUTES'
+    FIVE_MINUTES = 'FIVE_MINUTES'
+    TEN_MINUTES = 'TEN_MINUTES'
+    THIRTY_MINUTES = 'THIRTY_MINUTES'
+    HOUR = 'HOUR'
+    DAY = 'DAY'
+    WEEK = 'WEEK'
+    MONTH = 'MONTH'
+    QUARTER = 'QUARTER'
 
 
 class ListType(enum.Enum):
@@ -63,6 +78,7 @@ class InstrumentType(enum.Enum):
     CONVERTIBLE = 'convertible'
     ANY = ''
 
+
 class OrderType(enum.Enum):
     BUY = 'BUY'
     SELL = 'SELL'
@@ -74,12 +90,11 @@ class HttpMethod(enum.Enum):
     PUT = 3
     DELETE = 4
 
-
 class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
     ACCOUNTS_POSITIONS_PATH = '/_cqbe/ff/overview/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
-    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}?timePeriod={}'
+    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
     INSIGHTS_PATH = '/_cqbe/insights/?timePeriod={}&accountIds={}'
     INSPIRATION_LIST_PATH = '/_mobile/marketing/inspirationlist/{}'
@@ -93,7 +108,7 @@ class Route(enum.Enum):
     NOTE_PATH = '/_api/contract-notes/documents/{}/{}/note.pdf'
     ORDER_DELETE_PATH = '/_api/order?accountId={}&orderId={}'
     ORDER_GET_PATH = '/_mobile/order/{}?accountId={}&orderId={}'
-    ORDER_PLACE_PATH = '/_api/order'
+    ORDER_PLACE_PATH = '/_cqbe/trading/order/new'
     ORDER_PLACE_PATH_BUY_FUND = '/_api/fund-guide/fund-order-page/buy'
     ORDER_PLACE_PATH_SELL_FUND = '/_api/fund-guide/fund-order-page/sell'
     ORDER_EDIT_PATH = '/_api/order/{}/{}'
@@ -102,6 +117,7 @@ class Route(enum.Enum):
     OVERVIEW_PATH = '/_mobile/account/overview'
     POSITIONS_PATH = '/_mobile/account/positions'
     PRICE_ALERT_PATH = '/_cqbe/marketing/service/alert/{}'
+    STOP_LOSS_PATH = '/_cqbe/trading/stoploss'
     TOTP_PATH = '/_api/authentication/sessions/totp'
     TRANSACTIONS_PATH = '/_mobile/account/transactions/{}'
     TRANSACTIONS_DETAILS_PATH = '/_api/transactions'

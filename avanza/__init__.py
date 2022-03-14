@@ -7,5 +7,6 @@ from .constants import (
     InstrumentType,
     OrderType,
     HttpMethod,
-    Route
+    Route,
+    Resolution
 )

@@ -1,5 +1,6 @@
 
 import hashlib
+from typing import Optional
 from datetime import date
 from typing import Any, Callable, Sequence, Dict
 
@@ -9,7 +10,7 @@ import requests
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
                         OrderType, Route, TimePeriod, TransactionType,
-                        TransactionsDetailsType)
+                        TransactionsDetailsType, Resolution)
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -1472,8 +1473,8 @@ class Avanza:
             )
         )
 
-    def get_chart_data(self, order_book_id: str, period: TimePeriod):
-        """ Return chart data for an order book for the specified time period
+    def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Optional[Resolution] = None):
+        """ Return chart data for an order book for the specified time period with given resolution
 
         Returns:
             {
@@ -1488,12 +1489,17 @@ class Avanza:
                 'min': float
             }
         """
+        options = {
+            'timePeriod': period.value.lower()
+        }
+
+        if resolution is not None:
+            options['resolution'] = resolution.value.lower()
+
         return self.__call(
             HttpMethod.GET,
-            Route.CHARTDATA_PATH.value.format(
-                order_book_id,
-                period.value.lower()
-            )
+            Route.CHARTDATA_PATH.value.format(order_book_id),
+            options
         )
 
     def place_order(
@@ -1508,11 +1514,19 @@ class Avanza:
         """ Place an order
 
         Returns:
+            If the order was successfully placed:
+
             {
-                messages: List[str],
+                message: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: 'SUCCESS'
+            }
+
+            If the order was not placed:
+
+            {
+                message: str,
+                orderRequestStatus: 'ERROR'
             }
         """
 
@@ -1522,7 +1536,7 @@ class Avanza:
             {
                 'accountId': account_id,
                 'orderbookId': order_book_id,
-                'orderType': order_type.value,
+                'side': order_type.value,
                 'price': price,
                 'validUntil': valid_until.isoformat(),
                 'volume': volume
@@ -1718,6 +1732,55 @@ class Avanza:
                 account_id,
                 order_id
             )
+        )
+
+    def get_all_stop_losses(
+        self
+    ):
+        """ Get open stop losses
+
+        Returns:
+            [{
+                "id": str,
+                "status": str,
+                "account": {
+                    "id": str,
+                    "name": str,
+                    "type": str,
+                    "urlParameterId": str
+                },
+                "orderbook": {
+                    "id": str,
+                    "name": str,
+                    "countryCode": str,
+                    "currency": str,
+                    "shortName": str,
+                    "type": str
+                },
+                "hasExcludingChildren": bool,
+                "message": str,
+                "trigger": {
+                    "value": int,
+                    "type": str,
+                    "validUntil": str,
+                    "valueType": str
+                },
+                "order": {
+                    "type": str,
+                    "price": int,
+                    "volume": int,
+                    "shortSellingAllowed": bool,
+                    "validDays": int,
+                    "priceType": str,
+                    "priceDecimalPrecision": 0
+                },
+                "editable": bool,
+                "deletable": bool
+            }]
+        """
+        return self.__call(
+            HttpMethod.GET,
+            Route.STOP_LOSS_PATH.value
         )
 
     def delete_order(
@@ -2230,7 +2293,7 @@ class Avanza:
             }
         ]
         """
-        
+
         return self.__call(
             HttpMethod.POST,
             Route.PRICE_ALERT_PATH.value.format(order_book_id),
@@ -2265,7 +2328,7 @@ class Avanza:
             HttpMethod.GET,
             Route.PRICE_ALERT_PATH.value.format(order_book_id),
         )
-    
+
     def delete_price_alert(self, order_book_id: str, alert_id: str):
         """
         Deletes a price alert from the specified orderbook and returns the remaining alerts.
