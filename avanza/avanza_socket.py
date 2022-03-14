@@ -22,7 +22,7 @@ class AvanzaSocket:
         self._connected = False
         self._subscriptions = {}
         self._cookies = cookies
-        self._subscribe_event = asyncio.Event()
+        self._subscribe_event = None
 
     async def init(self):
         asyncio.ensure_future(self.__create_socket())
@@ -81,6 +81,9 @@ class AvanzaSocket:
         callback: Callable[[str, dict], Any],
         wait_for_reply_timeout_seconds
     ):
+        if self._subscribe_event is None:
+            self._subscribe_event = asyncio.Event()
+
         self._subscriptions[subscription_string] = {
             'callback': callback
         }
