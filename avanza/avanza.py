@@ -2348,3 +2348,23 @@ class Avanza:
             HttpMethod.DELETE,
             Route.PRICE_ALERT_PATH.value.format(order_book_id, alert_id)+f"/{alert_id}",
         )
+
+    def get_offers(self):
+        """ Return current offers
+
+        Returns:
+            [
+                {
+                    "customerOfferId": str,
+                    "title": str,
+                    "lastResponseDate": str,
+                    "type": str,
+                    "hasResponded": bool
+                }
+            ]
+        """
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.CURRENT_OFFERS_PATH.value
+        )
