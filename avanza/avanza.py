@@ -1511,11 +1511,19 @@ class Avanza:
         """ Place an order
 
         Returns:
+            If the order was successfully placed:
+
             {
-                messages: List[str],
+                message: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: 'SUCCESS'
+            }
+
+            If the order was not placed:
+
+            {
+                message: str,
+                orderRequestStatus: 'ERROR'
             }
         """
 
@@ -1525,7 +1533,7 @@ class Avanza:
             {
                 'accountId': account_id,
                 'orderbookId': order_book_id,
-                'orderType': order_type.value,
+                'side': order_type.value,
                 'price': price,
                 'validUntil': valid_until.isoformat(),
                 'volume': volume
@@ -1721,6 +1729,55 @@ class Avanza:
                 account_id,
                 order_id
             )
+        )
+
+    def get_all_stop_losses(
+        self
+    ):
+        """ Get open stop losses
+
+        Returns:
+            [{
+                "id": str,
+                "status": str,
+                "account": {
+                    "id": str,
+                    "name": str,
+                    "type": str,
+                    "urlParameterId": str
+                },
+                "orderbook": {
+                    "id": str,
+                    "name": str,
+                    "countryCode": str,
+                    "currency": str,
+                    "shortName": str,
+                    "type": str
+                },
+                "hasExcludingChildren": bool,
+                "message": str,
+                "trigger": {
+                    "value": int,
+                    "type": str,
+                    "validUntil": str,
+                    "valueType": str
+                },
+                "order": {
+                    "type": str,
+                    "price": int,
+                    "volume": int,
+                    "shortSellingAllowed": bool,
+                    "validDays": int,
+                    "priceType": str,
+                    "priceDecimalPrecision": 0
+                },
+                "editable": bool,
+                "deletable": bool
+            }]
+        """
+        return self.__call(
+            HttpMethod.GET,
+            Route.STOP_LOSS_PATH.value
         )
 
     def delete_order(

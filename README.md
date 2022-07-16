@@ -18,7 +18,7 @@ pip install avanza-api
 
 Here are the steps to get your TOTP Secret:
 
-1. Go to Mina Sidor > Profil > Sajtinställningar > Tvåfaktorsinloggning and click "Återaktivera". (*Only do this step if you have already set up two-factor auth.*)
+1. Go to Profil > Inställningar > Sajtinställningar > Inloggning och utloggning > Användarnamn > Tvåfaktorsinloggning and click "Återaktivera". (*Only do this step if you have already set up two-factor auth.*)
 1. Click "Aktivera" on the next screen.
 1. Select "Annan app för tvåfaktorsinloggning".
 1. Click "Kan du inte scanna QR-koden?" to reveal your TOTP Secret.
