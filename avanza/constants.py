@@ -97,7 +97,7 @@ class Route(enum.Enum):
     CHARTDATA_PATH = '/_mobile/chart/orderbook/{}'
     CURRENT_OFFERS_PATH = '/_api/customer-offer/currentoffers/'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
-    INSIGHTS_PATH = '/_cqbe/insights/?timePeriod={}&accountIds={}'
+    INSIGHTS_PATH = '/_api/insights-development/?timePeriod={}&accountIds={}'
     INSPIRATION_LIST_PATH = '/_mobile/marketing/inspirationlist/{}'
     INSTRUMENT_PATH = '/_mobile/market/{}/{}'
     INSTRUMENT_SEARCH_PATH = '/_mobile/market/search/{}?query={}'
