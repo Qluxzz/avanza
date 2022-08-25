@@ -95,6 +95,7 @@ class Route(enum.Enum):
     ACCOUNTS_POSITIONS_PATH = '/_cqbe/ff/overview/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
     CHARTDATA_PATH = '/_mobile/chart/orderbook/{}'
+    CURRENT_OFFERS_PATH = '/_api/customer-offer/currentoffers/'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
     INSIGHTS_PATH = '/_cqbe/insights/?timePeriod={}&accountIds={}'
     INSPIRATION_LIST_PATH = '/_mobile/marketing/inspirationlist/{}'
