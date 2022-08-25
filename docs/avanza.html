@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>avanza.avanza API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -27,6 +27,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import hashlib
+from typing import Optional
 from datetime import date
 from typing import Any, Callable, Sequence, Dict
 
@@ -35,7 +36,8 @@ import requests
 
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
-                        OrderType, Route, TimePeriod, TransactionType)
+                        OrderType, Route, TimePeriod, TransactionType,
+                        TransactionsDetailsType, Resolution)
 
 BASE_URL = &#39;https://www.avanza.se&#39;
 MIN_INACTIVE_MINUTES = 30
@@ -43,7 +45,23 @@ MAX_INACTIVE_MINUTES = 60 * 24
 
 
 class Avanza:
-    def __init__(self, credentials):
+    def __init__(self, credentials: dict):
+        &#34;&#34;&#34;
+        Args:
+            credentials: Login credentials.
+                Using TOTP secret:
+                    {
+                        &#39;username&#39;: &#39;MY_USERNAME&#39;,
+                        &#39;password&#39;: &#39;MY_PASSWORD&#39;,
+                        &#39;totpSecret&#39;: &#39;MY_TOTP_SECRET&#39;
+                    }
+                Using TOTP code:
+                    {
+                        &#39;username&#39;: &#39;MY_USERNAME&#39;,
+                        &#39;password&#39;: &#39;MY_PASSWORD&#39;,
+                        &#39;totpCode&#39;: &#39;MY_TOTP_CODE&#39;
+                    }
+        &#34;&#34;&#34;
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
 
@@ -92,8 +110,11 @@ class Avanza:
         return self.__validate_2fa(credentials)
 
     def __validate_2fa(self, credentials):
-        totp = pyotp.TOTP(credentials[&#39;totpSecret&#39;], digest=hashlib.sha1)
-        totp_code = totp.now()
+        if &#39;totpSecret&#39; in credentials:
+            totp = pyotp.TOTP(credentials[&#39;totpSecret&#39;], digest=hashlib.sha1)
+            totp_code = totp.now()
+        elif &#39;totpCode&#39; in credentials:
+            totp_code = credentials[&#39;totpCode&#39;]
 
         if totp_code is None:
             raise ValueError(&#39;Failed to get totp code&#39;)
@@ -114,7 +135,7 @@ class Avanza:
 
         return response_body, credentials
 
-    def __call(self, method: HttpMethod, path: str, options=None):
+    def __call(self, method: HttpMethod, path: str, options=None, return_content: bool = False):
         method_call = {
             HttpMethod.GET: self._session.get,
             HttpMethod.POST: self._session.post,
@@ -146,6 +167,9 @@ class Avanza:
         # only returns 200 OK with no further data about if the operation succeded
         if len(response.content) == 0:
             return None
+
+        if return_content:
+            return response.content
 
         return response.json()
 
@@ -275,6 +299,188 @@ class Avanza:
             Route.ACCOUNT_OVERVIEW_PATH.value.format(
                 account_id
             )
+        )
+
+    def get_accounts_positions(self):
+        &#34;&#34;&#34;Get investment positions for all account
+
+        Returns:
+            {
+                &#39;withOrderbook&#39;:[{
+                    &#39;account&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;urlParameterId&#39;: str,
+                        &#39;hasCredit&#39;:bool
+                    },
+                    &#39;instrument&#39;:{
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;orderbook&#39;:{
+                            &#39;id&#39;: str,
+                            &#39;flagCode&#39;: str,
+                            &#39;name&#39;: str,
+                            &#39;type&#39;: str,
+                            &#39;tradeStatus&#39;: str,
+                            &#39;quote&#39;:{
+                                &#39;highest&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;lowest&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;buy&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;sell&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;latest&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                }
+                            },
+                            &#39;turnover&#39;:{
+                                &#39;volume&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;value&#39;: ?float
+                            },
+                            &#39;lastDeal&#39;:{
+                                &#39;date&#39;: str,
+                                &#39;time&#39;: ?str
+                            }
+                        },
+                        &#39;currency&#39;: str,
+                        &#39;isin&#39;: str,
+                        &#39;volumeFactor&#39;: float
+                    },
+                    &#39;volume&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;value&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;averageAcquiredPrice&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;acquiredValue&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;lastTradingDayPerformance&#39;:{
+                       &#39;absolute&#39;:{
+                            &#39;value&#39;: float,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;decimalPrecision&#39;: int
+                       },
+                       &#39;relative&#39;:{
+                           &#39;value&#39;: float,
+                           &#39;unit&#39;: str,
+                           &#39;unitType&#39;: str,
+                           &#39;decimalPrecision&#39;: int
+                       }
+                    },
+                    &#39;id&#39;: str
+                }],
+                &#39;withoutOrderbook&#39;:[
+                  {
+                     &#39;account&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;urlParameterId&#39;: str,
+                        &#39;hasCredit&#39;: bool
+                     },
+                     &#39;instrument&#39;:{
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;orderbook&#39;: null (if not null, probably same as &#39;withOrderbook&#39;),
+                        &#39;currency&#39;: str,
+                        &#39;isin&#39;: str,
+                        &#39;volumeFactor&#39;: int
+                     },
+                     &#39;volume&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;value&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;averageAcquiredPrice&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;acquiredValue&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;lastTradingDayPerformance&#39;:null,
+                     &#39;id&#39;: str
+                  }
+               ],
+               &#39;cashPositions&#39;:[
+                  {
+                     &#39;account&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;urlParameterId&#39;: str,
+                        &#39;hasCredit&#39;: bool
+                     },
+                     &#39;totalBalance&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;id&#39;: str
+                  },
+               ]
+            }
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.GET,
+            Route.ACCOUNTS_POSITIONS_PATH.value
         )
 
     def get_watchlists(self):
@@ -1291,8 +1497,8 @@ class Avanza:
             )
         )
 
-    def get_chart_data(self, order_book_id: str, period: TimePeriod):
-        &#34;&#34;&#34; Return chart data for an order book for the specified time period
+    def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Optional[Resolution] = None):
+        &#34;&#34;&#34; Return chart data for an order book for the specified time period with given resolution
 
         Returns:
             {
@@ -1307,12 +1513,17 @@ class Avanza:
                 &#39;min&#39;: float
             }
         &#34;&#34;&#34;
+        options = {
+            &#39;timePeriod&#39;: period.value.lower()
+        }
+
+        if resolution is not None:
+            options[&#39;resolution&#39;] = resolution.value.lower()
+
         return self.__call(
             HttpMethod.GET,
-            Route.CHARTDATA_PATH.value.format(
-                order_book_id,
-                period.value.lower()
-            )
+            Route.CHARTDATA_PATH.value.format(order_book_id),
+            options
         )
 
     def place_order(
@@ -1327,11 +1538,19 @@ class Avanza:
         &#34;&#34;&#34; Place an order
 
         Returns:
+            If the order was successfully placed:
+
             {
-                messages: List[str],
+                message: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: &#39;SUCCESS&#39;
+            }
+
+            If the order was not placed:
+
+            {
+                message: str,
+                orderRequestStatus: &#39;ERROR&#39;
             }
         &#34;&#34;&#34;
 
@@ -1341,12 +1560,67 @@ class Avanza:
             {
                 &#39;accountId&#39;: account_id,
                 &#39;orderbookId&#39;: order_book_id,
-                &#39;orderType&#39;: order_type.value,
+                &#39;side&#39;: order_type.value,
                 &#39;price&#39;: price,
                 &#39;validUntil&#39;: valid_until.isoformat(),
                 &#39;volume&#39;: volume
             }
         )
+
+    def place_order_buy_fund(
+        self,
+        account_id: str,
+        order_book_id: str,
+        amount: float
+    ):
+        &#34;&#34;&#34; Place a buy order for a fund
+
+        Returns:
+            {
+                message: str,
+                orderId: str,
+                accountId: str,
+                orderRequestStatus: str
+            }
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH_BUY_FUND.value,
+            {
+                &#39;orderbookId&#39;: order_book_id,
+                &#39;accountId&#39;: account_id,
+                &#39;amount&#39;: amount
+            }
+        )
+
+    def place_order_sell_fund(
+        self,
+        account_id: str,
+        order_book_id: str,
+        volume: float
+    ):
+        &#34;&#34;&#34; Place a sell order for a fund
+
+        Returns:
+            {
+                message: str,
+                orderId: str,
+                accountId: str,
+                orderRequestStatus: str
+            }
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH_SELL_FUND.value,
+            {
+                &#39;orderbookId&#39;: order_book_id,
+                &#39;accountId&#39;: account_id,
+                &#39;volume&#39;: volume
+            }
+        )
+
 
     def edit_order(
         self,
@@ -1484,6 +1758,55 @@ class Avanza:
             )
         )
 
+    def get_all_stop_losses(
+        self
+    ):
+        &#34;&#34;&#34; Get open stop losses
+
+        Returns:
+            [{
+                &#34;id&#34;: str,
+                &#34;status&#34;: str,
+                &#34;account&#34;: {
+                    &#34;id&#34;: str,
+                    &#34;name&#34;: str,
+                    &#34;type&#34;: str,
+                    &#34;urlParameterId&#34;: str
+                },
+                &#34;orderbook&#34;: {
+                    &#34;id&#34;: str,
+                    &#34;name&#34;: str,
+                    &#34;countryCode&#34;: str,
+                    &#34;currency&#34;: str,
+                    &#34;shortName&#34;: str,
+                    &#34;type&#34;: str
+                },
+                &#34;hasExcludingChildren&#34;: bool,
+                &#34;message&#34;: str,
+                &#34;trigger&#34;: {
+                    &#34;value&#34;: int,
+                    &#34;type&#34;: str,
+                    &#34;validUntil&#34;: str,
+                    &#34;valueType&#34;: str
+                },
+                &#34;order&#34;: {
+                    &#34;type&#34;: str,
+                    &#34;price&#34;: int,
+                    &#34;volume&#34;: int,
+                    &#34;shortSellingAllowed&#34;: bool,
+                    &#34;validDays&#34;: int,
+                    &#34;priceType&#34;: str,
+                    &#34;priceDecimalPrecision&#34;: 0
+                },
+                &#34;editable&#34;: bool,
+                &#34;deletable&#34;: bool
+            }]
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.GET,
+            Route.STOP_LOSS_PATH.value
+        )
+
     def delete_order(
         self,
         account_id: str,
@@ -1556,7 +1879,7 @@ class Avanza:
     def get_all_monthly_savings(
         self
     ):
-        &#34;&#34;&#34; Get your monthly savings at Avanza 
+        &#34;&#34;&#34; Get your monthly savings at Avanza
 
         Returns:
             {
@@ -1847,6 +2170,230 @@ class Avanza:
             HttpMethod.GET,
             Route.TRANSACTIONS_PATH.value.format(&#39;/&#39;.join(filter(None, [account_id, transaction_type.value if transaction_type else None]))),
             options
+        )
+
+    def get_transactions_details(
+            self,
+            transaction_details_types: Sequence[TransactionsDetailsType]=[],
+            transactions_from: date=None,
+            transactions_to: date=None,
+            isin: str=None,
+            max_elements: int=1000,
+    ):
+        &#34;&#34;&#34; Get transactions, optionally apply criterias.
+
+        Args:
+            transaction_types: One or more transaction types.
+
+            transactions_from: Fetch transactions from this date.
+
+            transactions_to: Fetch transactions to this date.
+
+            isin: Only fetch transactions for specified isin.
+
+            max_elements: Limit result to N transactions.
+
+        Returns:
+            {
+                &#39;firstTransactionDate&#39;: str,
+                &#39;transactionsFilter&#39;: {
+                    &#39;accountIds: null|str,
+                    &#39;dateRange&#39;: {
+                        &#39;from&#39;: str,
+                        &#39;to&#39;: str
+                    }
+                    &#39;isin&#39;: null|str,
+                    &#39;transacitonTypes&#39;: null|array[str],
+                }
+                &#39;transactionsAfterFiltering&#39; int,
+                &#39;transactions&#39;: [
+                    {
+                        &#39;account&#39;: {
+                            &#39;type&#39;: str,
+                            &#39;name&#39;: str,
+                            &#39;id&#39;: int,
+                            &#39;urlParameterId&#39;: str,
+                        },
+                        &#39;amount&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: int,
+                        },
+                        &#39;availabilityDate&#39;: str,
+                        &#39;comission&#39;: null|?,
+                        &#39;currencyRate&#39;: null|?,
+                        &#39;date&#39;: str,
+                        &#39;description&#39;: str,
+                        &#39;foreignTaxRate&#39;: null|?,
+                        &#39;id&#39;: str,
+                        &#39;instrumentName&#39;: str,
+                        &#39;intraday&#39;: bool,
+                        &#39;isin&#39;: str,
+                        &#39;noteId&#39;: null|str
+                        &#39;onCreditAccount&#39;: bool,
+                        &#39;orderbook&#39;: {
+                            &#39;isin&#39;: str,
+                            &#39;currency&#39;: str,
+                            &#39;flagCode&#39;: null|str,
+                            &#39;name&#39;: str,
+                            &#39;id&#39;: int,
+                            &#39;type&#39;: str,
+                            &#39;volumeFactor&#39;: int,
+                            &#39;flagCode&#39;: null|str,
+                        },
+                        &#39;priceInAccountCurrency&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: float,
+                        },
+                        &#39;priceInTradedCurrency&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: float,
+                        },
+                        &#39;settlementDate: str,
+                        &#39;type&#39;: str,
+                        &#39;volume&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: float,
+                        }
+                    },
+                ],
+            }
+        &#34;&#34;&#34;
+        options = {}
+        options[&#39;maxElements&#39;] = max_elements
+
+        if transaction_details_types:
+            options[&#39;transactionTypes&#39;] = &#39;,&#39;.join(transaction_details_types)
+        if transactions_from:
+            options[&#39;from&#39;] = transactions_from.isoformat()
+        if transactions_to:
+            options[&#39;to&#39;] = transactions_to.isoformat()
+        if isin:
+            options[&#39;isin&#39;] = isin
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.TRANSACTIONS_DETAILS_PATH.value,
+            options
+        )
+
+    def get_note_as_pdf(self, url_parameter_id: str, note_id: str):
+        return self.__call(
+            HttpMethod.GET,
+            Route.NOTE_PATH.value.format(url_parameter_id, note_id),
+            return_content=True
+        )
+
+    def set_price_alert(
+        self,
+        order_book_id: str,
+        price: float,
+        valid_until: date,
+        notification: bool = True,
+        email: bool = False,
+        sms: bool = False
+    ):
+        &#34;&#34;&#34;
+        Sets a price alert for the specified orderbook and returns all the existing alerts.
+
+        Returns:
+        [
+            {
+                &#39;alertId&#39;: str,
+                &#39;accountId&#39;: str,
+                &#39;price&#39;: float,
+                &#39;validUntil&#39;: str,
+                &#39;direction&#39;: str,
+                &#39;email&#39;: bool,
+                &#39;notification&#39;: bool,
+                &#39;sms&#39;: bool,
+            }
+        ]
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+            {
+                &#39;price&#39;: price,
+                &#39;validUntil&#39;: valid_until.isoformat(),
+                &#34;notification&#34;: notification,
+                &#34;email&#34;: email,
+                &#34;sms&#34;: sms
+            }
+        )
+
+    def get_price_alert(self, order_book_id: str):
+        &#34;&#34;&#34;
+        Gets all the price alerts for the specified orderbook.
+
+        Returns:
+        [
+            {
+                &#39;alertId&#39;: str,
+                &#39;accountId&#39;: str,
+                &#39;price&#39;: float,
+                &#39;validUntil&#39;: str,
+                &#39;direction&#39;: str,
+                &#39;email&#39;: bool,
+                &#39;notification&#39;: bool,
+                &#39;sms&#39;: bool,
+            }
+        ]
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.GET,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+        )
+
+    def delete_price_alert(self, order_book_id: str, alert_id: str):
+        &#34;&#34;&#34;
+        Deletes a price alert from the specified orderbook and returns the remaining alerts.
+
+        Returns:
+        [
+            {
+                &#39;alertId&#39;: str,
+                &#39;accountId&#39;: str,
+                &#39;price&#39;: float,
+                &#39;validUntil&#39;: str,
+                &#39;direction&#39;: str,
+                &#39;email&#39;: bool,
+                &#39;notification&#39;: bool,
+                &#39;sms&#39;: bool,
+            }
+        ]
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id, alert_id)+f&#34;/{alert_id}&#34;,
+        )
+
+    def get_offers(self):
+        &#34;&#34;&#34; Return current offers
+
+        Returns:
+            [
+                {
+                    &#34;customerOfferId&#34;: str,
+                    &#34;title&#34;: str,
+                    &#34;lastResponseDate&#34;: str,
+                    &#34;type&#34;: str,
+                    &#34;hasResponded&#34;: bool
+                }
+            ]
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.CURRENT_OFFERS_PATH.value
         )</code></pre>
 </details>
 </section>
@@ -1861,16 +2408,48 @@ class Avanza:
 <dl>
 <dt id="avanza.avanza.Avanza"><code class="flex name class">
 <span>class <span class="ident">Avanza</span></span>
-<span>(</span><span>credentials)</span>
+<span>(</span><span>credentials: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>credentials</code></strong></dt>
+<dd>Login credentials.
+Using TOTP secret:
+{
+'username': 'MY_USERNAME',
+'password': 'MY_PASSWORD',
+'totpSecret': 'MY_TOTP_SECRET'
+}
+Using TOTP code:
+{
+'username': 'MY_USERNAME',
+'password': 'MY_PASSWORD',
+'totpCode': 'MY_TOTP_CODE'
+}</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Avanza:
-    def __init__(self, credentials):
+    def __init__(self, credentials: dict):
+        &#34;&#34;&#34;
+        Args:
+            credentials: Login credentials.
+                Using TOTP secret:
+                    {
+                        &#39;username&#39;: &#39;MY_USERNAME&#39;,
+                        &#39;password&#39;: &#39;MY_PASSWORD&#39;,
+                        &#39;totpSecret&#39;: &#39;MY_TOTP_SECRET&#39;
+                    }
+                Using TOTP code:
+                    {
+                        &#39;username&#39;: &#39;MY_USERNAME&#39;,
+                        &#39;password&#39;: &#39;MY_PASSWORD&#39;,
+                        &#39;totpCode&#39;: &#39;MY_TOTP_CODE&#39;
+                    }
+        &#34;&#34;&#34;
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
 
@@ -1919,8 +2498,11 @@ class Avanza:
         return self.__validate_2fa(credentials)
 
     def __validate_2fa(self, credentials):
-        totp = pyotp.TOTP(credentials[&#39;totpSecret&#39;], digest=hashlib.sha1)
-        totp_code = totp.now()
+        if &#39;totpSecret&#39; in credentials:
+            totp = pyotp.TOTP(credentials[&#39;totpSecret&#39;], digest=hashlib.sha1)
+            totp_code = totp.now()
+        elif &#39;totpCode&#39; in credentials:
+            totp_code = credentials[&#39;totpCode&#39;]
 
         if totp_code is None:
             raise ValueError(&#39;Failed to get totp code&#39;)
@@ -1941,7 +2523,7 @@ class Avanza:
 
         return response_body, credentials
 
-    def __call(self, method: HttpMethod, path: str, options=None):
+    def __call(self, method: HttpMethod, path: str, options=None, return_content: bool = False):
         method_call = {
             HttpMethod.GET: self._session.get,
             HttpMethod.POST: self._session.post,
@@ -1973,6 +2555,9 @@ class Avanza:
         # only returns 200 OK with no further data about if the operation succeded
         if len(response.content) == 0:
             return None
+
+        if return_content:
+            return response.content
 
         return response.json()
 
@@ -2102,6 +2687,188 @@ class Avanza:
             Route.ACCOUNT_OVERVIEW_PATH.value.format(
                 account_id
             )
+        )
+
+    def get_accounts_positions(self):
+        &#34;&#34;&#34;Get investment positions for all account
+
+        Returns:
+            {
+                &#39;withOrderbook&#39;:[{
+                    &#39;account&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;urlParameterId&#39;: str,
+                        &#39;hasCredit&#39;:bool
+                    },
+                    &#39;instrument&#39;:{
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;orderbook&#39;:{
+                            &#39;id&#39;: str,
+                            &#39;flagCode&#39;: str,
+                            &#39;name&#39;: str,
+                            &#39;type&#39;: str,
+                            &#39;tradeStatus&#39;: str,
+                            &#39;quote&#39;:{
+                                &#39;highest&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;lowest&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;buy&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;sell&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;latest&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                }
+                            },
+                            &#39;turnover&#39;:{
+                                &#39;volume&#39;:{
+                                    &#39;value&#39;: float,
+                                    &#39;unit&#39;: str,
+                                    &#39;unitType&#39;: str,
+                                    &#39;decimalPrecision&#39;: int
+                                },
+                                &#39;value&#39;: ?float
+                            },
+                            &#39;lastDeal&#39;:{
+                                &#39;date&#39;: str,
+                                &#39;time&#39;: ?str
+                            }
+                        },
+                        &#39;currency&#39;: str,
+                        &#39;isin&#39;: str,
+                        &#39;volumeFactor&#39;: float
+                    },
+                    &#39;volume&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;value&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;averageAcquiredPrice&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;acquiredValue&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                    },
+                    &#39;lastTradingDayPerformance&#39;:{
+                       &#39;absolute&#39;:{
+                            &#39;value&#39;: float,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;decimalPrecision&#39;: int
+                       },
+                       &#39;relative&#39;:{
+                           &#39;value&#39;: float,
+                           &#39;unit&#39;: str,
+                           &#39;unitType&#39;: str,
+                           &#39;decimalPrecision&#39;: int
+                       }
+                    },
+                    &#39;id&#39;: str
+                }],
+                &#39;withoutOrderbook&#39;:[
+                  {
+                     &#39;account&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;urlParameterId&#39;: str,
+                        &#39;hasCredit&#39;: bool
+                     },
+                     &#39;instrument&#39;:{
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;orderbook&#39;: null (if not null, probably same as &#39;withOrderbook&#39;),
+                        &#39;currency&#39;: str,
+                        &#39;isin&#39;: str,
+                        &#39;volumeFactor&#39;: int
+                     },
+                     &#39;volume&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;value&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;averageAcquiredPrice&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;acquiredValue&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;lastTradingDayPerformance&#39;:null,
+                     &#39;id&#39;: str
+                  }
+               ],
+               &#39;cashPositions&#39;:[
+                  {
+                     &#39;account&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;urlParameterId&#39;: str,
+                        &#39;hasCredit&#39;: bool
+                     },
+                     &#39;totalBalance&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                     },
+                     &#39;id&#39;: str
+                  },
+               ]
+            }
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.GET,
+            Route.ACCOUNTS_POSITIONS_PATH.value
         )
 
     def get_watchlists(self):
@@ -3118,8 +3885,8 @@ class Avanza:
             )
         )
 
-    def get_chart_data(self, order_book_id: str, period: TimePeriod):
-        &#34;&#34;&#34; Return chart data for an order book for the specified time period
+    def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Optional[Resolution] = None):
+        &#34;&#34;&#34; Return chart data for an order book for the specified time period with given resolution
 
         Returns:
             {
@@ -3134,12 +3901,17 @@ class Avanza:
                 &#39;min&#39;: float
             }
         &#34;&#34;&#34;
+        options = {
+            &#39;timePeriod&#39;: period.value.lower()
+        }
+
+        if resolution is not None:
+            options[&#39;resolution&#39;] = resolution.value.lower()
+
         return self.__call(
             HttpMethod.GET,
-            Route.CHARTDATA_PATH.value.format(
-                order_book_id,
-                period.value.lower()
-            )
+            Route.CHARTDATA_PATH.value.format(order_book_id),
+            options
         )
 
     def place_order(
@@ -3154,11 +3926,19 @@ class Avanza:
         &#34;&#34;&#34; Place an order
 
         Returns:
+            If the order was successfully placed:
+
             {
-                messages: List[str],
+                message: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: &#39;SUCCESS&#39;
+            }
+
+            If the order was not placed:
+
+            {
+                message: str,
+                orderRequestStatus: &#39;ERROR&#39;
             }
         &#34;&#34;&#34;
 
@@ -3168,12 +3948,67 @@ class Avanza:
             {
                 &#39;accountId&#39;: account_id,
                 &#39;orderbookId&#39;: order_book_id,
-                &#39;orderType&#39;: order_type.value,
+                &#39;side&#39;: order_type.value,
                 &#39;price&#39;: price,
                 &#39;validUntil&#39;: valid_until.isoformat(),
                 &#39;volume&#39;: volume
             }
         )
+
+    def place_order_buy_fund(
+        self,
+        account_id: str,
+        order_book_id: str,
+        amount: float
+    ):
+        &#34;&#34;&#34; Place a buy order for a fund
+
+        Returns:
+            {
+                message: str,
+                orderId: str,
+                accountId: str,
+                orderRequestStatus: str
+            }
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH_BUY_FUND.value,
+            {
+                &#39;orderbookId&#39;: order_book_id,
+                &#39;accountId&#39;: account_id,
+                &#39;amount&#39;: amount
+            }
+        )
+
+    def place_order_sell_fund(
+        self,
+        account_id: str,
+        order_book_id: str,
+        volume: float
+    ):
+        &#34;&#34;&#34; Place a sell order for a fund
+
+        Returns:
+            {
+                message: str,
+                orderId: str,
+                accountId: str,
+                orderRequestStatus: str
+            }
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_PATH_SELL_FUND.value,
+            {
+                &#39;orderbookId&#39;: order_book_id,
+                &#39;accountId&#39;: account_id,
+                &#39;volume&#39;: volume
+            }
+        )
+
 
     def edit_order(
         self,
@@ -3311,6 +4146,55 @@ class Avanza:
             )
         )
 
+    def get_all_stop_losses(
+        self
+    ):
+        &#34;&#34;&#34; Get open stop losses
+
+        Returns:
+            [{
+                &#34;id&#34;: str,
+                &#34;status&#34;: str,
+                &#34;account&#34;: {
+                    &#34;id&#34;: str,
+                    &#34;name&#34;: str,
+                    &#34;type&#34;: str,
+                    &#34;urlParameterId&#34;: str
+                },
+                &#34;orderbook&#34;: {
+                    &#34;id&#34;: str,
+                    &#34;name&#34;: str,
+                    &#34;countryCode&#34;: str,
+                    &#34;currency&#34;: str,
+                    &#34;shortName&#34;: str,
+                    &#34;type&#34;: str
+                },
+                &#34;hasExcludingChildren&#34;: bool,
+                &#34;message&#34;: str,
+                &#34;trigger&#34;: {
+                    &#34;value&#34;: int,
+                    &#34;type&#34;: str,
+                    &#34;validUntil&#34;: str,
+                    &#34;valueType&#34;: str
+                },
+                &#34;order&#34;: {
+                    &#34;type&#34;: str,
+                    &#34;price&#34;: int,
+                    &#34;volume&#34;: int,
+                    &#34;shortSellingAllowed&#34;: bool,
+                    &#34;validDays&#34;: int,
+                    &#34;priceType&#34;: str,
+                    &#34;priceDecimalPrecision&#34;: 0
+                },
+                &#34;editable&#34;: bool,
+                &#34;deletable&#34;: bool
+            }]
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.GET,
+            Route.STOP_LOSS_PATH.value
+        )
+
     def delete_order(
         self,
         account_id: str,
@@ -3383,7 +4267,7 @@ class Avanza:
     def get_all_monthly_savings(
         self
     ):
-        &#34;&#34;&#34; Get your monthly savings at Avanza 
+        &#34;&#34;&#34; Get your monthly savings at Avanza
 
         Returns:
             {
@@ -3674,12 +4558,236 @@ class Avanza:
             HttpMethod.GET,
             Route.TRANSACTIONS_PATH.value.format(&#39;/&#39;.join(filter(None, [account_id, transaction_type.value if transaction_type else None]))),
             options
+        )
+
+    def get_transactions_details(
+            self,
+            transaction_details_types: Sequence[TransactionsDetailsType]=[],
+            transactions_from: date=None,
+            transactions_to: date=None,
+            isin: str=None,
+            max_elements: int=1000,
+    ):
+        &#34;&#34;&#34; Get transactions, optionally apply criterias.
+
+        Args:
+            transaction_types: One or more transaction types.
+
+            transactions_from: Fetch transactions from this date.
+
+            transactions_to: Fetch transactions to this date.
+
+            isin: Only fetch transactions for specified isin.
+
+            max_elements: Limit result to N transactions.
+
+        Returns:
+            {
+                &#39;firstTransactionDate&#39;: str,
+                &#39;transactionsFilter&#39;: {
+                    &#39;accountIds: null|str,
+                    &#39;dateRange&#39;: {
+                        &#39;from&#39;: str,
+                        &#39;to&#39;: str
+                    }
+                    &#39;isin&#39;: null|str,
+                    &#39;transacitonTypes&#39;: null|array[str],
+                }
+                &#39;transactionsAfterFiltering&#39; int,
+                &#39;transactions&#39;: [
+                    {
+                        &#39;account&#39;: {
+                            &#39;type&#39;: str,
+                            &#39;name&#39;: str,
+                            &#39;id&#39;: int,
+                            &#39;urlParameterId&#39;: str,
+                        },
+                        &#39;amount&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: int,
+                        },
+                        &#39;availabilityDate&#39;: str,
+                        &#39;comission&#39;: null|?,
+                        &#39;currencyRate&#39;: null|?,
+                        &#39;date&#39;: str,
+                        &#39;description&#39;: str,
+                        &#39;foreignTaxRate&#39;: null|?,
+                        &#39;id&#39;: str,
+                        &#39;instrumentName&#39;: str,
+                        &#39;intraday&#39;: bool,
+                        &#39;isin&#39;: str,
+                        &#39;noteId&#39;: null|str
+                        &#39;onCreditAccount&#39;: bool,
+                        &#39;orderbook&#39;: {
+                            &#39;isin&#39;: str,
+                            &#39;currency&#39;: str,
+                            &#39;flagCode&#39;: null|str,
+                            &#39;name&#39;: str,
+                            &#39;id&#39;: int,
+                            &#39;type&#39;: str,
+                            &#39;volumeFactor&#39;: int,
+                            &#39;flagCode&#39;: null|str,
+                        },
+                        &#39;priceInAccountCurrency&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: float,
+                        },
+                        &#39;priceInTradedCurrency&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: float,
+                        },
+                        &#39;settlementDate: str,
+                        &#39;type&#39;: str,
+                        &#39;volume&#39;: {
+                            &#39;decimalPrecision&#39;: int,
+                            &#39;unit&#39;: str,
+                            &#39;unitType&#39;: str,
+                            &#39;value&#39;: float,
+                        }
+                    },
+                ],
+            }
+        &#34;&#34;&#34;
+        options = {}
+        options[&#39;maxElements&#39;] = max_elements
+
+        if transaction_details_types:
+            options[&#39;transactionTypes&#39;] = &#39;,&#39;.join(transaction_details_types)
+        if transactions_from:
+            options[&#39;from&#39;] = transactions_from.isoformat()
+        if transactions_to:
+            options[&#39;to&#39;] = transactions_to.isoformat()
+        if isin:
+            options[&#39;isin&#39;] = isin
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.TRANSACTIONS_DETAILS_PATH.value,
+            options
+        )
+
+    def get_note_as_pdf(self, url_parameter_id: str, note_id: str):
+        return self.__call(
+            HttpMethod.GET,
+            Route.NOTE_PATH.value.format(url_parameter_id, note_id),
+            return_content=True
+        )
+
+    def set_price_alert(
+        self,
+        order_book_id: str,
+        price: float,
+        valid_until: date,
+        notification: bool = True,
+        email: bool = False,
+        sms: bool = False
+    ):
+        &#34;&#34;&#34;
+        Sets a price alert for the specified orderbook and returns all the existing alerts.
+
+        Returns:
+        [
+            {
+                &#39;alertId&#39;: str,
+                &#39;accountId&#39;: str,
+                &#39;price&#39;: float,
+                &#39;validUntil&#39;: str,
+                &#39;direction&#39;: str,
+                &#39;email&#39;: bool,
+                &#39;notification&#39;: bool,
+                &#39;sms&#39;: bool,
+            }
+        ]
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+            {
+                &#39;price&#39;: price,
+                &#39;validUntil&#39;: valid_until.isoformat(),
+                &#34;notification&#34;: notification,
+                &#34;email&#34;: email,
+                &#34;sms&#34;: sms
+            }
+        )
+
+    def get_price_alert(self, order_book_id: str):
+        &#34;&#34;&#34;
+        Gets all the price alerts for the specified orderbook.
+
+        Returns:
+        [
+            {
+                &#39;alertId&#39;: str,
+                &#39;accountId&#39;: str,
+                &#39;price&#39;: float,
+                &#39;validUntil&#39;: str,
+                &#39;direction&#39;: str,
+                &#39;email&#39;: bool,
+                &#39;notification&#39;: bool,
+                &#39;sms&#39;: bool,
+            }
+        ]
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.GET,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id),
+        )
+
+    def delete_price_alert(self, order_book_id: str, alert_id: str):
+        &#34;&#34;&#34;
+        Deletes a price alert from the specified orderbook and returns the remaining alerts.
+
+        Returns:
+        [
+            {
+                &#39;alertId&#39;: str,
+                &#39;accountId&#39;: str,
+                &#39;price&#39;: float,
+                &#39;validUntil&#39;: str,
+                &#39;direction&#39;: str,
+                &#39;email&#39;: bool,
+                &#39;notification&#39;: bool,
+                &#39;sms&#39;: bool,
+            }
+        ]
+        &#34;&#34;&#34;
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.PRICE_ALERT_PATH.value.format(order_book_id, alert_id)+f&#34;/{alert_id}&#34;,
+        )
+
+    def get_offers(self):
+        &#34;&#34;&#34; Return current offers
+
+        Returns:
+            [
+                {
+                    &#34;customerOfferId&#34;: str,
+                    &#34;title&#34;: str,
+                    &#34;lastResponseDate&#34;: str,
+                    &#34;type&#34;: str,
+                    &#34;hasResponded&#34;: bool
+                }
+            ]
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.CURRENT_OFFERS_PATH.value
         )</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
 <dt id="avanza.avanza.Avanza.add_to_watchlist"><code class="name flex">
-<span>def <span class="ident">add_to_watchlist</span></span>(<span>self, instrument_id: str, watchlist_id: str) ‑> NoneType</span>
+<span>def <span class="ident">add_to_watchlist</span></span>(<span>self, instrument_id: str, watchlist_id: str) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add an instrument to the specified watchlist</p>
@@ -3840,7 +4948,7 @@ The sum of the percentages has to total 100</p>
 </details>
 </dd>
 <dt id="avanza.avanza.Avanza.delete_monthly_saving"><code class="name flex">
-<span>def <span class="ident">delete_monthly_saving</span></span>(<span>self, account_id: str, monthly_savings_id: str) ‑> NoneType</span>
+<span>def <span class="ident">delete_monthly_saving</span></span>(<span>self, account_id: str, monthly_savings_id: str) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Deletes a monthly saving</p>
@@ -3914,6 +5022,52 @@ status: str</dd>
             account_id,
             order_id
         )
+    )</code></pre>
+</details>
+</dd>
+<dt id="avanza.avanza.Avanza.delete_price_alert"><code class="name flex">
+<span>def <span class="ident">delete_price_alert</span></span>(<span>self, order_book_id: str, alert_id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Deletes a price alert from the specified orderbook and returns the remaining alerts.</p>
+<p>Returns:
+[
+{
+'alertId': str,
+'accountId': str,
+'price': float,
+'validUntil': str,
+'direction': str,
+'email': bool,
+'notification': bool,
+'sms': bool,
+}
+]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def delete_price_alert(self, order_book_id: str, alert_id: str):
+    &#34;&#34;&#34;
+    Deletes a price alert from the specified orderbook and returns the remaining alerts.
+
+    Returns:
+    [
+        {
+            &#39;alertId&#39;: str,
+            &#39;accountId&#39;: str,
+            &#39;price&#39;: float,
+            &#39;validUntil&#39;: str,
+            &#39;direction&#39;: str,
+            &#39;email&#39;: bool,
+            &#39;notification&#39;: bool,
+            &#39;sms&#39;: bool,
+        }
+    ]
+    &#34;&#34;&#34;
+    return self.__call(
+        HttpMethod.DELETE,
+        Route.PRICE_ALERT_PATH.value.format(order_book_id, alert_id)+f&#34;/{alert_id}&#34;,
     )</code></pre>
 </details>
 </dd>
@@ -4106,11 +5260,376 @@ status: str</dd>
     )</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.get_accounts_positions"><code class="name flex">
+<span>def <span class="ident">get_accounts_positions</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get investment positions for all account</p>
+<h2 id="returns">Returns</h2>
+<p>{
+'withOrderbook':[{
+'account':{
+'id': str,
+'type': str,
+'name': str,
+'urlParameterId': str,
+'hasCredit':bool
+},
+'instrument':{
+'type': str,
+'name': str,
+'orderbook':{
+'id': str,
+'flagCode': str,
+'name': str,
+'type': str,
+'tradeStatus': str,
+'quote':{
+'highest':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'lowest':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'buy':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'sell':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'latest':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+}
+},
+'turnover':{
+'volume':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'value': ?float
+},
+'lastDeal':{
+'date': str,
+'time': ?str
+}
+},
+'currency': str,
+'isin': str,
+'volumeFactor': float
+},
+'volume':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'value':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'averageAcquiredPrice':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'acquiredValue':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'lastTradingDayPerformance':{
+'absolute':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'relative':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+}
+},
+'id': str
+}],
+'withoutOrderbook':[
+{
+'account':{
+'id': str,
+'type': str,
+'name': str,
+'urlParameterId': str,
+'hasCredit': bool
+},
+'instrument':{
+'type': str,
+'name': str,
+'orderbook': null (if not null, probably same as 'withOrderbook'),
+'currency': str,
+'isin': str,
+'volumeFactor': int
+},
+'volume':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'value':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'averageAcquiredPrice':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'acquiredValue':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'lastTradingDayPerformance':null,
+'id': str
+}
+],
+'cashPositions':[
+{
+'account':{
+'id': str,
+'type': str,
+'name': str,
+'urlParameterId': str,
+'hasCredit': bool
+},
+'totalBalance':{
+'value': float,
+'unit': str,
+'unitType': str,
+'decimalPrecision': int
+},
+'id': str
+},
+]
+}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_accounts_positions(self):
+    &#34;&#34;&#34;Get investment positions for all account
+
+    Returns:
+        {
+            &#39;withOrderbook&#39;:[{
+                &#39;account&#39;:{
+                    &#39;id&#39;: str,
+                    &#39;type&#39;: str,
+                    &#39;name&#39;: str,
+                    &#39;urlParameterId&#39;: str,
+                    &#39;hasCredit&#39;:bool
+                },
+                &#39;instrument&#39;:{
+                    &#39;type&#39;: str,
+                    &#39;name&#39;: str,
+                    &#39;orderbook&#39;:{
+                        &#39;id&#39;: str,
+                        &#39;flagCode&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;type&#39;: str,
+                        &#39;tradeStatus&#39;: str,
+                        &#39;quote&#39;:{
+                            &#39;highest&#39;:{
+                                &#39;value&#39;: float,
+                                &#39;unit&#39;: str,
+                                &#39;unitType&#39;: str,
+                                &#39;decimalPrecision&#39;: int
+                            },
+                            &#39;lowest&#39;:{
+                                &#39;value&#39;: float,
+                                &#39;unit&#39;: str,
+                                &#39;unitType&#39;: str,
+                                &#39;decimalPrecision&#39;: int
+                            },
+                            &#39;buy&#39;:{
+                                &#39;value&#39;: float,
+                                &#39;unit&#39;: str,
+                                &#39;unitType&#39;: str,
+                                &#39;decimalPrecision&#39;: int
+                            },
+                            &#39;sell&#39;:{
+                                &#39;value&#39;: float,
+                                &#39;unit&#39;: str,
+                                &#39;unitType&#39;: str,
+                                &#39;decimalPrecision&#39;: int
+                            },
+                            &#39;latest&#39;:{
+                                &#39;value&#39;: float,
+                                &#39;unit&#39;: str,
+                                &#39;unitType&#39;: str,
+                                &#39;decimalPrecision&#39;: int
+                            }
+                        },
+                        &#39;turnover&#39;:{
+                            &#39;volume&#39;:{
+                                &#39;value&#39;: float,
+                                &#39;unit&#39;: str,
+                                &#39;unitType&#39;: str,
+                                &#39;decimalPrecision&#39;: int
+                            },
+                            &#39;value&#39;: ?float
+                        },
+                        &#39;lastDeal&#39;:{
+                            &#39;date&#39;: str,
+                            &#39;time&#39;: ?str
+                        }
+                    },
+                    &#39;currency&#39;: str,
+                    &#39;isin&#39;: str,
+                    &#39;volumeFactor&#39;: float
+                },
+                &#39;volume&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                },
+                &#39;value&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                },
+                &#39;averageAcquiredPrice&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                },
+                &#39;acquiredValue&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                },
+                &#39;lastTradingDayPerformance&#39;:{
+                   &#39;absolute&#39;:{
+                        &#39;value&#39;: float,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;decimalPrecision&#39;: int
+                   },
+                   &#39;relative&#39;:{
+                       &#39;value&#39;: float,
+                       &#39;unit&#39;: str,
+                       &#39;unitType&#39;: str,
+                       &#39;decimalPrecision&#39;: int
+                   }
+                },
+                &#39;id&#39;: str
+            }],
+            &#39;withoutOrderbook&#39;:[
+              {
+                 &#39;account&#39;:{
+                    &#39;id&#39;: str,
+                    &#39;type&#39;: str,
+                    &#39;name&#39;: str,
+                    &#39;urlParameterId&#39;: str,
+                    &#39;hasCredit&#39;: bool
+                 },
+                 &#39;instrument&#39;:{
+                    &#39;type&#39;: str,
+                    &#39;name&#39;: str,
+                    &#39;orderbook&#39;: null (if not null, probably same as &#39;withOrderbook&#39;),
+                    &#39;currency&#39;: str,
+                    &#39;isin&#39;: str,
+                    &#39;volumeFactor&#39;: int
+                 },
+                 &#39;volume&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                 },
+                 &#39;value&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                 },
+                 &#39;averageAcquiredPrice&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                 },
+                 &#39;acquiredValue&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                 },
+                 &#39;lastTradingDayPerformance&#39;:null,
+                 &#39;id&#39;: str
+              }
+           ],
+           &#39;cashPositions&#39;:[
+              {
+                 &#39;account&#39;:{
+                    &#39;id&#39;: str,
+                    &#39;type&#39;: str,
+                    &#39;name&#39;: str,
+                    &#39;urlParameterId&#39;: str,
+                    &#39;hasCredit&#39;: bool
+                 },
+                 &#39;totalBalance&#39;:{
+                    &#39;value&#39;: float,
+                    &#39;unit&#39;: str,
+                    &#39;unitType&#39;: str,
+                    &#39;decimalPrecision&#39;: int
+                 },
+                 &#39;id&#39;: str
+              },
+           ]
+        }
+    &#34;&#34;&#34;
+    return self.__call(
+        HttpMethod.GET,
+        Route.ACCOUNTS_POSITIONS_PATH.value
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.get_all_monthly_savings"><code class="name flex">
 <span>def <span class="ident">get_all_monthly_savings</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get your monthly savings at Avanza </p>
+<div class="desc"><p>Get your monthly savings at Avanza</p>
 <h2 id="returns">Returns</h2>
 <p>{
 'monthlySavings': [{
@@ -4150,7 +5669,7 @@ status: str</dd>
 <pre><code class="python">def get_all_monthly_savings(
     self
 ):
-    &#34;&#34;&#34; Get your monthly savings at Avanza 
+    &#34;&#34;&#34; Get your monthly savings at Avanza
 
     Returns:
         {
@@ -4189,6 +5708,103 @@ status: str</dd>
     return self.__call(
         HttpMethod.GET,
         Route.MONTHLY_SAVINGS_PATH.value.format(&#39;&#39;)
+    )</code></pre>
+</details>
+</dd>
+<dt id="avanza.avanza.Avanza.get_all_stop_losses"><code class="name flex">
+<span>def <span class="ident">get_all_stop_losses</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get open stop losses</p>
+<h2 id="returns">Returns</h2>
+<p>[{
+"id": str,
+"status": str,
+"account": {
+"id": str,
+"name": str,
+"type": str,
+"urlParameterId": str
+},
+"orderbook": {
+"id": str,
+"name": str,
+"countryCode": str,
+"currency": str,
+"shortName": str,
+"type": str
+},
+"hasExcludingChildren": bool,
+"message": str,
+"trigger": {
+"value": int,
+"type": str,
+"validUntil": str,
+"valueType": str
+},
+"order": {
+"type": str,
+"price": int,
+"volume": int,
+"shortSellingAllowed": bool,
+"validDays": int,
+"priceType": str,
+"priceDecimalPrecision": 0
+},
+"editable": bool,
+"deletable": bool
+}]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_stop_losses(
+    self
+):
+    &#34;&#34;&#34; Get open stop losses
+
+    Returns:
+        [{
+            &#34;id&#34;: str,
+            &#34;status&#34;: str,
+            &#34;account&#34;: {
+                &#34;id&#34;: str,
+                &#34;name&#34;: str,
+                &#34;type&#34;: str,
+                &#34;urlParameterId&#34;: str
+            },
+            &#34;orderbook&#34;: {
+                &#34;id&#34;: str,
+                &#34;name&#34;: str,
+                &#34;countryCode&#34;: str,
+                &#34;currency&#34;: str,
+                &#34;shortName&#34;: str,
+                &#34;type&#34;: str
+            },
+            &#34;hasExcludingChildren&#34;: bool,
+            &#34;message&#34;: str,
+            &#34;trigger&#34;: {
+                &#34;value&#34;: int,
+                &#34;type&#34;: str,
+                &#34;validUntil&#34;: str,
+                &#34;valueType&#34;: str
+            },
+            &#34;order&#34;: {
+                &#34;type&#34;: str,
+                &#34;price&#34;: int,
+                &#34;volume&#34;: int,
+                &#34;shortSellingAllowed&#34;: bool,
+                &#34;validDays&#34;: int,
+                &#34;priceType&#34;: str,
+                &#34;priceDecimalPrecision&#34;: 0
+            },
+            &#34;editable&#34;: bool,
+            &#34;deletable&#34;: bool
+        }]
+    &#34;&#34;&#34;
+    return self.__call(
+        HttpMethod.GET,
+        Route.STOP_LOSS_PATH.value
     )</code></pre>
 </details>
 </dd>
@@ -4300,10 +5916,10 @@ status: str</dd>
 </details>
 </dd>
 <dt id="avanza.avanza.Avanza.get_chart_data"><code class="name flex">
-<span>def <span class="ident">get_chart_data</span></span>(<span>self, order_book_id: str, period: <a title="avanza.constants.TimePeriod" href="constants.html#avanza.constants.TimePeriod">TimePeriod</a>)</span>
+<span>def <span class="ident">get_chart_data</span></span>(<span>self, order_book_id: str, period: <a title="avanza.constants.TimePeriod" href="constants.html#avanza.constants.TimePeriod">TimePeriod</a>, resolution: Optional[<a title="avanza.constants.Resolution" href="constants.html#avanza.constants.Resolution">Resolution</a>] = None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Return chart data for an order book for the specified time period</p>
+<div class="desc"><p>Return chart data for an order book for the specified time period with given resolution</p>
 <h2 id="returns">Returns</h2>
 <p>{
 'ceiling': float,
@@ -4320,8 +5936,8 @@ status: str</dd>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_chart_data(self, order_book_id: str, period: TimePeriod):
-    &#34;&#34;&#34; Return chart data for an order book for the specified time period
+<pre><code class="python">def get_chart_data(self, order_book_id: str, period: TimePeriod, resolution: Optional[Resolution] = None):
+    &#34;&#34;&#34; Return chart data for an order book for the specified time period with given resolution
 
     Returns:
         {
@@ -4336,12 +5952,17 @@ status: str</dd>
             &#39;min&#39;: float
         }
     &#34;&#34;&#34;
+    options = {
+        &#39;timePeriod&#39;: period.value.lower()
+    }
+
+    if resolution is not None:
+        options[&#39;resolution&#39;] = resolution.value.lower()
+
     return self.__call(
         HttpMethod.GET,
-        Route.CHARTDATA_PATH.value.format(
-            order_book_id,
-            period.value.lower()
-        )
+        Route.CHARTDATA_PATH.value.format(order_book_id),
+        options
     )</code></pre>
 </details>
 </dd>
@@ -5255,6 +6876,63 @@ get_warrant_info()
     )</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.get_note_as_pdf"><code class="name flex">
+<span>def <span class="ident">get_note_as_pdf</span></span>(<span>self, url_parameter_id: str, note_id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_note_as_pdf(self, url_parameter_id: str, note_id: str):
+    return self.__call(
+        HttpMethod.GET,
+        Route.NOTE_PATH.value.format(url_parameter_id, note_id),
+        return_content=True
+    )</code></pre>
+</details>
+</dd>
+<dt id="avanza.avanza.Avanza.get_offers"><code class="name flex">
+<span>def <span class="ident">get_offers</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Return current offers</p>
+<h2 id="returns">Returns</h2>
+<p>[
+{
+"customerOfferId": str,
+"title": str,
+"lastResponseDate": str,
+"type": str,
+"hasResponded": bool
+}
+]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_offers(self):
+    &#34;&#34;&#34; Return current offers
+
+    Returns:
+        [
+            {
+                &#34;customerOfferId&#34;: str,
+                &#34;title&#34;: str,
+                &#34;lastResponseDate&#34;: str,
+                &#34;type&#34;: str,
+                &#34;hasResponded&#34;: bool
+            }
+        ]
+    &#34;&#34;&#34;
+
+    return self.__call(
+        HttpMethod.GET,
+        Route.CURRENT_OFFERS_PATH.value
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.get_order"><code class="name flex">
 <span>def <span class="ident">get_order</span></span>(<span>self, account_id: str, order_id: str)</span>
 </code></dt>
@@ -5755,6 +7433,52 @@ get_warrant_info()
     return self.__call(HttpMethod.GET, Route.POSITIONS_PATH.value)</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.get_price_alert"><code class="name flex">
+<span>def <span class="ident">get_price_alert</span></span>(<span>self, order_book_id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Gets all the price alerts for the specified orderbook.</p>
+<p>Returns:
+[
+{
+'alertId': str,
+'accountId': str,
+'price': float,
+'validUntil': str,
+'direction': str,
+'email': bool,
+'notification': bool,
+'sms': bool,
+}
+]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_price_alert(self, order_book_id: str):
+    &#34;&#34;&#34;
+    Gets all the price alerts for the specified orderbook.
+
+    Returns:
+    [
+        {
+            &#39;alertId&#39;: str,
+            &#39;accountId&#39;: str,
+            &#39;price&#39;: float,
+            &#39;validUntil&#39;: str,
+            &#39;direction&#39;: str,
+            &#39;email&#39;: bool,
+            &#39;notification&#39;: bool,
+            &#39;sms&#39;: bool,
+        }
+    ]
+    &#34;&#34;&#34;
+    return self.__call(
+        HttpMethod.GET,
+        Route.PRICE_ALERT_PATH.value.format(order_book_id),
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.get_stock_info"><code class="name flex">
 <span>def <span class="ident">get_stock_info</span></span>(<span>self, stock_id: str)</span>
 </code></dt>
@@ -6212,6 +7936,213 @@ str</code></dt>
     )</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.get_transactions_details"><code class="name flex">
+<span>def <span class="ident">get_transactions_details</span></span>(<span>self, transaction_details_types: Sequence[<a title="avanza.constants.TransactionsDetailsType" href="constants.html#avanza.constants.TransactionsDetailsType">TransactionsDetailsType</a>] = [], transactions_from: datetime.date = None, transactions_to: datetime.date = None, isin: str = None, max_elements: int = 1000)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get transactions, optionally apply criterias.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>transaction_types</code></strong></dt>
+<dd>One or more transaction types.</dd>
+<dt><strong><code>transactions_from</code></strong></dt>
+<dd>Fetch transactions from this date.</dd>
+<dt><strong><code>transactions_to</code></strong></dt>
+<dd>Fetch transactions to this date.</dd>
+<dt><strong><code>isin</code></strong></dt>
+<dd>Only fetch transactions for specified isin.</dd>
+<dt><strong><code>max_elements</code></strong></dt>
+<dd>Limit result to N transactions.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>{
+'firstTransactionDate': str,
+'transactionsFilter': {
+'accountIds: null|str,
+'dateRange': {
+'from': str,
+'to': str
+}
+'isin': null|str,
+'transacitonTypes': null|array[str],
+}
+'transactionsAfterFiltering' int,
+'transactions': [
+{
+'account': {
+'type': str,
+'name': str,
+'id': int,
+'urlParameterId': str,
+},
+'amount': {
+'decimalPrecision': int,
+'unit': str,
+'unitType': str,
+'value': int,
+},
+'availabilityDate': str,
+'comission': null|?,
+'currencyRate': null|?,
+'date': str,
+'description': str,
+'foreignTaxRate': null|?,
+'id': str,
+'instrumentName': str,
+'intraday': bool,
+'isin': str,
+'noteId': null|str
+'onCreditAccount': bool,
+'orderbook': {
+'isin': str,
+'currency': str,
+'flagCode': null|str,
+'name': str,
+'id': int,
+'type': str,
+'volumeFactor': int,
+'flagCode': null|str,
+},
+'priceInAccountCurrency': {
+'decimalPrecision': int,
+'unit': str,
+'unitType': str,
+'value': float,
+},
+'priceInTradedCurrency': {
+'decimalPrecision': int,
+'unit': str,
+'unitType': str,
+'value': float,
+},
+'settlementDate: str,
+'type': str,
+'volume': {
+'decimalPrecision': int,
+'unit': str,
+'unitType': str,
+'value': float,
+}
+},
+],
+}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_transactions_details(
+        self,
+        transaction_details_types: Sequence[TransactionsDetailsType]=[],
+        transactions_from: date=None,
+        transactions_to: date=None,
+        isin: str=None,
+        max_elements: int=1000,
+):
+    &#34;&#34;&#34; Get transactions, optionally apply criterias.
+
+    Args:
+        transaction_types: One or more transaction types.
+
+        transactions_from: Fetch transactions from this date.
+
+        transactions_to: Fetch transactions to this date.
+
+        isin: Only fetch transactions for specified isin.
+
+        max_elements: Limit result to N transactions.
+
+    Returns:
+        {
+            &#39;firstTransactionDate&#39;: str,
+            &#39;transactionsFilter&#39;: {
+                &#39;accountIds: null|str,
+                &#39;dateRange&#39;: {
+                    &#39;from&#39;: str,
+                    &#39;to&#39;: str
+                }
+                &#39;isin&#39;: null|str,
+                &#39;transacitonTypes&#39;: null|array[str],
+            }
+            &#39;transactionsAfterFiltering&#39; int,
+            &#39;transactions&#39;: [
+                {
+                    &#39;account&#39;: {
+                        &#39;type&#39;: str,
+                        &#39;name&#39;: str,
+                        &#39;id&#39;: int,
+                        &#39;urlParameterId&#39;: str,
+                    },
+                    &#39;amount&#39;: {
+                        &#39;decimalPrecision&#39;: int,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;value&#39;: int,
+                    },
+                    &#39;availabilityDate&#39;: str,
+                    &#39;comission&#39;: null|?,
+                    &#39;currencyRate&#39;: null|?,
+                    &#39;date&#39;: str,
+                    &#39;description&#39;: str,
+                    &#39;foreignTaxRate&#39;: null|?,
+                    &#39;id&#39;: str,
+                    &#39;instrumentName&#39;: str,
+                    &#39;intraday&#39;: bool,
+                    &#39;isin&#39;: str,
+                    &#39;noteId&#39;: null|str
+                    &#39;onCreditAccount&#39;: bool,
+                    &#39;orderbook&#39;: {
+                        &#39;isin&#39;: str,
+                        &#39;currency&#39;: str,
+                        &#39;flagCode&#39;: null|str,
+                        &#39;name&#39;: str,
+                        &#39;id&#39;: int,
+                        &#39;type&#39;: str,
+                        &#39;volumeFactor&#39;: int,
+                        &#39;flagCode&#39;: null|str,
+                    },
+                    &#39;priceInAccountCurrency&#39;: {
+                        &#39;decimalPrecision&#39;: int,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;value&#39;: float,
+                    },
+                    &#39;priceInTradedCurrency&#39;: {
+                        &#39;decimalPrecision&#39;: int,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;value&#39;: float,
+                    },
+                    &#39;settlementDate: str,
+                    &#39;type&#39;: str,
+                    &#39;volume&#39;: {
+                        &#39;decimalPrecision&#39;: int,
+                        &#39;unit&#39;: str,
+                        &#39;unitType&#39;: str,
+                        &#39;value&#39;: float,
+                    }
+                },
+            ],
+        }
+    &#34;&#34;&#34;
+    options = {}
+    options[&#39;maxElements&#39;] = max_elements
+
+    if transaction_details_types:
+        options[&#39;transactionTypes&#39;] = &#39;,&#39;.join(transaction_details_types)
+    if transactions_from:
+        options[&#39;from&#39;] = transactions_from.isoformat()
+    if transactions_to:
+        options[&#39;to&#39;] = transactions_to.isoformat()
+    if isin:
+        options[&#39;isin&#39;] = isin
+
+    return self.__call(
+        HttpMethod.GET,
+        Route.TRANSACTIONS_DETAILS_PATH.value,
+        options
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.get_warrant_info"><code class="name flex">
 <span>def <span class="ident">get_warrant_info</span></span>(<span>self, warrant_id: str)</span>
 </code></dt>
@@ -6417,14 +8348,23 @@ str</code></dt>
 <dd>
 <div class="desc"><p>Place an order</p>
 <h2 id="returns">Returns</h2>
+<p>If the order was successfully placed:</p>
 <dl>
 <dt>{</dt>
 <dt><code>
-messages</code></dt>
-<dd>List[str],
+message</code></dt>
+<dd>str,
 orderId: str,
-requestId: str,
-status: str</dd>
+orderRequestStatus: 'SUCCESS'</dd>
+</dl>
+<p>}</p>
+<p>If the order was not placed:</p>
+<dl>
+<dt>{</dt>
+<dt><code>
+message</code></dt>
+<dd>str,
+orderRequestStatus: 'ERROR'</dd>
 </dl>
 <p>}</p></div>
 <details class="source">
@@ -6443,11 +8383,19 @@ status: str</dd>
     &#34;&#34;&#34; Place an order
 
     Returns:
+        If the order was successfully placed:
+
         {
-            messages: List[str],
+            message: str,
             orderId: str,
-            requestId: str,
-            status: str
+            orderRequestStatus: &#39;SUCCESS&#39;
+        }
+
+        If the order was not placed:
+
+        {
+            message: str,
+            orderRequestStatus: &#39;ERROR&#39;
         }
     &#34;&#34;&#34;
 
@@ -6457,7 +8405,7 @@ status: str</dd>
         {
             &#39;accountId&#39;: account_id,
             &#39;orderbookId&#39;: order_book_id,
-            &#39;orderType&#39;: order_type.value,
+            &#39;side&#39;: order_type.value,
             &#39;price&#39;: price,
             &#39;validUntil&#39;: valid_until.isoformat(),
             &#39;volume&#39;: volume
@@ -6465,8 +8413,104 @@ status: str</dd>
     )</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.place_order_buy_fund"><code class="name flex">
+<span>def <span class="ident">place_order_buy_fund</span></span>(<span>self, account_id: str, order_book_id: str, amount: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Place a buy order for a fund</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt>{</dt>
+<dt><code>
+message</code></dt>
+<dd>str,
+orderId: str,
+accountId: str,
+orderRequestStatus: str</dd>
+</dl>
+<p>}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def place_order_buy_fund(
+    self,
+    account_id: str,
+    order_book_id: str,
+    amount: float
+):
+    &#34;&#34;&#34; Place a buy order for a fund
+
+    Returns:
+        {
+            message: str,
+            orderId: str,
+            accountId: str,
+            orderRequestStatus: str
+        }
+    &#34;&#34;&#34;
+
+    return self.__call(
+        HttpMethod.POST,
+        Route.ORDER_PLACE_PATH_BUY_FUND.value,
+        {
+            &#39;orderbookId&#39;: order_book_id,
+            &#39;accountId&#39;: account_id,
+            &#39;amount&#39;: amount
+        }
+    )</code></pre>
+</details>
+</dd>
+<dt id="avanza.avanza.Avanza.place_order_sell_fund"><code class="name flex">
+<span>def <span class="ident">place_order_sell_fund</span></span>(<span>self, account_id: str, order_book_id: str, volume: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Place a sell order for a fund</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt>{</dt>
+<dt><code>
+message</code></dt>
+<dd>str,
+orderId: str,
+accountId: str,
+orderRequestStatus: str</dd>
+</dl>
+<p>}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def place_order_sell_fund(
+    self,
+    account_id: str,
+    order_book_id: str,
+    volume: float
+):
+    &#34;&#34;&#34; Place a sell order for a fund
+
+    Returns:
+        {
+            message: str,
+            orderId: str,
+            accountId: str,
+            orderRequestStatus: str
+        }
+    &#34;&#34;&#34;
+
+    return self.__call(
+        HttpMethod.POST,
+        Route.ORDER_PLACE_PATH_SELL_FUND.value,
+        {
+            &#39;orderbookId&#39;: order_book_id,
+            &#39;accountId&#39;: account_id,
+            &#39;volume&#39;: volume
+        }
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.remove_from_watchlist"><code class="name flex">
-<span>def <span class="ident">remove_from_watchlist</span></span>(<span>self, instrument_id: str, watchlist_id: str) ‑> NoneType</span>
+<span>def <span class="ident">remove_from_watchlist</span></span>(<span>self, instrument_id: str, watchlist_id: str) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Remove an instrument to the specified watchlist</p>
@@ -6850,6 +8894,68 @@ tickerSymbol ('AAPL')</dd>
     )</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.set_price_alert"><code class="name flex">
+<span>def <span class="ident">set_price_alert</span></span>(<span>self, order_book_id: str, price: float, valid_until: datetime.date, notification: bool = True, email: bool = False, sms: bool = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets a price alert for the specified orderbook and returns all the existing alerts.</p>
+<p>Returns:
+[
+{
+'alertId': str,
+'accountId': str,
+'price': float,
+'validUntil': str,
+'direction': str,
+'email': bool,
+'notification': bool,
+'sms': bool,
+}
+]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_price_alert(
+    self,
+    order_book_id: str,
+    price: float,
+    valid_until: date,
+    notification: bool = True,
+    email: bool = False,
+    sms: bool = False
+):
+    &#34;&#34;&#34;
+    Sets a price alert for the specified orderbook and returns all the existing alerts.
+
+    Returns:
+    [
+        {
+            &#39;alertId&#39;: str,
+            &#39;accountId&#39;: str,
+            &#39;price&#39;: float,
+            &#39;validUntil&#39;: str,
+            &#39;direction&#39;: str,
+            &#39;email&#39;: bool,
+            &#39;notification&#39;: bool,
+            &#39;sms&#39;: bool,
+        }
+    ]
+    &#34;&#34;&#34;
+
+    return self.__call(
+        HttpMethod.POST,
+        Route.PRICE_ALERT_PATH.value.format(order_book_id),
+        {
+            &#39;price&#39;: price,
+            &#39;validUntil&#39;: valid_until.isoformat(),
+            &#34;notification&#34;: notification,
+            &#34;email&#34;: email,
+            &#34;sms&#34;: sms
+        }
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.subscribe_to_id"><code class="name flex">
 <span>async def <span class="ident">subscribe_to_id</span></span>(<span>self, channel: <a title="avanza.constants.ChannelType" href="constants.html#avanza.constants.ChannelType">ChannelType</a>, id: str, callback: Callable[[str, dict], Any])</span>
 </code></dt>
@@ -6921,9 +9027,12 @@ tickerSymbol ('AAPL')</dd>
 <li><code><a title="avanza.avanza.Avanza.create_monthly_saving" href="#avanza.avanza.Avanza.create_monthly_saving">create_monthly_saving</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.delete_monthly_saving" href="#avanza.avanza.Avanza.delete_monthly_saving">delete_monthly_saving</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.delete_order" href="#avanza.avanza.Avanza.delete_order">delete_order</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.delete_price_alert" href="#avanza.avanza.Avanza.delete_price_alert">delete_price_alert</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.edit_order" href="#avanza.avanza.Avanza.edit_order">edit_order</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_account_overview" href="#avanza.avanza.Avanza.get_account_overview">get_account_overview</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_accounts_positions" href="#avanza.avanza.Avanza.get_accounts_positions">get_accounts_positions</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_all_monthly_savings" href="#avanza.avanza.Avanza.get_all_monthly_savings">get_all_monthly_savings</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_all_stop_losses" href="#avanza.avanza.Avanza.get_all_stop_losses">get_all_stop_losses</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_certificate_info" href="#avanza.avanza.Avanza.get_certificate_info">get_certificate_info</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_chart_data" href="#avanza.avanza.Avanza.get_chart_data">get_chart_data</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_deals_and_orders" href="#avanza.avanza.Avanza.get_deals_and_orders">get_deals_and_orders</a></code></li>
@@ -6934,17 +9043,23 @@ tickerSymbol ('AAPL')</dd>
 <li><code><a title="avanza.avanza.Avanza.get_inspiration_lists" href="#avanza.avanza.Avanza.get_inspiration_lists">get_inspiration_lists</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_instrument" href="#avanza.avanza.Avanza.get_instrument">get_instrument</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_monthly_savings_by_account_id" href="#avanza.avanza.Avanza.get_monthly_savings_by_account_id">get_monthly_savings_by_account_id</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_note_as_pdf" href="#avanza.avanza.Avanza.get_note_as_pdf">get_note_as_pdf</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_offers" href="#avanza.avanza.Avanza.get_offers">get_offers</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_order" href="#avanza.avanza.Avanza.get_order">get_order</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_order_book" href="#avanza.avanza.Avanza.get_order_book">get_order_book</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_order_books" href="#avanza.avanza.Avanza.get_order_books">get_order_books</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_overview" href="#avanza.avanza.Avanza.get_overview">get_overview</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_positions" href="#avanza.avanza.Avanza.get_positions">get_positions</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_price_alert" href="#avanza.avanza.Avanza.get_price_alert">get_price_alert</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_stock_info" href="#avanza.avanza.Avanza.get_stock_info">get_stock_info</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_transactions" href="#avanza.avanza.Avanza.get_transactions">get_transactions</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_transactions_details" href="#avanza.avanza.Avanza.get_transactions_details">get_transactions_details</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_warrant_info" href="#avanza.avanza.Avanza.get_warrant_info">get_warrant_info</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_watchlists" href="#avanza.avanza.Avanza.get_watchlists">get_watchlists</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.pause_monthly_saving" href="#avanza.avanza.Avanza.pause_monthly_saving">pause_monthly_saving</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.place_order" href="#avanza.avanza.Avanza.place_order">place_order</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.place_order_buy_fund" href="#avanza.avanza.Avanza.place_order_buy_fund">place_order_buy_fund</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.place_order_sell_fund" href="#avanza.avanza.Avanza.place_order_sell_fund">place_order_sell_fund</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.remove_from_watchlist" href="#avanza.avanza.Avanza.remove_from_watchlist">remove_from_watchlist</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.resume_monthly_saving" href="#avanza.avanza.Avanza.resume_monthly_saving">resume_monthly_saving</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.search_for_certificate" href="#avanza.avanza.Avanza.search_for_certificate">search_for_certificate</a></code></li>
@@ -6952,6 +9067,7 @@ tickerSymbol ('AAPL')</dd>
 <li><code><a title="avanza.avanza.Avanza.search_for_instrument" href="#avanza.avanza.Avanza.search_for_instrument">search_for_instrument</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.search_for_stock" href="#avanza.avanza.Avanza.search_for_stock">search_for_stock</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.search_for_warrant" href="#avanza.avanza.Avanza.search_for_warrant">search_for_warrant</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.set_price_alert" href="#avanza.avanza.Avanza.set_price_alert">set_price_alert</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.subscribe_to_id" href="#avanza.avanza.Avanza.subscribe_to_id">subscribe_to_id</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.subscribe_to_ids" href="#avanza.avanza.Avanza.subscribe_to_ids">subscribe_to_ids</a></code></li>
 </ul>
@@ -6962,7 +9078,7 @@ tickerSymbol ('AAPL')</dd>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>

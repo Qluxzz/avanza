@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.9.2" />
+<meta name="generator" content="pdoc 0.10.0" />
 <title>avanza.constants API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -39,6 +39,15 @@ class TransactionType(enum.Enum):
     FOREIGN_TAX = &#39;foreign-tax&#39;
 
 
+class TransactionsDetailsType(enum.Enum):
+    DIVIDEND = &#39;DIVIDEND&#39;
+    BUY = &#39;BUY&#39;
+    SELL = &#39;SELL&#39;
+    WITHDRAW = &#39;WITHDRAW&#39;
+    DEPOSIT = &#39;DEPOSIT&#39;
+    UNKNOWN = &#39;UNKNOWN&#39;
+
+
 class ChannelType(enum.Enum):
     ACCOUNTS = &#39;accounts&#39;
     QUOTES = &#39;quotes&#39;
@@ -57,7 +66,21 @@ class TimePeriod(enum.Enum):
     THREE_MONTHS = &#39;THREE_MONTHS&#39;
     THIS_YEAR = &#39;THIS_YEAR&#39;
     ONE_YEAR = &#39;ONE_YEAR&#39;
+    THREE_YEARS = &#39;THREE_YEARS&#39;
     FIVE_YEARS = &#39;FIVE_YEARS&#39;
+
+
+class Resolution(enum.Enum):
+    MINUTE = &#39;MINUTE&#39;
+    TWO_MINUTES = &#39;TWO_MINUTES&#39;
+    FIVE_MINUTES = &#39;FIVE_MINUTES&#39;
+    TEN_MINUTES = &#39;TEN_MINUTES&#39;
+    THIRTY_MINUTES = &#39;THIRTY_MINUTES&#39;
+    HOUR = &#39;HOUR&#39;
+    DAY = &#39;DAY&#39;
+    WEEK = &#39;WEEK&#39;
+    MONTH = &#39;MONTH&#39;
+    QUARTER = &#39;QUARTER&#39;
 
 
 class ListType(enum.Enum):
@@ -81,6 +104,7 @@ class InstrumentType(enum.Enum):
     SUBSCRIPTION_OPTION = &#39;subscription_option&#39;
     EQUITY_LINKED_BOND = &#39;equity_linked_bond&#39;
     CONVERTIBLE = &#39;convertible&#39;
+    ANY = &#39;&#39;
 
 
 class OrderType(enum.Enum):
@@ -94,13 +118,14 @@ class HttpMethod(enum.Enum):
     PUT = 3
     DELETE = 4
 
-
 class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = &#39;/_mobile/account/{}/overview&#39;
+    ACCOUNTS_POSITIONS_PATH = &#39;/_cqbe/ff/overview/positions&#39;
     AUTHENTICATION_PATH = &#39;/_api/authentication/sessions/usercredentials&#39;
-    CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}?timePeriod={}&#39;
+    CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}&#39;
+    CURRENT_OFFERS_PATH = &#39;/_api/customer-offer/currentoffers/&#39;
     DEALS_AND_ORDERS_PATH = &#39;/_mobile/account/dealsandorders&#39;
-    INSIGHTS_PATH = &#39;/_cqbe/insights/?timePeriod={}&amp;accountIds={}&#39;
+    INSIGHTS_PATH = &#39;/_api/insights-development/?timePeriod={}&amp;accountIds={}&#39;
     INSPIRATION_LIST_PATH = &#39;/_mobile/marketing/inspirationlist/{}&#39;
     INSTRUMENT_PATH = &#39;/_mobile/market/{}/{}&#39;
     INSTRUMENT_SEARCH_PATH = &#39;/_mobile/market/search/{}?query={}&#39;
@@ -109,16 +134,22 @@ class Route(enum.Enum):
     MONTHLY_SAVINGS_PAUSE_PATH = &#39;/_api/transfer/monthly-savings/{}/{}/pause&#39;
     MONTHLY_SAVINGS_REMOVE_PATH = &#39;/_api/transfer/monthly-savings/{}/{}/&#39;
     MONTHLY_SAVINGS_RESUME_PATH = &#39;/_api/transfer/monthly-savings/{}/{}/resume&#39;
+    NOTE_PATH = &#39;/_api/contract-notes/documents/{}/{}/note.pdf&#39;
     ORDER_DELETE_PATH = &#39;/_api/order?accountId={}&amp;orderId={}&#39;
     ORDER_GET_PATH = &#39;/_mobile/order/{}?accountId={}&amp;orderId={}&#39;
-    ORDER_PLACE_PATH = &#39;/_api/order&#39;
+    ORDER_PLACE_PATH = &#39;/_cqbe/trading/order/new&#39;
+    ORDER_PLACE_PATH_BUY_FUND = &#39;/_api/fund-guide/fund-order-page/buy&#39;
+    ORDER_PLACE_PATH_SELL_FUND = &#39;/_api/fund-guide/fund-order-page/sell&#39;
     ORDER_EDIT_PATH = &#39;/_api/order/{}/{}&#39;
     ORDERBOOK_LIST_PATH = &#39;/_mobile/market/orderbooklist/{}&#39;
     ORDERBOOK_PATH = &#39;/_mobile/order/{}?orderbookId={}&#39;
     OVERVIEW_PATH = &#39;/_mobile/account/overview&#39;
     POSITIONS_PATH = &#39;/_mobile/account/positions&#39;
+    PRICE_ALERT_PATH = &#39;/_cqbe/marketing/service/alert/{}&#39;
+    STOP_LOSS_PATH = &#39;/_cqbe/trading/stoploss&#39;
     TOTP_PATH = &#39;/_api/authentication/sessions/totp&#39;
     TRANSACTIONS_PATH = &#39;/_mobile/account/transactions/{}&#39;
+    TRANSACTIONS_DETAILS_PATH = &#39;/_api/transactions&#39;
     WATCHLISTS_ADD_DELETE_PATH = &#39;/_api/usercontent/watchlist/{}/orderbooks/{}&#39;
     WATCHLISTS_PATH = &#39;/_mobile/usercontent/watchlist&#39;</code></pre>
 </details>
@@ -255,7 +286,8 @@ class Route(enum.Enum):
     PREMIUM_BOND = &#39;premium_bond&#39;
     SUBSCRIPTION_OPTION = &#39;subscription_option&#39;
     EQUITY_LINKED_BOND = &#39;equity_linked_bond&#39;
-    CONVERTIBLE = &#39;convertible&#39;</code></pre>
+    CONVERTIBLE = &#39;convertible&#39;
+    ANY = &#39;&#39;</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -263,6 +295,10 @@ class Route(enum.Enum):
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="avanza.constants.InstrumentType.ANY"><code class="name">var <span class="ident">ANY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.InstrumentType.BOND"><code class="name">var <span class="ident">BOND</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -387,6 +423,76 @@ class Route(enum.Enum):
 </dd>
 </dl>
 </dd>
+<dt id="avanza.constants.Resolution"><code class="flex name class">
+<span>class <span class="ident">Resolution</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Resolution(enum.Enum):
+    MINUTE = &#39;MINUTE&#39;
+    TWO_MINUTES = &#39;TWO_MINUTES&#39;
+    FIVE_MINUTES = &#39;FIVE_MINUTES&#39;
+    TEN_MINUTES = &#39;TEN_MINUTES&#39;
+    THIRTY_MINUTES = &#39;THIRTY_MINUTES&#39;
+    HOUR = &#39;HOUR&#39;
+    DAY = &#39;DAY&#39;
+    WEEK = &#39;WEEK&#39;
+    MONTH = &#39;MONTH&#39;
+    QUARTER = &#39;QUARTER&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="avanza.constants.Resolution.DAY"><code class="name">var <span class="ident">DAY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.FIVE_MINUTES"><code class="name">var <span class="ident">FIVE_MINUTES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.HOUR"><code class="name">var <span class="ident">HOUR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.MINUTE"><code class="name">var <span class="ident">MINUTE</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.MONTH"><code class="name">var <span class="ident">MONTH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.QUARTER"><code class="name">var <span class="ident">QUARTER</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.TEN_MINUTES"><code class="name">var <span class="ident">TEN_MINUTES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.THIRTY_MINUTES"><code class="name">var <span class="ident">THIRTY_MINUTES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.TWO_MINUTES"><code class="name">var <span class="ident">TWO_MINUTES</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Resolution.WEEK"><code class="name">var <span class="ident">WEEK</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="avanza.constants.Route"><code class="flex name class">
 <span>class <span class="ident">Route</span></span>
 <span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
@@ -399,10 +505,12 @@ class Route(enum.Enum):
 </summary>
 <pre><code class="python">class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = &#39;/_mobile/account/{}/overview&#39;
+    ACCOUNTS_POSITIONS_PATH = &#39;/_cqbe/ff/overview/positions&#39;
     AUTHENTICATION_PATH = &#39;/_api/authentication/sessions/usercredentials&#39;
-    CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}?timePeriod={}&#39;
+    CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}&#39;
+    CURRENT_OFFERS_PATH = &#39;/_api/customer-offer/currentoffers/&#39;
     DEALS_AND_ORDERS_PATH = &#39;/_mobile/account/dealsandorders&#39;
-    INSIGHTS_PATH = &#39;/_cqbe/insights/?timePeriod={}&amp;accountIds={}&#39;
+    INSIGHTS_PATH = &#39;/_api/insights-development/?timePeriod={}&amp;accountIds={}&#39;
     INSPIRATION_LIST_PATH = &#39;/_mobile/marketing/inspirationlist/{}&#39;
     INSTRUMENT_PATH = &#39;/_mobile/market/{}/{}&#39;
     INSTRUMENT_SEARCH_PATH = &#39;/_mobile/market/search/{}?query={}&#39;
@@ -411,16 +519,22 @@ class Route(enum.Enum):
     MONTHLY_SAVINGS_PAUSE_PATH = &#39;/_api/transfer/monthly-savings/{}/{}/pause&#39;
     MONTHLY_SAVINGS_REMOVE_PATH = &#39;/_api/transfer/monthly-savings/{}/{}/&#39;
     MONTHLY_SAVINGS_RESUME_PATH = &#39;/_api/transfer/monthly-savings/{}/{}/resume&#39;
+    NOTE_PATH = &#39;/_api/contract-notes/documents/{}/{}/note.pdf&#39;
     ORDER_DELETE_PATH = &#39;/_api/order?accountId={}&amp;orderId={}&#39;
     ORDER_GET_PATH = &#39;/_mobile/order/{}?accountId={}&amp;orderId={}&#39;
-    ORDER_PLACE_PATH = &#39;/_api/order&#39;
+    ORDER_PLACE_PATH = &#39;/_cqbe/trading/order/new&#39;
+    ORDER_PLACE_PATH_BUY_FUND = &#39;/_api/fund-guide/fund-order-page/buy&#39;
+    ORDER_PLACE_PATH_SELL_FUND = &#39;/_api/fund-guide/fund-order-page/sell&#39;
     ORDER_EDIT_PATH = &#39;/_api/order/{}/{}&#39;
     ORDERBOOK_LIST_PATH = &#39;/_mobile/market/orderbooklist/{}&#39;
     ORDERBOOK_PATH = &#39;/_mobile/order/{}?orderbookId={}&#39;
     OVERVIEW_PATH = &#39;/_mobile/account/overview&#39;
     POSITIONS_PATH = &#39;/_mobile/account/positions&#39;
+    PRICE_ALERT_PATH = &#39;/_cqbe/marketing/service/alert/{}&#39;
+    STOP_LOSS_PATH = &#39;/_cqbe/trading/stoploss&#39;
     TOTP_PATH = &#39;/_api/authentication/sessions/totp&#39;
     TRANSACTIONS_PATH = &#39;/_mobile/account/transactions/{}&#39;
+    TRANSACTIONS_DETAILS_PATH = &#39;/_api/transactions&#39;
     WATCHLISTS_ADD_DELETE_PATH = &#39;/_api/usercontent/watchlist/{}/orderbooks/{}&#39;
     WATCHLISTS_PATH = &#39;/_mobile/usercontent/watchlist&#39;</code></pre>
 </details>
@@ -430,6 +544,10 @@ class Route(enum.Enum):
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="avanza.constants.Route.ACCOUNTS_POSITIONS_PATH"><code class="name">var <span class="ident">ACCOUNTS_POSITIONS_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.Route.ACCOUNT_OVERVIEW_PATH"><code class="name">var <span class="ident">ACCOUNT_OVERVIEW_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -439,6 +557,10 @@ class Route(enum.Enum):
 <div class="desc"></div>
 </dd>
 <dt id="avanza.constants.Route.CHARTDATA_PATH"><code class="name">var <span class="ident">CHARTDATA_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.CURRENT_OFFERS_PATH"><code class="name">var <span class="ident">CURRENT_OFFERS_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -482,6 +604,10 @@ class Route(enum.Enum):
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="avanza.constants.Route.NOTE_PATH"><code class="name">var <span class="ident">NOTE_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.Route.ORDERBOOK_LIST_PATH"><code class="name">var <span class="ident">ORDERBOOK_LIST_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -506,6 +632,14 @@ class Route(enum.Enum):
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="avanza.constants.Route.ORDER_PLACE_PATH_BUY_FUND"><code class="name">var <span class="ident">ORDER_PLACE_PATH_BUY_FUND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.ORDER_PLACE_PATH_SELL_FUND"><code class="name">var <span class="ident">ORDER_PLACE_PATH_SELL_FUND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.Route.OVERVIEW_PATH"><code class="name">var <span class="ident">OVERVIEW_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -514,7 +648,19 @@ class Route(enum.Enum):
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="avanza.constants.Route.PRICE_ALERT_PATH"><code class="name">var <span class="ident">PRICE_ALERT_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.STOP_LOSS_PATH"><code class="name">var <span class="ident">STOP_LOSS_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.Route.TOTP_PATH"><code class="name">var <span class="ident">TOTP_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.TRANSACTIONS_DETAILS_PATH"><code class="name">var <span class="ident">TRANSACTIONS_DETAILS_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -549,6 +695,7 @@ class Route(enum.Enum):
     THREE_MONTHS = &#39;THREE_MONTHS&#39;
     THIS_YEAR = &#39;THIS_YEAR&#39;
     ONE_YEAR = &#39;ONE_YEAR&#39;
+    THREE_YEARS = &#39;THREE_YEARS&#39;
     FIVE_YEARS = &#39;FIVE_YEARS&#39;</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -578,6 +725,10 @@ class Route(enum.Enum):
 <div class="desc"></div>
 </dd>
 <dt id="avanza.constants.TimePeriod.THREE_MONTHS"><code class="name">var <span class="ident">THREE_MONTHS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TimePeriod.THREE_YEARS"><code class="name">var <span class="ident">THREE_YEARS</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -642,6 +793,56 @@ class Route(enum.Enum):
 </dd>
 </dl>
 </dd>
+<dt id="avanza.constants.TransactionsDetailsType"><code class="flex name class">
+<span>class <span class="ident">TransactionsDetailsType</span></span>
+<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>An enumeration.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TransactionsDetailsType(enum.Enum):
+    DIVIDEND = &#39;DIVIDEND&#39;
+    BUY = &#39;BUY&#39;
+    SELL = &#39;SELL&#39;
+    WITHDRAW = &#39;WITHDRAW&#39;
+    DEPOSIT = &#39;DEPOSIT&#39;
+    UNKNOWN = &#39;UNKNOWN&#39;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>enum.Enum</li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="avanza.constants.TransactionsDetailsType.BUY"><code class="name">var <span class="ident">BUY</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TransactionsDetailsType.DEPOSIT"><code class="name">var <span class="ident">DEPOSIT</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TransactionsDetailsType.DIVIDEND"><code class="name">var <span class="ident">DIVIDEND</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TransactionsDetailsType.SELL"><code class="name">var <span class="ident">SELL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TransactionsDetailsType.UNKNOWN"><code class="name">var <span class="ident">UNKNOWN</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TransactionsDetailsType.WITHDRAW"><code class="name">var <span class="ident">WITHDRAW</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -683,6 +884,7 @@ class Route(enum.Enum):
 <li>
 <h4><code><a title="avanza.constants.InstrumentType" href="#avanza.constants.InstrumentType">InstrumentType</a></code></h4>
 <ul class="">
+<li><code><a title="avanza.constants.InstrumentType.ANY" href="#avanza.constants.InstrumentType.ANY">ANY</a></code></li>
 <li><code><a title="avanza.constants.InstrumentType.BOND" href="#avanza.constants.InstrumentType.BOND">BOND</a></code></li>
 <li><code><a title="avanza.constants.InstrumentType.CERTIFICATE" href="#avanza.constants.InstrumentType.CERTIFICATE">CERTIFICATE</a></code></li>
 <li><code><a title="avanza.constants.InstrumentType.CONVERTIBLE" href="#avanza.constants.InstrumentType.CONVERTIBLE">CONVERTIBLE</a></code></li>
@@ -715,11 +917,28 @@ class Route(enum.Enum):
 </ul>
 </li>
 <li>
+<h4><code><a title="avanza.constants.Resolution" href="#avanza.constants.Resolution">Resolution</a></code></h4>
+<ul class="two-column">
+<li><code><a title="avanza.constants.Resolution.DAY" href="#avanza.constants.Resolution.DAY">DAY</a></code></li>
+<li><code><a title="avanza.constants.Resolution.FIVE_MINUTES" href="#avanza.constants.Resolution.FIVE_MINUTES">FIVE_MINUTES</a></code></li>
+<li><code><a title="avanza.constants.Resolution.HOUR" href="#avanza.constants.Resolution.HOUR">HOUR</a></code></li>
+<li><code><a title="avanza.constants.Resolution.MINUTE" href="#avanza.constants.Resolution.MINUTE">MINUTE</a></code></li>
+<li><code><a title="avanza.constants.Resolution.MONTH" href="#avanza.constants.Resolution.MONTH">MONTH</a></code></li>
+<li><code><a title="avanza.constants.Resolution.QUARTER" href="#avanza.constants.Resolution.QUARTER">QUARTER</a></code></li>
+<li><code><a title="avanza.constants.Resolution.TEN_MINUTES" href="#avanza.constants.Resolution.TEN_MINUTES">TEN_MINUTES</a></code></li>
+<li><code><a title="avanza.constants.Resolution.THIRTY_MINUTES" href="#avanza.constants.Resolution.THIRTY_MINUTES">THIRTY_MINUTES</a></code></li>
+<li><code><a title="avanza.constants.Resolution.TWO_MINUTES" href="#avanza.constants.Resolution.TWO_MINUTES">TWO_MINUTES</a></code></li>
+<li><code><a title="avanza.constants.Resolution.WEEK" href="#avanza.constants.Resolution.WEEK">WEEK</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="avanza.constants.Route" href="#avanza.constants.Route">Route</a></code></h4>
 <ul class="">
+<li><code><a title="avanza.constants.Route.ACCOUNTS_POSITIONS_PATH" href="#avanza.constants.Route.ACCOUNTS_POSITIONS_PATH">ACCOUNTS_POSITIONS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ACCOUNT_OVERVIEW_PATH" href="#avanza.constants.Route.ACCOUNT_OVERVIEW_PATH">ACCOUNT_OVERVIEW_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.AUTHENTICATION_PATH" href="#avanza.constants.Route.AUTHENTICATION_PATH">AUTHENTICATION_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.CHARTDATA_PATH" href="#avanza.constants.Route.CHARTDATA_PATH">CHARTDATA_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.CURRENT_OFFERS_PATH" href="#avanza.constants.Route.CURRENT_OFFERS_PATH">CURRENT_OFFERS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.DEALS_AND_ORDERS_PATH" href="#avanza.constants.Route.DEALS_AND_ORDERS_PATH">DEALS_AND_ORDERS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSIGHTS_PATH" href="#avanza.constants.Route.INSIGHTS_PATH">INSIGHTS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSPIRATION_LIST_PATH" href="#avanza.constants.Route.INSPIRATION_LIST_PATH">INSPIRATION_LIST_PATH</a></code></li>
@@ -730,15 +949,21 @@ class Route(enum.Enum):
 <li><code><a title="avanza.constants.Route.MONTHLY_SAVINGS_PAUSE_PATH" href="#avanza.constants.Route.MONTHLY_SAVINGS_PAUSE_PATH">MONTHLY_SAVINGS_PAUSE_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.MONTHLY_SAVINGS_REMOVE_PATH" href="#avanza.constants.Route.MONTHLY_SAVINGS_REMOVE_PATH">MONTHLY_SAVINGS_REMOVE_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.MONTHLY_SAVINGS_RESUME_PATH" href="#avanza.constants.Route.MONTHLY_SAVINGS_RESUME_PATH">MONTHLY_SAVINGS_RESUME_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.NOTE_PATH" href="#avanza.constants.Route.NOTE_PATH">NOTE_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDERBOOK_LIST_PATH" href="#avanza.constants.Route.ORDERBOOK_LIST_PATH">ORDERBOOK_LIST_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDERBOOK_PATH" href="#avanza.constants.Route.ORDERBOOK_PATH">ORDERBOOK_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_DELETE_PATH" href="#avanza.constants.Route.ORDER_DELETE_PATH">ORDER_DELETE_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_EDIT_PATH" href="#avanza.constants.Route.ORDER_EDIT_PATH">ORDER_EDIT_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_GET_PATH" href="#avanza.constants.Route.ORDER_GET_PATH">ORDER_GET_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.ORDER_PLACE_PATH" href="#avanza.constants.Route.ORDER_PLACE_PATH">ORDER_PLACE_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.ORDER_PLACE_PATH_BUY_FUND" href="#avanza.constants.Route.ORDER_PLACE_PATH_BUY_FUND">ORDER_PLACE_PATH_BUY_FUND</a></code></li>
+<li><code><a title="avanza.constants.Route.ORDER_PLACE_PATH_SELL_FUND" href="#avanza.constants.Route.ORDER_PLACE_PATH_SELL_FUND">ORDER_PLACE_PATH_SELL_FUND</a></code></li>
 <li><code><a title="avanza.constants.Route.OVERVIEW_PATH" href="#avanza.constants.Route.OVERVIEW_PATH">OVERVIEW_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.POSITIONS_PATH" href="#avanza.constants.Route.POSITIONS_PATH">POSITIONS_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.PRICE_ALERT_PATH" href="#avanza.constants.Route.PRICE_ALERT_PATH">PRICE_ALERT_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.STOP_LOSS_PATH" href="#avanza.constants.Route.STOP_LOSS_PATH">STOP_LOSS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.TOTP_PATH" href="#avanza.constants.Route.TOTP_PATH">TOTP_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.TRANSACTIONS_DETAILS_PATH" href="#avanza.constants.Route.TRANSACTIONS_DETAILS_PATH">TRANSACTIONS_DETAILS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.TRANSACTIONS_PATH" href="#avanza.constants.Route.TRANSACTIONS_PATH">TRANSACTIONS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.WATCHLISTS_ADD_DELETE_PATH" href="#avanza.constants.Route.WATCHLISTS_ADD_DELETE_PATH">WATCHLISTS_ADD_DELETE_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.WATCHLISTS_PATH" href="#avanza.constants.Route.WATCHLISTS_PATH">WATCHLISTS_PATH</a></code></li>
@@ -753,6 +978,7 @@ class Route(enum.Enum):
 <li><code><a title="avanza.constants.TimePeriod.ONE_YEAR" href="#avanza.constants.TimePeriod.ONE_YEAR">ONE_YEAR</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.THIS_YEAR" href="#avanza.constants.TimePeriod.THIS_YEAR">THIS_YEAR</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.THREE_MONTHS" href="#avanza.constants.TimePeriod.THREE_MONTHS">THREE_MONTHS</a></code></li>
+<li><code><a title="avanza.constants.TimePeriod.THREE_YEARS" href="#avanza.constants.TimePeriod.THREE_YEARS">THREE_YEARS</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.TODAY" href="#avanza.constants.TimePeriod.TODAY">TODAY</a></code></li>
 </ul>
 </li>
@@ -768,13 +994,24 @@ class Route(enum.Enum):
 <li><code><a title="avanza.constants.TransactionType.OPTIONS" href="#avanza.constants.TransactionType.OPTIONS">OPTIONS</a></code></li>
 </ul>
 </li>
+<li>
+<h4><code><a title="avanza.constants.TransactionsDetailsType" href="#avanza.constants.TransactionsDetailsType">TransactionsDetailsType</a></code></h4>
+<ul class="two-column">
+<li><code><a title="avanza.constants.TransactionsDetailsType.BUY" href="#avanza.constants.TransactionsDetailsType.BUY">BUY</a></code></li>
+<li><code><a title="avanza.constants.TransactionsDetailsType.DEPOSIT" href="#avanza.constants.TransactionsDetailsType.DEPOSIT">DEPOSIT</a></code></li>
+<li><code><a title="avanza.constants.TransactionsDetailsType.DIVIDEND" href="#avanza.constants.TransactionsDetailsType.DIVIDEND">DIVIDEND</a></code></li>
+<li><code><a title="avanza.constants.TransactionsDetailsType.SELL" href="#avanza.constants.TransactionsDetailsType.SELL">SELL</a></code></li>
+<li><code><a title="avanza.constants.TransactionsDetailsType.UNKNOWN" href="#avanza.constants.TransactionsDetailsType.UNKNOWN">UNKNOWN</a></code></li>
+<li><code><a title="avanza.constants.TransactionsDetailsType.WITHDRAW" href="#avanza.constants.TransactionsDetailsType.WITHDRAW">WITHDRAW</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
 </footer>
 </body>
 </html>
