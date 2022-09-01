@@ -71,7 +71,8 @@ class Avanza:
 
         # No second factor required, continue with normal login
         if response_body.get('twoFactorLogin') is None:
-            return response_body, credentials
+            self._security_token = response.headers.get('X-SecurityToken')
+            return response_body['successfulLogin'], credentials
 
         tfa_method = response_body['twoFactorLogin'].get('method')
 
