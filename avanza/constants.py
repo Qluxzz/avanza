@@ -34,12 +34,9 @@ class ChannelType(enum.Enum):
 class TimePeriod(enum.Enum):
     TODAY = 'TODAY'
     ONE_WEEK = 'ONE_WEEK'
-    ONE_MONTH = 'ONE_MONTH'
-    THREE_MONTHS = 'THREE_MONTHS'
     THIS_YEAR = 'THIS_YEAR'
-    ONE_YEAR = 'ONE_YEAR'
-    THREE_YEARS = 'THREE_YEARS'
-    FIVE_YEARS = 'FIVE_YEARS'
+    THREE_YEARS_ROLLING = 'THREE_YEARS_ROLLING'
+    FIVE_YEARS_ROLLING = 'FIVE_YEARS_ROLLING'
 
 
 class Resolution(enum.Enum):
