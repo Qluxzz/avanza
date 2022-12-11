@@ -62,12 +62,9 @@ class ChannelType(enum.Enum):
 class TimePeriod(enum.Enum):
     TODAY = &#39;TODAY&#39;
     ONE_WEEK = &#39;ONE_WEEK&#39;
-    ONE_MONTH = &#39;ONE_MONTH&#39;
-    THREE_MONTHS = &#39;THREE_MONTHS&#39;
     THIS_YEAR = &#39;THIS_YEAR&#39;
-    ONE_YEAR = &#39;ONE_YEAR&#39;
-    THREE_YEARS = &#39;THREE_YEARS&#39;
-    FIVE_YEARS = &#39;FIVE_YEARS&#39;
+    THREE_YEARS_ROLLING = &#39;THREE_YEARS_ROLLING&#39;
+    FIVE_YEARS_ROLLING = &#39;FIVE_YEARS_ROLLING&#39;
 
 
 class Resolution(enum.Enum):
@@ -120,14 +117,15 @@ class HttpMethod(enum.Enum):
 
 class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = &#39;/_mobile/account/{}/overview&#39;
-    ACCOUNTS_POSITIONS_PATH = &#39;/_cqbe/ff/overview/positions&#39;
+    ACCOUNTS_POSITIONS_PATH = &#39;/_api/position-data/positions&#39;
     AUTHENTICATION_PATH = &#39;/_api/authentication/sessions/usercredentials&#39;
     CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}&#39;
     CURRENT_OFFERS_PATH = &#39;/_api/customer-offer/currentoffers/&#39;
     DEALS_AND_ORDERS_PATH = &#39;/_mobile/account/dealsandorders&#39;
     INSIGHTS_PATH = &#39;/_api/insights-development/?timePeriod={}&amp;accountIds={}&#39;
     INSPIRATION_LIST_PATH = &#39;/_mobile/marketing/inspirationlist/{}&#39;
-    INSTRUMENT_PATH = &#39;/_mobile/market/{}/{}&#39;
+    INSTRUMENT_PATH = &#39;/_api/market-guide/{}/{}&#39;
+    INSTRUMENT_DETAILS_PATH = &#39;/_api/market-guide/{}/{}/details&#39;
     INSTRUMENT_SEARCH_PATH = &#39;/_mobile/market/search/{}?query={}&#39;
     MONTHLY_SAVINGS_CREATE_PATH = &#39;/_api/transfer/monthly-savings/{}&#39;
     MONTHLY_SAVINGS_PATH = &#39;/_mobile/transfer/monthly-savings/{}&#39;
@@ -137,7 +135,7 @@ class Route(enum.Enum):
     NOTE_PATH = &#39;/_api/contract-notes/documents/{}/{}/note.pdf&#39;
     ORDER_DELETE_PATH = &#39;/_api/order?accountId={}&amp;orderId={}&#39;
     ORDER_GET_PATH = &#39;/_mobile/order/{}?accountId={}&amp;orderId={}&#39;
-    ORDER_PLACE_PATH = &#39;/_cqbe/trading/order/new&#39;
+    ORDER_PLACE_PATH = &#39;/_api/trading-critical/rest/order/new&#39;
     ORDER_PLACE_PATH_BUY_FUND = &#39;/_api/fund-guide/fund-order-page/buy&#39;
     ORDER_PLACE_PATH_SELL_FUND = &#39;/_api/fund-guide/fund-order-page/sell&#39;
     ORDER_EDIT_PATH = &#39;/_api/order/{}/{}&#39;
@@ -146,7 +144,7 @@ class Route(enum.Enum):
     OVERVIEW_PATH = &#39;/_mobile/account/overview&#39;
     POSITIONS_PATH = &#39;/_mobile/account/positions&#39;
     PRICE_ALERT_PATH = &#39;/_cqbe/marketing/service/alert/{}&#39;
-    STOP_LOSS_PATH = &#39;/_cqbe/trading/stoploss&#39;
+    STOP_LOSS_PATH = &#39;/_api/trading-critical/rest/stoploss&#39;
     TOTP_PATH = &#39;/_api/authentication/sessions/totp&#39;
     TRANSACTIONS_PATH = &#39;/_mobile/account/transactions/{}&#39;
     TRANSACTIONS_DETAILS_PATH = &#39;/_api/transactions&#39;
@@ -165,10 +163,44 @@ class Route(enum.Enum):
 <dl>
 <dt id="avanza.constants.ChannelType"><code class="flex name class">
 <span>class <span class="ident">ChannelType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -225,10 +257,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.HttpMethod"><code class="flex name class">
 <span>class <span class="ident">HttpMethod</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -265,10 +331,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.InstrumentType"><code class="flex name class">
 <span>class <span class="ident">InstrumentType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -355,10 +455,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.ListType"><code class="flex name class">
 <span>class <span class="ident">ListType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -395,10 +529,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.OrderType"><code class="flex name class">
 <span>class <span class="ident">OrderType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -425,10 +593,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.Resolution"><code class="flex name class">
 <span>class <span class="ident">Resolution</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -495,24 +697,59 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.Route"><code class="flex name class">
 <span>class <span class="ident">Route</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = &#39;/_mobile/account/{}/overview&#39;
-    ACCOUNTS_POSITIONS_PATH = &#39;/_cqbe/ff/overview/positions&#39;
+    ACCOUNTS_POSITIONS_PATH = &#39;/_api/position-data/positions&#39;
     AUTHENTICATION_PATH = &#39;/_api/authentication/sessions/usercredentials&#39;
     CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}&#39;
     CURRENT_OFFERS_PATH = &#39;/_api/customer-offer/currentoffers/&#39;
     DEALS_AND_ORDERS_PATH = &#39;/_mobile/account/dealsandorders&#39;
     INSIGHTS_PATH = &#39;/_api/insights-development/?timePeriod={}&amp;accountIds={}&#39;
     INSPIRATION_LIST_PATH = &#39;/_mobile/marketing/inspirationlist/{}&#39;
-    INSTRUMENT_PATH = &#39;/_mobile/market/{}/{}&#39;
+    INSTRUMENT_PATH = &#39;/_api/market-guide/{}/{}&#39;
+    INSTRUMENT_DETAILS_PATH = &#39;/_api/market-guide/{}/{}/details&#39;
     INSTRUMENT_SEARCH_PATH = &#39;/_mobile/market/search/{}?query={}&#39;
     MONTHLY_SAVINGS_CREATE_PATH = &#39;/_api/transfer/monthly-savings/{}&#39;
     MONTHLY_SAVINGS_PATH = &#39;/_mobile/transfer/monthly-savings/{}&#39;
@@ -522,7 +759,7 @@ class Route(enum.Enum):
     NOTE_PATH = &#39;/_api/contract-notes/documents/{}/{}/note.pdf&#39;
     ORDER_DELETE_PATH = &#39;/_api/order?accountId={}&amp;orderId={}&#39;
     ORDER_GET_PATH = &#39;/_mobile/order/{}?accountId={}&amp;orderId={}&#39;
-    ORDER_PLACE_PATH = &#39;/_cqbe/trading/order/new&#39;
+    ORDER_PLACE_PATH = &#39;/_api/trading-critical/rest/order/new&#39;
     ORDER_PLACE_PATH_BUY_FUND = &#39;/_api/fund-guide/fund-order-page/buy&#39;
     ORDER_PLACE_PATH_SELL_FUND = &#39;/_api/fund-guide/fund-order-page/sell&#39;
     ORDER_EDIT_PATH = &#39;/_api/order/{}/{}&#39;
@@ -531,7 +768,7 @@ class Route(enum.Enum):
     OVERVIEW_PATH = &#39;/_mobile/account/overview&#39;
     POSITIONS_PATH = &#39;/_mobile/account/positions&#39;
     PRICE_ALERT_PATH = &#39;/_cqbe/marketing/service/alert/{}&#39;
-    STOP_LOSS_PATH = &#39;/_cqbe/trading/stoploss&#39;
+    STOP_LOSS_PATH = &#39;/_api/trading-critical/rest/stoploss&#39;
     TOTP_PATH = &#39;/_api/authentication/sessions/totp&#39;
     TRANSACTIONS_PATH = &#39;/_mobile/account/transactions/{}&#39;
     TRANSACTIONS_DETAILS_PATH = &#39;/_api/transactions&#39;
@@ -573,6 +810,10 @@ class Route(enum.Enum):
 <div class="desc"></div>
 </dd>
 <dt id="avanza.constants.Route.INSPIRATION_LIST_PATH"><code class="name">var <span class="ident">INSPIRATION_LIST_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.INSTRUMENT_DETAILS_PATH"><code class="name">var <span class="ident">INSTRUMENT_DETAILS_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -680,10 +921,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.TimePeriod"><code class="flex name class">
 <span>class <span class="ident">TimePeriod</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -691,12 +966,9 @@ class Route(enum.Enum):
 <pre><code class="python">class TimePeriod(enum.Enum):
     TODAY = &#39;TODAY&#39;
     ONE_WEEK = &#39;ONE_WEEK&#39;
-    ONE_MONTH = &#39;ONE_MONTH&#39;
-    THREE_MONTHS = &#39;THREE_MONTHS&#39;
     THIS_YEAR = &#39;THIS_YEAR&#39;
-    ONE_YEAR = &#39;ONE_YEAR&#39;
-    THREE_YEARS = &#39;THREE_YEARS&#39;
-    FIVE_YEARS = &#39;FIVE_YEARS&#39;</code></pre>
+    THREE_YEARS_ROLLING = &#39;THREE_YEARS_ROLLING&#39;
+    FIVE_YEARS_ROLLING = &#39;FIVE_YEARS_ROLLING&#39;</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -704,11 +976,7 @@ class Route(enum.Enum):
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="avanza.constants.TimePeriod.FIVE_YEARS"><code class="name">var <span class="ident">FIVE_YEARS</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="avanza.constants.TimePeriod.ONE_MONTH"><code class="name">var <span class="ident">ONE_MONTH</span></code></dt>
+<dt id="avanza.constants.TimePeriod.FIVE_YEARS_ROLLING"><code class="name">var <span class="ident">FIVE_YEARS_ROLLING</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -716,19 +984,11 @@ class Route(enum.Enum):
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="avanza.constants.TimePeriod.ONE_YEAR"><code class="name">var <span class="ident">ONE_YEAR</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
 <dt id="avanza.constants.TimePeriod.THIS_YEAR"><code class="name">var <span class="ident">THIS_YEAR</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="avanza.constants.TimePeriod.THREE_MONTHS"><code class="name">var <span class="ident">THREE_MONTHS</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="avanza.constants.TimePeriod.THREE_YEARS"><code class="name">var <span class="ident">THREE_YEARS</span></code></dt>
+<dt id="avanza.constants.TimePeriod.THREE_YEARS_ROLLING"><code class="name">var <span class="ident">THREE_YEARS_ROLLING</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -740,10 +1000,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.TransactionType"><code class="flex name class">
 <span>class <span class="ident">TransactionType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -795,10 +1089,44 @@ class Route(enum.Enum):
 </dd>
 <dt id="avanza.constants.TransactionsDetailsType"><code class="flex name class">
 <span>class <span class="ident">TransactionsDetailsType</span></span>
-<span>(</span><span>value, names=None, *, module=None, qualname=None, type=None, start=1)</span>
+<span>(</span><span>*args, **kwds)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>An enumeration.</p></div>
+<div class="desc"><p>Create a collection of name/value pairs.</p>
+<p>Example enumeration:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; class Color(Enum):
+...     RED = 1
+...     BLUE = 2
+...     GREEN = 3
+</code></pre>
+<p>Access them by:</p>
+<ul>
+<li>attribute access::</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color.RED
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>value lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color(1)
+&lt;Color.RED: 1&gt;
+</code></pre>
+<ul>
+<li>name lookup:</li>
+</ul>
+<pre><code class="language-python-repl">&gt;&gt;&gt; Color['RED']
+&lt;Color.RED: 1&gt;
+</code></pre>
+<p>Enumerations can be iterated over, and know how many members they have:</p>
+<pre><code class="language-python-repl">&gt;&gt;&gt; len(Color)
+3
+</code></pre>
+<pre><code class="language-python-repl">&gt;&gt;&gt; list(Color)
+[&lt;Color.RED: 1&gt;, &lt;Color.BLUE: 2&gt;, &lt;Color.GREEN: 3&gt;]
+</code></pre>
+<p>Methods can be added to enumerations, and members can have their own
+attributes &ndash; see the documentation for details.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -942,6 +1270,7 @@ class Route(enum.Enum):
 <li><code><a title="avanza.constants.Route.DEALS_AND_ORDERS_PATH" href="#avanza.constants.Route.DEALS_AND_ORDERS_PATH">DEALS_AND_ORDERS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSIGHTS_PATH" href="#avanza.constants.Route.INSIGHTS_PATH">INSIGHTS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSPIRATION_LIST_PATH" href="#avanza.constants.Route.INSPIRATION_LIST_PATH">INSPIRATION_LIST_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.INSTRUMENT_DETAILS_PATH" href="#avanza.constants.Route.INSTRUMENT_DETAILS_PATH">INSTRUMENT_DETAILS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSTRUMENT_PATH" href="#avanza.constants.Route.INSTRUMENT_PATH">INSTRUMENT_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSTRUMENT_SEARCH_PATH" href="#avanza.constants.Route.INSTRUMENT_SEARCH_PATH">INSTRUMENT_SEARCH_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.MONTHLY_SAVINGS_CREATE_PATH" href="#avanza.constants.Route.MONTHLY_SAVINGS_CREATE_PATH">MONTHLY_SAVINGS_CREATE_PATH</a></code></li>
@@ -971,14 +1300,11 @@ class Route(enum.Enum):
 </li>
 <li>
 <h4><code><a title="avanza.constants.TimePeriod" href="#avanza.constants.TimePeriod">TimePeriod</a></code></h4>
-<ul class="two-column">
-<li><code><a title="avanza.constants.TimePeriod.FIVE_YEARS" href="#avanza.constants.TimePeriod.FIVE_YEARS">FIVE_YEARS</a></code></li>
-<li><code><a title="avanza.constants.TimePeriod.ONE_MONTH" href="#avanza.constants.TimePeriod.ONE_MONTH">ONE_MONTH</a></code></li>
+<ul class="">
+<li><code><a title="avanza.constants.TimePeriod.FIVE_YEARS_ROLLING" href="#avanza.constants.TimePeriod.FIVE_YEARS_ROLLING">FIVE_YEARS_ROLLING</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.ONE_WEEK" href="#avanza.constants.TimePeriod.ONE_WEEK">ONE_WEEK</a></code></li>
-<li><code><a title="avanza.constants.TimePeriod.ONE_YEAR" href="#avanza.constants.TimePeriod.ONE_YEAR">ONE_YEAR</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.THIS_YEAR" href="#avanza.constants.TimePeriod.THIS_YEAR">THIS_YEAR</a></code></li>
-<li><code><a title="avanza.constants.TimePeriod.THREE_MONTHS" href="#avanza.constants.TimePeriod.THREE_MONTHS">THREE_MONTHS</a></code></li>
-<li><code><a title="avanza.constants.TimePeriod.THREE_YEARS" href="#avanza.constants.TimePeriod.THREE_YEARS">THREE_YEARS</a></code></li>
+<li><code><a title="avanza.constants.TimePeriod.THREE_YEARS_ROLLING" href="#avanza.constants.TimePeriod.THREE_YEARS_ROLLING">THREE_YEARS_ROLLING</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.TODAY" href="#avanza.constants.TimePeriod.TODAY">TODAY</a></code></li>
 </ul>
 </li>

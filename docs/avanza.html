@@ -98,7 +98,8 @@ class Avanza:
 
         # No second factor required, continue with normal login
         if response_body.get(&#39;twoFactorLogin&#39;) is None:
-            return response_body, credentials
+            self._security_token = response.headers.get(&#39;X-SecurityToken&#39;)
+            return response_body[&#39;successfulLogin&#39;], credentials
 
         tfa_method = response_body[&#39;twoFactorLogin&#39;].get(&#39;method&#39;)
 
@@ -740,53 +741,102 @@ class Avanza:
         &#34;&#34;&#34; Returns info about a certificate
 
         Returns:
-            {
-                &#39;administrationFee&#39;: float,
-                &#39;assetRootCategory&#39;: str,
-                &#39;assetSubCategory&#39;: str,
-                &#39;assetSubSubCategory&#39;: str,
-                &#39;change&#39;: float,
-                &#39;changePercent&#39;: float,
-                &#39;currency&#39;: str,
-                &#39;direction&#39;: str,
-                &#39;flagCode&#39;: str,
-                &#39;hasInvestmentFees&#39;: bool,
-                &#39;highestPrice&#39;: float,
-                &#39;id&#39;: str,
-                &#39;isin&#39;: str,
-                &#39;issuerName&#39;: str,
-                &#39;lastPrice&#39;: float,
-                &#39;lastPriceUpdated&#39;: str,
-                &#39;leverage&#39;: float,
-                &#39;lowestPrice&#39;: float,
-                &#39;marketPlace&#39;: str,
-                &#39;name&#39;: str,
-                &#39;numberOfPriceAlerts&#39;: int,
-                &#39;positions&#39;: List,
-                &#39;positionsTotalValue&#39;: float,
-                &#39;priceAtStartOfYear&#39;: float,
-                &#39;priceOneMonthAgo&#39;: float,
-                &#39;priceOneWeekAgo&#39;: float,
-                &#39;priceOneYearAgo&#39;: float,
-                &#39;priceSixMonthsAgo&#39;: float,
-                &#39;priceThreeMonthsAgo&#39;: float,
-                &#39;priipDocumentUrl&#39;: str,
-                &#39;prospectus&#39;: str,
-                &#39;pushPermitted&#39;: bool,
-                &#39;quoteUpdated&#39;: str,
-                &#39;shortName&#39;: str,
-                &#39;tickerSymbol&#39;: str,
-                &#39;totalValueTraded&#39;: float,
-                &#39;totalVolumeTraded&#39;: int,
-                &#39;tradable&#39;: bool,
-                &#39;underlyingCurrency&#39;: str
-            }
+        {
+           &#34;historicalClosingPrices&#34;:{
+              &#34;oneDay&#34;:&#34;float&#34;,
+              &#34;oneMonth&#34;:&#34;float&#34;,
+              &#34;oneWeek&#34;:&#34;float&#34;,
+              &#34;start&#34;:&#34;float&#34;,
+              &#34;startDate&#34;:&#34;str&#34;,
+              &#34;threeMonths&#34;:&#34;float&#34;
+           },
+           &#34;isin&#34;:&#34;str&#34;,
+           &#34;keyIndicators&#34;:{
+              &#34;isAza&#34;:&#34;bool&#34;,
+              &#34;leverage&#34;:&#34;float&#34;,
+              &#34;numberOfOwners&#34;:&#34;int&#34;,
+              &#34;productLink&#34;:&#34;str&#34;
+           },
+           &#34;listing&#34;:{
+              &#34;countryCode&#34;:&#34;str&#34;,
+              &#34;currency&#34;:&#34;str&#34;,
+              &#34;marketPlaceCode&#34;:&#34;str&#34;,
+              &#34;marketPlaceName&#34;:&#34;str&#34;,
+              &#34;marketTradesAvailable&#34;:&#34;bool&#34;,
+              &#34;shortName&#34;:&#34;str&#34;,
+              &#34;tickSizeListId&#34;:&#34;str&#34;,
+              &#34;tickerSymbol&#34;:&#34;str&#34;
+           },
+           &#34;name&#34;:&#34;str&#34;,
+           &#34;orderbookId&#34;:&#34;str&#34;,
+           &#34;quote&#34;:{
+              &#34;change&#34;:&#34;float&#34;,
+              &#34;changePercent&#34;:&#34;float&#34;,
+              &#34;last&#34;:&#34;float&#34;,
+              &#34;timeOfLast&#34;:&#34;int&#34;,
+              &#34;totalValueTraded&#34;:&#34;float&#34;,
+              &#34;totalVolumeTraded&#34;:&#34;int&#34;
+           },
+           &#34;tradable&#34;:&#34;str&#34;,
+           &#34;type&#34;:&#34;str&#34;
+        }
         &#34;&#34;&#34;
 
         return self.get_instrument(
             InstrumentType.CERTIFICATE,
             certificate_id
         )
+
+    def get_certificate_details(
+        self,
+        certificate_id: str
+    ):
+        &#34;&#34;&#34; Returns additional info about a certificate
+
+        Returns:
+        {
+           &#34;assetCategory&#34;:&#34;str&#34;,
+           &#34;brokerTradeSummaries&#34;:&#34;List&#34;,
+           &#34;category&#34;:&#34;str&#34;,
+           &#34;collateralValue&#34;:&#34;float&#34;,
+           &#34;direction&#34;:&#34;str&#34;,
+           &#34;documents&#34;:{
+              &#34;kid&#34;:&#34;str&#34;,
+              &#34;prospectus&#34;:&#34;str&#34;
+           },
+           &#34;fee&#34;:{
+              &#34;totalMonetaryFee&#34;:&#34;float&#34;,
+              &#34;totalPercentageFee&#34;:&#34;float&#34;
+           },
+           &#34;holdings&#34;:{
+              &#34;accountAndPositionsView&#34;:&#34;List&#34;,
+              &#34;acquiredPrice&#34;:&#34;float&#34;,
+              &#34;acquiredValue&#34;:&#34;float&#34;,
+              &#34;totalDevelopmentAmount&#34;:&#34;float&#34;,
+              &#34;totalDevelopmentPercent&#34;:&#34;float&#34;,
+              &#34;totalMarketValue&#34;:&#34;float&#34;,
+              &#34;totalVolume&#34;:&#34;int&#34;
+           },
+           &#34;issuer&#34;:&#34;str&#34;,
+           &#34;leverage&#34;:&#34;float&#34;,
+           &#34;orderDepthLevels&#34;:&#34;List&#34;,
+           &#34;ordersAndDeals&#34;:{
+              &#34;accounts&#34;:&#34;List&#34;,
+              &#34;deals&#34;:&#34;List&#34;,
+              &#34;hasStoplossOrders&#34;:&#34;bool&#34;,
+              &#34;orders&#34;:&#34;List&#34;
+           },
+           &#34;subCategory&#34;:&#34;str&#34;,
+           &#34;trades&#34;:&#34;List&#34;
+        }
+        &#34;&#34;&#34;
+
+        return self.get_instrument_details(
+            InstrumentType.CERTIFICATE,
+            certificate_id
+        )
+
+
 
     def get_warrant_info(
         self,
@@ -921,6 +971,32 @@ class Avanza:
                 instrument_id
             )
         )
+
+    def get_instrument_details(
+        self,
+        instrument_type: InstrumentType,
+        instrument_id: str
+    ):
+        &#34;&#34;&#34;
+            Get additional instrument info
+            For more info on return models for this function see functions
+            [
+                get_stock_info(),
+                get_fund_info(),
+                get_certificate_info(),
+                get_index_info(),
+                get_warrant_info()
+            ]
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSTRUMENT_DETAILS_PATH.value.format(
+                instrument_type.value,
+                instrument_id
+            )
+        )
+
 
     def search_for_stock(
         self,
@@ -2486,7 +2562,8 @@ Using TOTP code:
 
         # No second factor required, continue with normal login
         if response_body.get(&#39;twoFactorLogin&#39;) is None:
-            return response_body, credentials
+            self._security_token = response.headers.get(&#39;X-SecurityToken&#39;)
+            return response_body[&#39;successfulLogin&#39;], credentials
 
         tfa_method = response_body[&#39;twoFactorLogin&#39;].get(&#39;method&#39;)
 
@@ -3128,53 +3205,102 @@ Using TOTP code:
         &#34;&#34;&#34; Returns info about a certificate
 
         Returns:
-            {
-                &#39;administrationFee&#39;: float,
-                &#39;assetRootCategory&#39;: str,
-                &#39;assetSubCategory&#39;: str,
-                &#39;assetSubSubCategory&#39;: str,
-                &#39;change&#39;: float,
-                &#39;changePercent&#39;: float,
-                &#39;currency&#39;: str,
-                &#39;direction&#39;: str,
-                &#39;flagCode&#39;: str,
-                &#39;hasInvestmentFees&#39;: bool,
-                &#39;highestPrice&#39;: float,
-                &#39;id&#39;: str,
-                &#39;isin&#39;: str,
-                &#39;issuerName&#39;: str,
-                &#39;lastPrice&#39;: float,
-                &#39;lastPriceUpdated&#39;: str,
-                &#39;leverage&#39;: float,
-                &#39;lowestPrice&#39;: float,
-                &#39;marketPlace&#39;: str,
-                &#39;name&#39;: str,
-                &#39;numberOfPriceAlerts&#39;: int,
-                &#39;positions&#39;: List,
-                &#39;positionsTotalValue&#39;: float,
-                &#39;priceAtStartOfYear&#39;: float,
-                &#39;priceOneMonthAgo&#39;: float,
-                &#39;priceOneWeekAgo&#39;: float,
-                &#39;priceOneYearAgo&#39;: float,
-                &#39;priceSixMonthsAgo&#39;: float,
-                &#39;priceThreeMonthsAgo&#39;: float,
-                &#39;priipDocumentUrl&#39;: str,
-                &#39;prospectus&#39;: str,
-                &#39;pushPermitted&#39;: bool,
-                &#39;quoteUpdated&#39;: str,
-                &#39;shortName&#39;: str,
-                &#39;tickerSymbol&#39;: str,
-                &#39;totalValueTraded&#39;: float,
-                &#39;totalVolumeTraded&#39;: int,
-                &#39;tradable&#39;: bool,
-                &#39;underlyingCurrency&#39;: str
-            }
+        {
+           &#34;historicalClosingPrices&#34;:{
+              &#34;oneDay&#34;:&#34;float&#34;,
+              &#34;oneMonth&#34;:&#34;float&#34;,
+              &#34;oneWeek&#34;:&#34;float&#34;,
+              &#34;start&#34;:&#34;float&#34;,
+              &#34;startDate&#34;:&#34;str&#34;,
+              &#34;threeMonths&#34;:&#34;float&#34;
+           },
+           &#34;isin&#34;:&#34;str&#34;,
+           &#34;keyIndicators&#34;:{
+              &#34;isAza&#34;:&#34;bool&#34;,
+              &#34;leverage&#34;:&#34;float&#34;,
+              &#34;numberOfOwners&#34;:&#34;int&#34;,
+              &#34;productLink&#34;:&#34;str&#34;
+           },
+           &#34;listing&#34;:{
+              &#34;countryCode&#34;:&#34;str&#34;,
+              &#34;currency&#34;:&#34;str&#34;,
+              &#34;marketPlaceCode&#34;:&#34;str&#34;,
+              &#34;marketPlaceName&#34;:&#34;str&#34;,
+              &#34;marketTradesAvailable&#34;:&#34;bool&#34;,
+              &#34;shortName&#34;:&#34;str&#34;,
+              &#34;tickSizeListId&#34;:&#34;str&#34;,
+              &#34;tickerSymbol&#34;:&#34;str&#34;
+           },
+           &#34;name&#34;:&#34;str&#34;,
+           &#34;orderbookId&#34;:&#34;str&#34;,
+           &#34;quote&#34;:{
+              &#34;change&#34;:&#34;float&#34;,
+              &#34;changePercent&#34;:&#34;float&#34;,
+              &#34;last&#34;:&#34;float&#34;,
+              &#34;timeOfLast&#34;:&#34;int&#34;,
+              &#34;totalValueTraded&#34;:&#34;float&#34;,
+              &#34;totalVolumeTraded&#34;:&#34;int&#34;
+           },
+           &#34;tradable&#34;:&#34;str&#34;,
+           &#34;type&#34;:&#34;str&#34;
+        }
         &#34;&#34;&#34;
 
         return self.get_instrument(
             InstrumentType.CERTIFICATE,
             certificate_id
         )
+
+    def get_certificate_details(
+        self,
+        certificate_id: str
+    ):
+        &#34;&#34;&#34; Returns additional info about a certificate
+
+        Returns:
+        {
+           &#34;assetCategory&#34;:&#34;str&#34;,
+           &#34;brokerTradeSummaries&#34;:&#34;List&#34;,
+           &#34;category&#34;:&#34;str&#34;,
+           &#34;collateralValue&#34;:&#34;float&#34;,
+           &#34;direction&#34;:&#34;str&#34;,
+           &#34;documents&#34;:{
+              &#34;kid&#34;:&#34;str&#34;,
+              &#34;prospectus&#34;:&#34;str&#34;
+           },
+           &#34;fee&#34;:{
+              &#34;totalMonetaryFee&#34;:&#34;float&#34;,
+              &#34;totalPercentageFee&#34;:&#34;float&#34;
+           },
+           &#34;holdings&#34;:{
+              &#34;accountAndPositionsView&#34;:&#34;List&#34;,
+              &#34;acquiredPrice&#34;:&#34;float&#34;,
+              &#34;acquiredValue&#34;:&#34;float&#34;,
+              &#34;totalDevelopmentAmount&#34;:&#34;float&#34;,
+              &#34;totalDevelopmentPercent&#34;:&#34;float&#34;,
+              &#34;totalMarketValue&#34;:&#34;float&#34;,
+              &#34;totalVolume&#34;:&#34;int&#34;
+           },
+           &#34;issuer&#34;:&#34;str&#34;,
+           &#34;leverage&#34;:&#34;float&#34;,
+           &#34;orderDepthLevels&#34;:&#34;List&#34;,
+           &#34;ordersAndDeals&#34;:{
+              &#34;accounts&#34;:&#34;List&#34;,
+              &#34;deals&#34;:&#34;List&#34;,
+              &#34;hasStoplossOrders&#34;:&#34;bool&#34;,
+              &#34;orders&#34;:&#34;List&#34;
+           },
+           &#34;subCategory&#34;:&#34;str&#34;,
+           &#34;trades&#34;:&#34;List&#34;
+        }
+        &#34;&#34;&#34;
+
+        return self.get_instrument_details(
+            InstrumentType.CERTIFICATE,
+            certificate_id
+        )
+
+
 
     def get_warrant_info(
         self,
@@ -3309,6 +3435,32 @@ Using TOTP code:
                 instrument_id
             )
         )
+
+    def get_instrument_details(
+        self,
+        instrument_type: InstrumentType,
+        instrument_id: str
+    ):
+        &#34;&#34;&#34;
+            Get additional instrument info
+            For more info on return models for this function see functions
+            [
+                get_stock_info(),
+                get_fund_info(),
+                get_certificate_info(),
+                get_index_info(),
+                get_warrant_info()
+            ]
+        &#34;&#34;&#34;
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSTRUMENT_DETAILS_PATH.value.format(
+                instrument_type.value,
+                instrument_id
+            )
+        )
+
 
     def search_for_stock(
         self,
@@ -5808,52 +5960,145 @@ status: str</dd>
     )</code></pre>
 </details>
 </dd>
+<dt id="avanza.avanza.Avanza.get_certificate_details"><code class="name flex">
+<span>def <span class="ident">get_certificate_details</span></span>(<span>self, certificate_id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns additional info about a certificate</p>
+<p>Returns:
+{
+"assetCategory":"str",
+"brokerTradeSummaries":"List",
+"category":"str",
+"collateralValue":"float",
+"direction":"str",
+"documents":{
+"kid":"str",
+"prospectus":"str"
+},
+"fee":{
+"totalMonetaryFee":"float",
+"totalPercentageFee":"float"
+},
+"holdings":{
+"accountAndPositionsView":"List",
+"acquiredPrice":"float",
+"acquiredValue":"float",
+"totalDevelopmentAmount":"float",
+"totalDevelopmentPercent":"float",
+"totalMarketValue":"float",
+"totalVolume":"int"
+},
+"issuer":"str",
+"leverage":"float",
+"orderDepthLevels":"List",
+"ordersAndDeals":{
+"accounts":"List",
+"deals":"List",
+"hasStoplossOrders":"bool",
+"orders":"List"
+},
+"subCategory":"str",
+"trades":"List"
+}</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_certificate_details(
+    self,
+    certificate_id: str
+):
+    &#34;&#34;&#34; Returns additional info about a certificate
+
+    Returns:
+    {
+       &#34;assetCategory&#34;:&#34;str&#34;,
+       &#34;brokerTradeSummaries&#34;:&#34;List&#34;,
+       &#34;category&#34;:&#34;str&#34;,
+       &#34;collateralValue&#34;:&#34;float&#34;,
+       &#34;direction&#34;:&#34;str&#34;,
+       &#34;documents&#34;:{
+          &#34;kid&#34;:&#34;str&#34;,
+          &#34;prospectus&#34;:&#34;str&#34;
+       },
+       &#34;fee&#34;:{
+          &#34;totalMonetaryFee&#34;:&#34;float&#34;,
+          &#34;totalPercentageFee&#34;:&#34;float&#34;
+       },
+       &#34;holdings&#34;:{
+          &#34;accountAndPositionsView&#34;:&#34;List&#34;,
+          &#34;acquiredPrice&#34;:&#34;float&#34;,
+          &#34;acquiredValue&#34;:&#34;float&#34;,
+          &#34;totalDevelopmentAmount&#34;:&#34;float&#34;,
+          &#34;totalDevelopmentPercent&#34;:&#34;float&#34;,
+          &#34;totalMarketValue&#34;:&#34;float&#34;,
+          &#34;totalVolume&#34;:&#34;int&#34;
+       },
+       &#34;issuer&#34;:&#34;str&#34;,
+       &#34;leverage&#34;:&#34;float&#34;,
+       &#34;orderDepthLevels&#34;:&#34;List&#34;,
+       &#34;ordersAndDeals&#34;:{
+          &#34;accounts&#34;:&#34;List&#34;,
+          &#34;deals&#34;:&#34;List&#34;,
+          &#34;hasStoplossOrders&#34;:&#34;bool&#34;,
+          &#34;orders&#34;:&#34;List&#34;
+       },
+       &#34;subCategory&#34;:&#34;str&#34;,
+       &#34;trades&#34;:&#34;List&#34;
+    }
+    &#34;&#34;&#34;
+
+    return self.get_instrument_details(
+        InstrumentType.CERTIFICATE,
+        certificate_id
+    )</code></pre>
+</details>
+</dd>
 <dt id="avanza.avanza.Avanza.get_certificate_info"><code class="name flex">
 <span>def <span class="ident">get_certificate_info</span></span>(<span>self, certificate_id: str)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns info about a certificate</p>
-<h2 id="returns">Returns</h2>
-<p>{
-'administrationFee': float,
-'assetRootCategory': str,
-'assetSubCategory': str,
-'assetSubSubCategory': str,
-'change': float,
-'changePercent': float,
-'currency': str,
-'direction': str,
-'flagCode': str,
-'hasInvestmentFees': bool,
-'highestPrice': float,
-'id': str,
-'isin': str,
-'issuerName': str,
-'lastPrice': float,
-'lastPriceUpdated': str,
-'leverage': float,
-'lowestPrice': float,
-'marketPlace': str,
-'name': str,
-'numberOfPriceAlerts': int,
-'positions': List,
-'positionsTotalValue': float,
-'priceAtStartOfYear': float,
-'priceOneMonthAgo': float,
-'priceOneWeekAgo': float,
-'priceOneYearAgo': float,
-'priceSixMonthsAgo': float,
-'priceThreeMonthsAgo': float,
-'priipDocumentUrl': str,
-'prospectus': str,
-'pushPermitted': bool,
-'quoteUpdated': str,
-'shortName': str,
-'tickerSymbol': str,
-'totalValueTraded': float,
-'totalVolumeTraded': int,
-'tradable': bool,
-'underlyingCurrency': str
+<p>Returns:
+{
+"historicalClosingPrices":{
+"oneDay":"float",
+"oneMonth":"float",
+"oneWeek":"float",
+"start":"float",
+"startDate":"str",
+"threeMonths":"float"
+},
+"isin":"str",
+"keyIndicators":{
+"isAza":"bool",
+"leverage":"float",
+"numberOfOwners":"int",
+"productLink":"str"
+},
+"listing":{
+"countryCode":"str",
+"currency":"str",
+"marketPlaceCode":"str",
+"marketPlaceName":"str",
+"marketTradesAvailable":"bool",
+"shortName":"str",
+"tickSizeListId":"str",
+"tickerSymbol":"str"
+},
+"name":"str",
+"orderbookId":"str",
+"quote":{
+"change":"float",
+"changePercent":"float",
+"last":"float",
+"timeOfLast":"int",
+"totalValueTraded":"float",
+"totalVolumeTraded":"int"
+},
+"tradable":"str",
+"type":"str"
 }</p></div>
 <details class="source">
 <summary>
@@ -5866,47 +6111,45 @@ status: str</dd>
     &#34;&#34;&#34; Returns info about a certificate
 
     Returns:
-        {
-            &#39;administrationFee&#39;: float,
-            &#39;assetRootCategory&#39;: str,
-            &#39;assetSubCategory&#39;: str,
-            &#39;assetSubSubCategory&#39;: str,
-            &#39;change&#39;: float,
-            &#39;changePercent&#39;: float,
-            &#39;currency&#39;: str,
-            &#39;direction&#39;: str,
-            &#39;flagCode&#39;: str,
-            &#39;hasInvestmentFees&#39;: bool,
-            &#39;highestPrice&#39;: float,
-            &#39;id&#39;: str,
-            &#39;isin&#39;: str,
-            &#39;issuerName&#39;: str,
-            &#39;lastPrice&#39;: float,
-            &#39;lastPriceUpdated&#39;: str,
-            &#39;leverage&#39;: float,
-            &#39;lowestPrice&#39;: float,
-            &#39;marketPlace&#39;: str,
-            &#39;name&#39;: str,
-            &#39;numberOfPriceAlerts&#39;: int,
-            &#39;positions&#39;: List,
-            &#39;positionsTotalValue&#39;: float,
-            &#39;priceAtStartOfYear&#39;: float,
-            &#39;priceOneMonthAgo&#39;: float,
-            &#39;priceOneWeekAgo&#39;: float,
-            &#39;priceOneYearAgo&#39;: float,
-            &#39;priceSixMonthsAgo&#39;: float,
-            &#39;priceThreeMonthsAgo&#39;: float,
-            &#39;priipDocumentUrl&#39;: str,
-            &#39;prospectus&#39;: str,
-            &#39;pushPermitted&#39;: bool,
-            &#39;quoteUpdated&#39;: str,
-            &#39;shortName&#39;: str,
-            &#39;tickerSymbol&#39;: str,
-            &#39;totalValueTraded&#39;: float,
-            &#39;totalVolumeTraded&#39;: int,
-            &#39;tradable&#39;: bool,
-            &#39;underlyingCurrency&#39;: str
-        }
+    {
+       &#34;historicalClosingPrices&#34;:{
+          &#34;oneDay&#34;:&#34;float&#34;,
+          &#34;oneMonth&#34;:&#34;float&#34;,
+          &#34;oneWeek&#34;:&#34;float&#34;,
+          &#34;start&#34;:&#34;float&#34;,
+          &#34;startDate&#34;:&#34;str&#34;,
+          &#34;threeMonths&#34;:&#34;float&#34;
+       },
+       &#34;isin&#34;:&#34;str&#34;,
+       &#34;keyIndicators&#34;:{
+          &#34;isAza&#34;:&#34;bool&#34;,
+          &#34;leverage&#34;:&#34;float&#34;,
+          &#34;numberOfOwners&#34;:&#34;int&#34;,
+          &#34;productLink&#34;:&#34;str&#34;
+       },
+       &#34;listing&#34;:{
+          &#34;countryCode&#34;:&#34;str&#34;,
+          &#34;currency&#34;:&#34;str&#34;,
+          &#34;marketPlaceCode&#34;:&#34;str&#34;,
+          &#34;marketPlaceName&#34;:&#34;str&#34;,
+          &#34;marketTradesAvailable&#34;:&#34;bool&#34;,
+          &#34;shortName&#34;:&#34;str&#34;,
+          &#34;tickSizeListId&#34;:&#34;str&#34;,
+          &#34;tickerSymbol&#34;:&#34;str&#34;
+       },
+       &#34;name&#34;:&#34;str&#34;,
+       &#34;orderbookId&#34;:&#34;str&#34;,
+       &#34;quote&#34;:{
+          &#34;change&#34;:&#34;float&#34;,
+          &#34;changePercent&#34;:&#34;float&#34;,
+          &#34;last&#34;:&#34;float&#34;,
+          &#34;timeOfLast&#34;:&#34;int&#34;,
+          &#34;totalValueTraded&#34;:&#34;float&#34;,
+          &#34;totalVolumeTraded&#34;:&#34;int&#34;
+       },
+       &#34;tradable&#34;:&#34;str&#34;,
+       &#34;type&#34;:&#34;str&#34;
+    }
     &#34;&#34;&#34;
 
     return self.get_instrument(
@@ -6783,6 +7026,49 @@ get_warrant_info()
     return self.__call(
         HttpMethod.GET,
         Route.INSTRUMENT_PATH.value.format(
+            instrument_type.value,
+            instrument_id
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="avanza.avanza.Avanza.get_instrument_details"><code class="name flex">
+<span>def <span class="ident">get_instrument_details</span></span>(<span>self, instrument_type: <a title="avanza.constants.InstrumentType" href="constants.html#avanza.constants.InstrumentType">InstrumentType</a>, instrument_id: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get additional instrument info
+For more info on return models for this function see functions
+[
+get_stock_info(),
+get_fund_info(),
+get_certificate_info(),
+get_index_info(),
+get_warrant_info()
+]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_instrument_details(
+    self,
+    instrument_type: InstrumentType,
+    instrument_id: str
+):
+    &#34;&#34;&#34;
+        Get additional instrument info
+        For more info on return models for this function see functions
+        [
+            get_stock_info(),
+            get_fund_info(),
+            get_certificate_info(),
+            get_index_info(),
+            get_warrant_info()
+        ]
+    &#34;&#34;&#34;
+
+    return self.__call(
+        HttpMethod.GET,
+        Route.INSTRUMENT_DETAILS_PATH.value.format(
             instrument_type.value,
             instrument_id
         )
@@ -9033,6 +9319,7 @@ tickerSymbol ('AAPL')</dd>
 <li><code><a title="avanza.avanza.Avanza.get_accounts_positions" href="#avanza.avanza.Avanza.get_accounts_positions">get_accounts_positions</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_all_monthly_savings" href="#avanza.avanza.Avanza.get_all_monthly_savings">get_all_monthly_savings</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_all_stop_losses" href="#avanza.avanza.Avanza.get_all_stop_losses">get_all_stop_losses</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_certificate_details" href="#avanza.avanza.Avanza.get_certificate_details">get_certificate_details</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_certificate_info" href="#avanza.avanza.Avanza.get_certificate_info">get_certificate_info</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_chart_data" href="#avanza.avanza.Avanza.get_chart_data">get_chart_data</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_deals_and_orders" href="#avanza.avanza.Avanza.get_deals_and_orders">get_deals_and_orders</a></code></li>
@@ -9042,6 +9329,7 @@ tickerSymbol ('AAPL')</dd>
 <li><code><a title="avanza.avanza.Avanza.get_inspiration_list" href="#avanza.avanza.Avanza.get_inspiration_list">get_inspiration_list</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_inspiration_lists" href="#avanza.avanza.Avanza.get_inspiration_lists">get_inspiration_lists</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_instrument" href="#avanza.avanza.Avanza.get_instrument">get_instrument</a></code></li>
+<li><code><a title="avanza.avanza.Avanza.get_instrument_details" href="#avanza.avanza.Avanza.get_instrument_details">get_instrument_details</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_monthly_savings_by_account_id" href="#avanza.avanza.Avanza.get_monthly_savings_by_account_id">get_monthly_savings_by_account_id</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_note_as_pdf" href="#avanza.avanza.Avanza.get_note_as_pdf">get_note_as_pdf</a></code></li>
 <li><code><a title="avanza.avanza.Avanza.get_offers" href="#avanza.avanza.Avanza.get_offers">get_offers</a></code></li>
