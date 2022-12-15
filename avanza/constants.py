@@ -91,7 +91,7 @@ class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
     ACCOUNTS_POSITIONS_PATH = '/_api/position-data/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
-    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}'
+    CHARTDATA_PATH = '/_api/price-chart/stock/{}'
     CURRENT_OFFERS_PATH = '/_api/customer-offer/currentoffers/'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
     INSIGHTS_PATH = '/_api/insights-development/?timePeriod={}&accountIds={}'
