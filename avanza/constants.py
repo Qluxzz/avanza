@@ -34,7 +34,12 @@ class ChannelType(enum.Enum):
 class TimePeriod(enum.Enum):
     TODAY = 'TODAY'
     ONE_WEEK = 'ONE_WEEK'
+    ONE_MONTH = 'ONE_MONTH'
+    THREE_MONTHS = 'THREE_MONTHS'
     THIS_YEAR = 'THIS_YEAR'
+    ONE_YEAR = 'ONE_YEAR'
+    THREE_YEARS = 'THREE_YEARS'
+    FIVE_YEARS = 'FIVE_YEARS'
     THREE_YEARS_ROLLING = 'THREE_YEARS_ROLLING'
     FIVE_YEARS_ROLLING = 'FIVE_YEARS_ROLLING'
 
@@ -91,7 +96,7 @@ class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
     ACCOUNTS_POSITIONS_PATH = '/_api/position-data/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
-    CHARTDATA_PATH = '/_mobile/chart/orderbook/{}'
+    CHARTDATA_PATH = '/_api/price-chart/stock/{}'
     CURRENT_OFFERS_PATH = '/_api/customer-offer/currentoffers/'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
     INSIGHTS_PATH = '/_api/insights-development/?timePeriod={}&accountIds={}'

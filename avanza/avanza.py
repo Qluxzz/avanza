@@ -1551,15 +1551,14 @@ class Avanza:
 
         Returns:
             {
-                'ceiling': float,
-                'change': float,
-                'changePercent': float,
-                'comparisonName': str,
-                'comparisonSeries': [{'timestamp': str, 'value': float}],
-                'dataSeries': [{'timestamp': str, 'value': float}],
-                'floor': float,
-                'max': float,
-                'min': float
+                'ohlc': [{'timestamp': int, 'open': float, 'close': float, 'low': float, 'high': float, 'totalVolumeTraded': int}]
+                'metadata': 
+                { 'resolution' : {'chartResolution': str,
+                                  'availableResolutions': [str]}
+                }
+                'from' : str,
+                'to' : str,
+                'previousClosingPrice' : float
             }
         """
         options = {
