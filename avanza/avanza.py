@@ -71,7 +71,8 @@ class Avanza:
 
         # No second factor required, continue with normal login
         if response_body.get('twoFactorLogin') is None:
-            return response_body, credentials
+            self._security_token = response.headers.get('X-SecurityToken')
+            return response_body['successfulLogin'], credentials
 
         tfa_method = response_body['twoFactorLogin'].get('method')
 
@@ -716,53 +717,102 @@ class Avanza:
         """ Returns info about a certificate
 
         Returns:
-            {
-                'administrationFee': float,
-                'assetRootCategory': str,
-                'assetSubCategory': str,
-                'assetSubSubCategory': str,
-                'change': float,
-                'changePercent': float,
-                'currency': str,
-                'direction': str,
-                'flagCode': str,
-                'hasInvestmentFees': bool,
-                'highestPrice': float,
-                'id': str,
-                'isin': str,
-                'issuerName': str,
-                'lastPrice': float,
-                'lastPriceUpdated': str,
-                'leverage': float,
-                'lowestPrice': float,
-                'marketPlace': str,
-                'name': str,
-                'numberOfPriceAlerts': int,
-                'positions': List,
-                'positionsTotalValue': float,
-                'priceAtStartOfYear': float,
-                'priceOneMonthAgo': float,
-                'priceOneWeekAgo': float,
-                'priceOneYearAgo': float,
-                'priceSixMonthsAgo': float,
-                'priceThreeMonthsAgo': float,
-                'priipDocumentUrl': str,
-                'prospectus': str,
-                'pushPermitted': bool,
-                'quoteUpdated': str,
-                'shortName': str,
-                'tickerSymbol': str,
-                'totalValueTraded': float,
-                'totalVolumeTraded': int,
-                'tradable': bool,
-                'underlyingCurrency': str
-            }
+        {
+           "historicalClosingPrices":{
+              "oneDay":"float",
+              "oneMonth":"float",
+              "oneWeek":"float",
+              "start":"float",
+              "startDate":"str",
+              "threeMonths":"float"
+           },
+           "isin":"str",
+           "keyIndicators":{
+              "isAza":"bool",
+              "leverage":"float",
+              "numberOfOwners":"int",
+              "productLink":"str"
+           },
+           "listing":{
+              "countryCode":"str",
+              "currency":"str",
+              "marketPlaceCode":"str",
+              "marketPlaceName":"str",
+              "marketTradesAvailable":"bool",
+              "shortName":"str",
+              "tickSizeListId":"str",
+              "tickerSymbol":"str"
+           },
+           "name":"str",
+           "orderbookId":"str",
+           "quote":{
+              "change":"float",
+              "changePercent":"float",
+              "last":"float",
+              "timeOfLast":"int",
+              "totalValueTraded":"float",
+              "totalVolumeTraded":"int"
+           },
+           "tradable":"str",
+           "type":"str"
+        }
         """
 
         return self.get_instrument(
             InstrumentType.CERTIFICATE,
             certificate_id
         )
+
+    def get_certificate_details(
+        self,
+        certificate_id: str
+    ):
+        """ Returns additional info about a certificate
+
+        Returns:
+        {
+           "assetCategory":"str",
+           "brokerTradeSummaries":"List",
+           "category":"str",
+           "collateralValue":"float",
+           "direction":"str",
+           "documents":{
+              "kid":"str",
+              "prospectus":"str"
+           },
+           "fee":{
+              "totalMonetaryFee":"float",
+              "totalPercentageFee":"float"
+           },
+           "holdings":{
+              "accountAndPositionsView":"List",
+              "acquiredPrice":"float",
+              "acquiredValue":"float",
+              "totalDevelopmentAmount":"float",
+              "totalDevelopmentPercent":"float",
+              "totalMarketValue":"float",
+              "totalVolume":"int"
+           },
+           "issuer":"str",
+           "leverage":"float",
+           "orderDepthLevels":"List",
+           "ordersAndDeals":{
+              "accounts":"List",
+              "deals":"List",
+              "hasStoplossOrders":"bool",
+              "orders":"List"
+           },
+           "subCategory":"str",
+           "trades":"List"
+        }
+        """
+
+        return self.get_instrument_details(
+            InstrumentType.CERTIFICATE,
+            certificate_id
+        )
+
+
 
     def get_warrant_info(
         self,
@@ -897,6 +947,32 @@ class Avanza:
                 instrument_id
             )
         )
+
+    def get_instrument_details(
+        self,
+        instrument_type: InstrumentType,
+        instrument_id: str
+    ):
+        """
+            Get additional instrument info
+            For more info on return models for this function see functions
+            [
+                get_stock_info(),
+                get_fund_info(),
+                get_certificate_info(),
+                get_index_info(),
+                get_warrant_info()
+            ]
+        """
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSTRUMENT_DETAILS_PATH.value.format(
+                instrument_type.value,
+                instrument_id
+            )
+        )
+
 
     def search_for_stock(
         self,
@@ -1478,15 +1554,14 @@ class Avanza:
 
         Returns:
             {
-                'ceiling': float,
-                'change': float,
-                'changePercent': float,
-                'comparisonName': str,
-                'comparisonSeries': [{'timestamp': str, 'value': float}],
-                'dataSeries': [{'timestamp': str, 'value': float}],
-                'floor': float,
-                'max': float,
-                'min': float
+                'ohlc': [{'timestamp': int, 'open': float, 'close': float, 'low': float, 'high': float, 'totalVolumeTraded': int}]
+                'metadata': 
+                { 'resolution' : {'chartResolution': str,
+                                  'availableResolutions': [str]}
+                }
+                'from' : str,
+                'to' : str,
+                'previousClosingPrice' : float
             }
         """
         options = {
@@ -2350,4 +2425,24 @@ class Avanza:
         return self.__call(
             HttpMethod.DELETE,
             Route.PRICE_ALERT_PATH.value.format(order_book_id, alert_id)+f"/{alert_id}",
+        )
+
+    def get_offers(self):
+        """ Return current offers
+
+        Returns:
+            [
+                {
+                    "customerOfferId": str,
+                    "title": str,
+                    "lastResponseDate": str,
+                    "type": str,
+                    "hasResponded": bool
+                }
+            ]
+        """
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.CURRENT_OFFERS_PATH.value
         )
