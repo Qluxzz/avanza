@@ -515,69 +515,122 @@ class Avanza:
         """ Get info about a fund
 
         Returns:
-            {
-                'NAV': float,
-                'NAVLastUpdated': str,
-                'administrators': str,
-                'autoPortfolio': bool,
-                'buyFee': float,
-                'buyable': bool,
-                'capital': float,
-                'changeSinceOneDay': float,
-                'changeSinceOneMonth': float,
-                'changeSinceOneWeek': float,
-                'changeSinceOneYear': float,
-                'changeSinceSixMonths': float,
-                'changeSinceThreeMonths': float,
-                'changeSinceTurnOfTheYear': float,
-                'description': str,
-                'domicile': str,
-                'fundCompany': {
-                    'homePage': str,
-                    'name': str
-                },
-                'hasInvestmentFees': bool,
-                'id': str,
-                'isin': str,
-                'loanFactor': float,
-                'managementFee': float,
-                'name': str,
-                'normanAmount': float,
-                'numberOfOwners': int,
-                'numberOfPriceAlerts': int,
-                'otherFees': str,
-                'positions': [{
-                    'accountId': str,
-                    'accountName': str,
-                    'accountType': str,
-                    'acquiredValue': float,
-                    'averageAcquiredPrice': float,
-                    'profit': float,
-                    'profitPercent': float,
-                    'value': float,
-                    'volume': float
-                }],
-                'positionsTotalValue': float,
-                'prospectus': str,
-                'relatedFunds': [{
-                    'changeSinceOneYear': float,
-                    'id': str,
-                    'name': str
-                }],
-                'risk': int,
-                'riskLevel': str,
-                'sellFee': float,
-                'sellable': bool,
-                'startDate': str,
-                'subCategory': str,
-                'tradingCurrency': str,
-                'type': str
-            }
+        {
+            "adminCompany": {
+                "country": str,
+                "name": str,
+                "url": str
+            },
+            "aumCoveredCarbon": float,
+            "capital": float,
+            "carbonRiskScore": float,
+            "carbonSolutionsInvolvement": float,
+            "categories": [
+                str
+            ],
+            "controversyScore": float,
+            "countryChartData": [
+                {
+                    "countryCode": str,
+                    "currency": str,
+                    "isin": str,
+                    "name": str,
+                    "orderbookId": str,
+                    "type": str,
+                    "y": float
+                }
+            ],
+            "currency": str,
+            "description": str,
+            "developmentFiveYears": float,
+            "developmentOneDay": float,
+            "developmentOneMonth": float,
+            "developmentOneYear": float,
+            "developmentSixMonths": float,
+            "developmentThisYear": float,
+            "developmentThreeMonths": float,
+            "developmentThreeYears": float,
+            "environmentalScore": float,
+            "esgScore": float,
+            "fossilFuelInvolvement": float,
+            "fundManagers": [
+                {
+                    "name": str,
+                    "startDate": date
+                }
+            ],
+            "fundRatingViews": [
+                {
+                    "date": date,
+                    "fundRating": int,
+                    "fundRatingType": str
+                }
+            ],
+            "fundType": str,
+            "fundTypeName": str,
+            "governanceScore": float,
+            "hedgeFund": bool,
+            "holdingChartData": [
+                {
+                    "countryCode": str,
+                    "currency": str,
+                    "isin": str,
+                    "name": str,
+                    "orderbookId": str,
+                    "type": str,
+                    "y": float
+                }
+            ],
+            "indexFund": bool,
+            "isin": str,
+            "lowCarbon": bool,
+            "managementFee": float,
+            "nav": float,
+            "navDate": date,
+            "portfolioDate": date,
+            "ppmCode": type(None),
+            "pricingFrequency": str,
+            "primaryBenchmark": str,
+            "productFee": float,
+            "productInvolvements": [
+                {
+                    "product": str,
+                    "productDescription": str,
+                    "value": float
+                }
+            ],
+            "prospectusLink": str,
+            "rating": int,
+            "recommendedHoldingPeriod": str,
+            "risk": int,
+            "riskText": str,
+            "sectorChartData": [
+                {
+                    "countryCode": type(None),
+                    "currency": str,
+                    "isin": type(None),
+                    "name": str,
+                    "orderbookId": type(None),
+                    "type": str,
+                    "y": float
+                }
+            ],
+            "sharpeRatio": float,
+            "socialScore": float,
+            "standardDeviation": float,
+            "superloanOrderbook": bool,
+            "sustainabilityRating": int,
+            "sustainabilityRatingCategoryName": str,
+            "svanen": bool,
+            "ucitsFund": bool
+        }
         """
 
-        return self.get_instrument(
-            InstrumentType.FUND,
-            fund_id
+        return self.__call(
+            HttpMethod.GET,
+            Route.FUND_PATH.value.format(
+                fund_id
+            )
         )
 
     def get_stock_info(
@@ -1552,7 +1605,7 @@ class Avanza:
         Returns:
             {
                 'ohlc': [{'timestamp': int, 'open': float, 'close': float, 'low': float, 'high': float, 'totalVolumeTraded': int}]
-                'metadata': 
+                'metadata':
                 { 'resolution' : {'chartResolution': str,
                                   'availableResolutions': [str]}
                 }
