@@ -1,7 +1,7 @@
 
 import hashlib
 from datetime import date
-from typing import Any, Callable, Dict, Optional, Sequence, Type
+from typing import Any, Callable, Dict, Optional, Sequence
 
 import pyotp
 import requests
@@ -1676,8 +1676,8 @@ class Avanza:
         parent_stop_loss_id: str,
         account_id: str,
         order_book_id: str,
-        stop_loss_trigger: Type[StopLossTrigger],
-        stop_loss_order_event: Type[StopLossOrderEvent],
+        stop_loss_trigger: StopLossTrigger,
+        stop_loss_order_event: StopLossOrderEvent,
     ):
         """ Place an stop loss order
 
