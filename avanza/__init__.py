@@ -1,3 +1,7 @@
+"""
+.. include:: ../README.md
+"""
+
 from .avanza import Avanza
 from .constants import (
     TransactionType,
