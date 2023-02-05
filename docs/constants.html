@@ -62,7 +62,12 @@ class ChannelType(enum.Enum):
 class TimePeriod(enum.Enum):
     TODAY = &#39;TODAY&#39;
     ONE_WEEK = &#39;ONE_WEEK&#39;
+    ONE_MONTH = &#39;ONE_MONTH&#39;
+    THREE_MONTHS = &#39;THREE_MONTHS&#39;
     THIS_YEAR = &#39;THIS_YEAR&#39;
+    ONE_YEAR = &#39;ONE_YEAR&#39;
+    THREE_YEARS = &#39;THREE_YEARS&#39;
+    FIVE_YEARS = &#39;FIVE_YEARS&#39;
     THREE_YEARS_ROLLING = &#39;THREE_YEARS_ROLLING&#39;
     FIVE_YEARS_ROLLING = &#39;FIVE_YEARS_ROLLING&#39;
 
@@ -119,9 +124,10 @@ class Route(enum.Enum):
     ACCOUNT_OVERVIEW_PATH = &#39;/_mobile/account/{}/overview&#39;
     ACCOUNTS_POSITIONS_PATH = &#39;/_api/position-data/positions&#39;
     AUTHENTICATION_PATH = &#39;/_api/authentication/sessions/usercredentials&#39;
-    CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}&#39;
+    CHARTDATA_PATH = &#39;/_api/price-chart/stock/{}&#39;
     CURRENT_OFFERS_PATH = &#39;/_api/customer-offer/currentoffers/&#39;
     DEALS_AND_ORDERS_PATH = &#39;/_mobile/account/dealsandorders&#39;
+    FUND_PATH = &#39;/_api/fund-guide/guide/{}&#39;
     INSIGHTS_PATH = &#39;/_api/insights-development/?timePeriod={}&amp;accountIds={}&#39;
     INSPIRATION_LIST_PATH = &#39;/_mobile/marketing/inspirationlist/{}&#39;
     INSTRUMENT_PATH = &#39;/_api/market-guide/{}/{}&#39;
@@ -743,9 +749,10 @@ attributes &ndash; see the documentation for details.</p></div>
     ACCOUNT_OVERVIEW_PATH = &#39;/_mobile/account/{}/overview&#39;
     ACCOUNTS_POSITIONS_PATH = &#39;/_api/position-data/positions&#39;
     AUTHENTICATION_PATH = &#39;/_api/authentication/sessions/usercredentials&#39;
-    CHARTDATA_PATH = &#39;/_mobile/chart/orderbook/{}&#39;
+    CHARTDATA_PATH = &#39;/_api/price-chart/stock/{}&#39;
     CURRENT_OFFERS_PATH = &#39;/_api/customer-offer/currentoffers/&#39;
     DEALS_AND_ORDERS_PATH = &#39;/_mobile/account/dealsandorders&#39;
+    FUND_PATH = &#39;/_api/fund-guide/guide/{}&#39;
     INSIGHTS_PATH = &#39;/_api/insights-development/?timePeriod={}&amp;accountIds={}&#39;
     INSPIRATION_LIST_PATH = &#39;/_mobile/marketing/inspirationlist/{}&#39;
     INSTRUMENT_PATH = &#39;/_api/market-guide/{}/{}&#39;
@@ -802,6 +809,10 @@ attributes &ndash; see the documentation for details.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="avanza.constants.Route.DEALS_AND_ORDERS_PATH"><code class="name">var <span class="ident">DEALS_AND_ORDERS_PATH</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.Route.FUND_PATH"><code class="name">var <span class="ident">FUND_PATH</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -966,7 +977,12 @@ attributes &ndash; see the documentation for details.</p></div>
 <pre><code class="python">class TimePeriod(enum.Enum):
     TODAY = &#39;TODAY&#39;
     ONE_WEEK = &#39;ONE_WEEK&#39;
+    ONE_MONTH = &#39;ONE_MONTH&#39;
+    THREE_MONTHS = &#39;THREE_MONTHS&#39;
     THIS_YEAR = &#39;THIS_YEAR&#39;
+    ONE_YEAR = &#39;ONE_YEAR&#39;
+    THREE_YEARS = &#39;THREE_YEARS&#39;
+    FIVE_YEARS = &#39;FIVE_YEARS&#39;
     THREE_YEARS_ROLLING = &#39;THREE_YEARS_ROLLING&#39;
     FIVE_YEARS_ROLLING = &#39;FIVE_YEARS_ROLLING&#39;</code></pre>
 </details>
@@ -976,7 +992,15 @@ attributes &ndash; see the documentation for details.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="avanza.constants.TimePeriod.FIVE_YEARS"><code class="name">var <span class="ident">FIVE_YEARS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.TimePeriod.FIVE_YEARS_ROLLING"><code class="name">var <span class="ident">FIVE_YEARS_ROLLING</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TimePeriod.ONE_MONTH"><code class="name">var <span class="ident">ONE_MONTH</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -984,7 +1008,19 @@ attributes &ndash; see the documentation for details.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="avanza.constants.TimePeriod.ONE_YEAR"><code class="name">var <span class="ident">ONE_YEAR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="avanza.constants.TimePeriod.THIS_YEAR"><code class="name">var <span class="ident">THIS_YEAR</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TimePeriod.THREE_MONTHS"><code class="name">var <span class="ident">THREE_MONTHS</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="avanza.constants.TimePeriod.THREE_YEARS"><code class="name">var <span class="ident">THREE_YEARS</span></code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -1268,6 +1304,7 @@ attributes &ndash; see the documentation for details.</p></div>
 <li><code><a title="avanza.constants.Route.CHARTDATA_PATH" href="#avanza.constants.Route.CHARTDATA_PATH">CHARTDATA_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.CURRENT_OFFERS_PATH" href="#avanza.constants.Route.CURRENT_OFFERS_PATH">CURRENT_OFFERS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.DEALS_AND_ORDERS_PATH" href="#avanza.constants.Route.DEALS_AND_ORDERS_PATH">DEALS_AND_ORDERS_PATH</a></code></li>
+<li><code><a title="avanza.constants.Route.FUND_PATH" href="#avanza.constants.Route.FUND_PATH">FUND_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSIGHTS_PATH" href="#avanza.constants.Route.INSIGHTS_PATH">INSIGHTS_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSPIRATION_LIST_PATH" href="#avanza.constants.Route.INSPIRATION_LIST_PATH">INSPIRATION_LIST_PATH</a></code></li>
 <li><code><a title="avanza.constants.Route.INSTRUMENT_DETAILS_PATH" href="#avanza.constants.Route.INSTRUMENT_DETAILS_PATH">INSTRUMENT_DETAILS_PATH</a></code></li>
@@ -1300,10 +1337,15 @@ attributes &ndash; see the documentation for details.</p></div>
 </li>
 <li>
 <h4><code><a title="avanza.constants.TimePeriod" href="#avanza.constants.TimePeriod">TimePeriod</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="avanza.constants.TimePeriod.FIVE_YEARS" href="#avanza.constants.TimePeriod.FIVE_YEARS">FIVE_YEARS</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.FIVE_YEARS_ROLLING" href="#avanza.constants.TimePeriod.FIVE_YEARS_ROLLING">FIVE_YEARS_ROLLING</a></code></li>
+<li><code><a title="avanza.constants.TimePeriod.ONE_MONTH" href="#avanza.constants.TimePeriod.ONE_MONTH">ONE_MONTH</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.ONE_WEEK" href="#avanza.constants.TimePeriod.ONE_WEEK">ONE_WEEK</a></code></li>
+<li><code><a title="avanza.constants.TimePeriod.ONE_YEAR" href="#avanza.constants.TimePeriod.ONE_YEAR">ONE_YEAR</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.THIS_YEAR" href="#avanza.constants.TimePeriod.THIS_YEAR">THIS_YEAR</a></code></li>
+<li><code><a title="avanza.constants.TimePeriod.THREE_MONTHS" href="#avanza.constants.TimePeriod.THREE_MONTHS">THREE_MONTHS</a></code></li>
+<li><code><a title="avanza.constants.TimePeriod.THREE_YEARS" href="#avanza.constants.TimePeriod.THREE_YEARS">THREE_YEARS</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.THREE_YEARS_ROLLING" href="#avanza.constants.TimePeriod.THREE_YEARS_ROLLING">THREE_YEARS_ROLLING</a></code></li>
 <li><code><a title="avanza.constants.TimePeriod.TODAY" href="#avanza.constants.TimePeriod.TODAY">TODAY</a></code></li>
 </ul>

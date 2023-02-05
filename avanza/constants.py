@@ -111,6 +111,7 @@ class Route(enum.Enum):
     CHARTDATA_PATH = '/_api/price-chart/stock/{}'
     CURRENT_OFFERS_PATH = '/_api/customer-offer/currentoffers/'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
+    FUND_PATH = '/_api/fund-guide/guide/{}'
     INSIGHTS_PATH = '/_api/insights-development/?timePeriod={}&accountIds={}'
     INSPIRATION_LIST_PATH = '/_mobile/marketing/inspirationlist/{}'
     INSTRUMENT_PATH = '/_api/market-guide/{}/{}'
