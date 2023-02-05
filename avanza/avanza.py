@@ -1,16 +1,17 @@
 
 import hashlib
-from typing import Optional
 from datetime import date
-from typing import Any, Callable, Sequence, Dict
+from typing import Any, Callable, Dict, Optional, Sequence
 
 import pyotp
 import requests
 
+from avanza.entities import StopLossOrderEvent, StopLossTrigger
+
 from .avanza_socket import AvanzaSocket
 from .constants import (ChannelType, HttpMethod, InstrumentType, ListType,
-                        OrderType, Route, TimePeriod, TransactionType,
-                        TransactionsDetailsType, Resolution)
+                        OrderType, Resolution, Route, TimePeriod,
+                        TransactionsDetailsType, TransactionType)
 
 BASE_URL = 'https://www.avanza.se'
 MIN_INACTIVE_MINUTES = 30
@@ -1666,6 +1667,67 @@ class Avanza:
                 'orderbookId': order_book_id,
                 'accountId': account_id,
                 'volume': volume
+            }
+        )
+
+
+    def place_stop_loss_order(
+        self,
+        parent_stop_loss_id: str,
+        account_id: str,
+        order_book_id: str,
+        stop_loss_trigger: StopLossTrigger,
+        stop_loss_order_event: StopLossOrderEvent,
+    ):
+        """ Place an stop loss order
+
+        Args:
+            parent_stop_loss_id: The id of the parent stop loss order. If this is the first stop loss order, this should be "0".
+            
+            account_id: A valid account id.
+
+            order_book_id: The order book id of the instrument to place the stop loss order for.
+
+            stop_loss_trigger: The stop loss trigger type.
+
+            stop_loss_order_event: The stop loss order event type.
+
+        Returns:
+            If the order was successfully placed:
+
+            {
+                status: 'SUCCESS',
+                stoplossOrderId: str
+            }
+
+            If the order was not placed:
+
+            {
+                status: str,
+                stoplossOrderId: str
+            }
+        """
+
+        return self.__call(
+            HttpMethod.POST,
+            Route.ORDER_PLACE_STOP_LOSS_PATH.value,
+            {
+                'parentStopLossId': parent_stop_loss_id,
+                'accountId': account_id,
+                'orderBookId': order_book_id,
+                'stopLossTrigger': {
+                    'type': stop_loss_trigger.type,
+                    'value': stop_loss_trigger.value,
+                    'validUntil': stop_loss_trigger.valid_until.isoformat()
+                },
+                'stopLossOrderEvent': {
+                    'type': stop_loss_order_event.type,
+                    'price': stop_loss_order_event.price,
+                    'volume': stop_loss_order_event.volume,
+                    'validDays': stop_loss_order_event.valid_days,
+                    'priceType': stop_loss_order_event.price_type,
+                    'shortSellingAllowed': stop_loss_order_event.short_selling_allowed
+                }
             }
         )
 

@@ -86,6 +86,18 @@ class OrderType(enum.Enum):
     SELL = 'SELL'
 
 
+class StopLossTriggerType(enum.Enum):
+    FOLLOW_DOWNWARDS = 'FOLLOW_DOWNWARDS'
+    FOLLOW_UPWARDS = 'FOLLOW_UPWARDS'
+    LESS_OR_EQUAL = 'LESS_OR_EQUAL'
+    MORE_OR_EQUAL = 'MORE_OR_EQUAL'
+
+
+class StopLossPriceType(enum.Enum):
+    MONETARY = 'MONETARY'
+    PERCENTAGE = 'PERCENTAGE'
+    
+
 class HttpMethod(enum.Enum):
     POST = 1
     GET = 2
@@ -113,6 +125,7 @@ class Route(enum.Enum):
     ORDER_DELETE_PATH = '/_api/order?accountId={}&orderId={}'
     ORDER_GET_PATH = '/_mobile/order/{}?accountId={}&orderId={}'
     ORDER_PLACE_PATH = '/_api/trading-critical/rest/order/new'
+    ORDER_PLACE_STOP_LOSS_PATH = '/_api/trading-critical/rest/stoploss/new'
     ORDER_PLACE_PATH_BUY_FUND = '/_api/fund-guide/fund-order-page/buy'
     ORDER_PLACE_PATH_SELL_FUND = '/_api/fund-guide/fund-order-page/sell'
     ORDER_EDIT_PATH = '/_api/order/{}/{}'
