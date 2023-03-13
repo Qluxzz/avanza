@@ -1034,7 +1034,8 @@ class Avanza:
 
     def search_for_stock(
         self,
-        query
+        query: str,
+        limit: int = 10
     ):
         """ Search for a stock
 
@@ -1042,6 +1043,7 @@ class Avanza:
             query: can be a ISIN ('US0378331005'),
                 name ('Apple'),
                 tickerSymbol ('AAPL')
+            limit: maximum number of results to return
 
         Returns:
 
@@ -1065,12 +1067,14 @@ class Avanza:
         """
         return self.search_for_instrument(
             InstrumentType.STOCK,
-            query
+            query,
+            limit
         )
 
     def search_for_fund(
         self,
-        query: str
+        query: str,
+        limit: int = 10
     ):
         """ Search for a fund
 
@@ -1078,6 +1082,7 @@ class Avanza:
             query: can be a ISIN ('SE0012454338'),
                 name ('Avanza'),
                 tickerSymbol ('Avanza Europa')
+            limit: maximum number of results to return
 
         Returns:
 
@@ -1104,17 +1109,20 @@ class Avanza:
 
         return self.search_for_instrument(
             InstrumentType.FUND,
-            query
+            query,
+            limit
         )
 
     def search_for_certificate(
         self,
-        query: str
+        query: str,
+        limit: int = 10
     ):
         """ Search for a certificate
 
         Args:
             query: can be a ISIN, name or tickerSymbol
+            limit: maximum number of results to return
 
         Returns:
 
@@ -1139,17 +1147,20 @@ class Avanza:
 
         return self.search_for_instrument(
             InstrumentType.CERTIFICATE,
-            query
+            query,
+            limit
         )
 
     def search_for_warrant(
         self,
-        query: str
+        query: str,
+        limit: int = 10
     ):
         """ Search for a warrant
 
         Args:
             query: can be a ISIN, name or tickerSymbol
+            limit: maximum number of results to return
 
         Returns:
 
@@ -1174,15 +1185,22 @@ class Avanza:
 
         return self.search_for_instrument(
             InstrumentType.WARRANT,
-            query
+            query,
+            limit
         )
 
     def search_for_instrument(
         self,
         instrument_type: InstrumentType,
-        query: str
+        query: str,
+        limit: int = 10
     ):
         """ Search for a specific instrument
+
+        Args:
+            instrument_type: can be STOCK, FUND, BOND etc
+            query: can be a ISIN, name or tickerSymbol
+            limit: maximum number of results to return
 
         Returns:
 
@@ -1198,7 +1216,8 @@ class Avanza:
             HttpMethod.GET,
             Route.INSTRUMENT_SEARCH_PATH.value.format(
                 instrument_type.value.upper(),
-                query
+                query,
+                limit
             )
         )
 
