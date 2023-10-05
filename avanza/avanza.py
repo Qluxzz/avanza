@@ -2024,18 +2024,19 @@ class Avanza:
         Returns:
 
             {
-                messages: List[str],
+                messages: str,
                 orderId: str,
-                requestId: str,
-                status: str
+                parameters: List[str],
+                orderRequestStatus: str
             }
         """
         return self.__call(
-            HttpMethod.DELETE,
-            Route.ORDER_DELETE_PATH.value.format(
-                account_id,
-                order_id
-            )
+            HttpMethod.POST,
+            Route.ORDER_DELETE_PATH.value,
+            {
+                'accountId': account_id,
+                'orderId': order_id
+            }
         )
 
     def get_monthly_savings_by_account_id(
