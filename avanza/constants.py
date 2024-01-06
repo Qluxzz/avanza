@@ -105,9 +105,9 @@ class HttpMethod(enum.Enum):
     DELETE = 4
 
 class Route(enum.Enum):
-    ACCOUNT_OVERVIEW_PATH = '/_mobile/account/{}/overview'
     ACCOUNTS_POSITIONS_PATH = '/_api/position-data/positions'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
+    CATEGORIZED_ACCOUNTS = '/_api/account-overview/overview/categorizedAccounts'
     CHARTDATA_PATH = '/_api/price-chart/stock/{}'
     CURRENT_OFFERS_PATH = '/_api/customer-offer/currentoffers/'
     DEALS_AND_ORDERS_PATH = '/_mobile/account/dealsandorders'
@@ -132,7 +132,6 @@ class Route(enum.Enum):
     ORDER_EDIT_PATH = '/_api/order/{}/{}'
     ORDERBOOK_LIST_PATH = '/_mobile/market/orderbooklist/{}'
     ORDERBOOK_PATH = '/_mobile/order/{}?orderbookId={}'
-    OVERVIEW_PATH = '/_mobile/account/overview'
     POSITIONS_PATH = '/_mobile/account/positions'
     PRICE_ALERT_PATH = '/_cqbe/marketing/service/alert/{}'
     STOP_LOSS_PATH = '/_api/trading-critical/rest/stoploss'

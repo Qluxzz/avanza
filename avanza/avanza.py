@@ -175,108 +175,452 @@ class Avanza:
         )
 
     def get_overview(self):
-        """ Get overview for all accounts
+        """ Get account and category overviews
 
         Returns:
 
             {
-                'accounts': [{
-                    'accountId': str,
-                    'accountPartlyOwned': bool,
-                    'accountType': str,
-                    'active': bool,
-                    'attorney': bool,
-                    'buyingPower': float,
-                    'depositable': bool,
-                    'interestRate': float,
-                    'name': str,
-                    'ownCapital': float,
-                    'performance': float,
-                    'performancePercent': float,
-                    'totalBalance': float,
-                    'totalBalanceDue': float,
-                    'totalProfit': float,
-                    'totalProfitPercent': float,
-                    'tradable': bool
-                }],
-                'numberOfDeals': int,
-                'numberOfIntradayTransfers': int,
-                'numberOfOrders': int,
-                'numberOfTransfers': int,
-                'totalBalance': float,
-                'totalBuyingPower': float,
-                'totalOwnCapital': float,
-                'totalPerformance': float,
-                'totalPerformancePercent': float
+                'categories': [
+                    {
+                        'name': str,
+                        'totalValue': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'buyingPower': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'id': str,
+                        'profit': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'performance': {
+                            'THREE_MONTHS': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'THREE_YEARS': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ONE_WEEK': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ONE_YEAR': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ALL_TIME': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'THIS_YEAR': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ONE_MONTH': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            }
+                        },
+                        'savingsGoalView': {
+                            'goalAmount': float,
+                            'percentCompleted': float,
+                            'sharedGoal': bool
+                        },
+                        'sortOrder': int
+                    }
+                ],
+                'accounts': [
+                    {
+                        'id': str,
+                        'categoryId': str,
+                        'balance': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'profit': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'totalAcquiredValue': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'type': str,
+                        'totalValue': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'buyingPower': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'buyingPowerWithoutCredit': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'interestRate': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'depositInterestRate': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'loanInterestRate': {
+                            'value': float,
+                            'unit': str,
+                            'unitType': str,
+                            'decimalPrecision': int
+                        },
+                        'credit': null,
+                        'name': {
+                            'defaultName': str,
+                            'userDefinedName': str
+                        },
+                        'status': str,
+                        'errorStatus': str,
+                        'overmortgaged': bool,
+                        'overdrawn': bool,
+                        'performance': {
+                            'THREE_MONTHS': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'THREE_YEARS': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ONE_WEEK': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ONE_YEAR': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ALL_TIME': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'THIS_YEAR': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            },
+                            'ONE_MONTH': {
+                                'absolute': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                },
+                                'relative': {
+                                    'value': float,
+                                    'unit': str,
+                                    'unitType': str,
+                                    'decimalPrecision': int
+                                }
+                            }
+                        },
+                        'settings': {
+                            'IS_HIDDEN': bool
+                        },
+                        'clearingNumber': str,
+                        'accountNumber': str,
+                        'urlParameterId': str,
+                        'owner': bool
+                    }
+                ],
+                'loans': [],
+                'accountsSummary': {
+                    'performance': {
+                        'THREE_MONTHS': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'THREE_YEARS': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'ONE_WEEK': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'ONE_YEAR': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'ALL_TIME': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'THIS_YEAR': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        },
+                        'ONE_MONTH': {
+                            'absolute': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            },
+                            'relative': {
+                                'value': float,
+                                'unit': str,
+                                'unitType': str,
+                                'decimalPrecision': int
+                            }
+                        }
+                    },
+                    'buyingPower': {
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                    },
+                    'totalValue': {
+                        'value': float,
+                        'unit': str,
+                        'unitType': str,
+                        'decimalPrecision': int
+                    }
+                }
             }
         """
-        return self.__call(HttpMethod.GET, Route.OVERVIEW_PATH.value)
-
-    def get_account_overview(self, account_id: str):
-        """ Get overview for a specific account
-
-        Returns:
-
-            {
-                'accountId': str,
-                'accountType': str,
-                'accountTypeName': str,
-                'accruedInterest': float,
-                'allowMonthlySaving': bool,
-                'availableSuperLoanAmount': float,
-                'buyingPower': float,
-                'clearingNumber': str,
-                'courtageClass': str,
-                'creditAfterInterest': float,
-                'creditLimit': float,
-                'currencyAccounts': [{
-                    'balance': float,
-                    'currency': str
-                }],
-                'depositable': bool,
-                'forwardBalance': float,
-                'instrumentTransferPossible': bool,
-                'interestRate': float,
-                'internalTransferPossible': bool,
-                'jointlyOwned': bool,
-                'numberOfDeals': int,
-                'numberOfIntradayTransfers': int,
-                'numberOfOrders': int,
-                'numberOfTransfers': int,
-                'overMortgaged': bool,
-                'overdrawn': bool,
-                'ownCapital': float,
-                'performance': float,
-                'performancePercent': float,
-                'performanceSinceOneMonth': float,
-                'performanceSinceOneMonthPercent': float,
-                'performanceSinceOneWeek': float,
-                'performanceSinceOneWeekPercent': float,
-                'performanceSinceOneYear': float,
-                'performanceSinceOneYearPercent': float,
-                'performanceSinceSixMonths': float,
-                'performanceSinceSixMonthsPercent': float,
-                'performanceSinceThreeMonths': float,
-                'performanceSinceThreeMonthsPercent': float,
-                'performanceSinceThreeYears': float,
-                'performanceSinceThreeYearsPercent': float,
-                'reservedAmount': float,
-                'sharpeRatio': float,
-                'standardDeviation': float,
-                'totalBalance': float,
-                'totalCollateralValue': float,
-                'totalPositionsValue': float,
-                'totalProfit': float,
-                'totalProfitPercent': float,
-                'withdrawable': bool
-            }
-        """
-        return self.__call(
-            HttpMethod.GET,
-            Route.ACCOUNT_OVERVIEW_PATH.value.format(
-                account_id
-            )
-        )
+        return self.__call(HttpMethod.GET, Route.CATEGORIZED_ACCOUNTS.value)
 
     def get_accounts_positions(self):
         """Get investment positions for all account
