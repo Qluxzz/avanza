@@ -175,44 +175,6 @@ class Avanza:
         )
 
     def get_overview(self):
-        """ Get overview for all accounts
-
-        Returns:
-
-            {
-                'accounts': [{
-                    'accountId': str,
-                    'accountPartlyOwned': bool,
-                    'accountType': str,
-                    'active': bool,
-                    'attorney': bool,
-                    'buyingPower': float,
-                    'depositable': bool,
-                    'interestRate': float,
-                    'name': str,
-                    'ownCapital': float,
-                    'performance': float,
-                    'performancePercent': float,
-                    'totalBalance': float,
-                    'totalBalanceDue': float,
-                    'totalProfit': float,
-                    'totalProfitPercent': float,
-                    'tradable': bool
-                }],
-                'numberOfDeals': int,
-                'numberOfIntradayTransfers': int,
-                'numberOfOrders': int,
-                'numberOfTransfers': int,
-                'totalBalance': float,
-                'totalBuyingPower': float,
-                'totalOwnCapital': float,
-                'totalPerformance': float,
-                'totalPerformancePercent': float
-            }
-        """
-        return self.__call(HttpMethod.GET, Route.OVERVIEW_PATH.value)
-    
-    def get_categorized_accounts(self):
         """ Get account and category overviews
 
         Returns:
@@ -659,72 +621,6 @@ class Avanza:
             }
         """
         return self.__call(HttpMethod.GET, Route.CATEGORIZED_ACCOUNTS.value)
-
-    def get_account_overview(self, account_id: str):
-        """ Get overview for a specific account
-
-        Returns:
-
-            {
-                'accountId': str,
-                'accountType': str,
-                'accountTypeName': str,
-                'accruedInterest': float,
-                'allowMonthlySaving': bool,
-                'availableSuperLoanAmount': float,
-                'buyingPower': float,
-                'clearingNumber': str,
-                'courtageClass': str,
-                'creditAfterInterest': float,
-                'creditLimit': float,
-                'currencyAccounts': [{
-                    'balance': float,
-                    'currency': str
-                }],
-                'depositable': bool,
-                'forwardBalance': float,
-                'instrumentTransferPossible': bool,
-                'interestRate': float,
-                'internalTransferPossible': bool,
-                'jointlyOwned': bool,
-                'numberOfDeals': int,
-                'numberOfIntradayTransfers': int,
-                'numberOfOrders': int,
-                'numberOfTransfers': int,
-                'overMortgaged': bool,
-                'overdrawn': bool,
-                'ownCapital': float,
-                'performance': float,
-                'performancePercent': float,
-                'performanceSinceOneMonth': float,
-                'performanceSinceOneMonthPercent': float,
-                'performanceSinceOneWeek': float,
-                'performanceSinceOneWeekPercent': float,
-                'performanceSinceOneYear': float,
-                'performanceSinceOneYearPercent': float,
-                'performanceSinceSixMonths': float,
-                'performanceSinceSixMonthsPercent': float,
-                'performanceSinceThreeMonths': float,
-                'performanceSinceThreeMonthsPercent': float,
-                'performanceSinceThreeYears': float,
-                'performanceSinceThreeYearsPercent': float,
-                'reservedAmount': float,
-                'sharpeRatio': float,
-                'standardDeviation': float,
-                'totalBalance': float,
-                'totalCollateralValue': float,
-                'totalPositionsValue': float,
-                'totalProfit': float,
-                'totalProfitPercent': float,
-                'withdrawable': bool
-            }
-        """
-        return self.__call(
-            HttpMethod.GET,
-            Route.ACCOUNT_OVERVIEW_PATH.value.format(
-                account_id
-            )
-        )
 
     def get_accounts_positions(self):
         """Get investment positions for all account
