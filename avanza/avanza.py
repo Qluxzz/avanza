@@ -805,6 +805,67 @@ class Avanza:
             Route.ACCOUNTS_POSITIONS_PATH.value
         )
 
+    def get_account_performance_chart_data(self, url_parameters_ids: list[str], time_period: TimePeriod):
+        """ Get performance chart for accounts.
+
+        Args:
+            url_parameters_ids: Scrambled account ids. 
+                Can be found in the overview response.
+            time_period: Time period to get chart data for
+
+        Returns:
+        {
+            "interval": {
+                "timePeriod": str,
+                "from": str,
+                "to": str,
+            },
+            "absoluteSeries": [
+                {
+                "performance": {
+                    "value": float,
+                    "unit": str,
+                    "unitType": str,
+                "decimalPrecision": int
+                },
+                "timestamp": int
+            }
+            ],
+            "relativeSeries": [
+            {
+                "performance": {
+                    "value": float,
+                    "unit": str,
+                    "unitType": str,
+                    "decimalPrecision": int
+                },
+                "timestamp": int
+                }
+            ],
+            "valueSeries": [
+                {
+                    "performance": {
+                        "value": float,
+                        "unit": str,
+                        "unitType": str,
+                        "decimalPrecision": int
+                    },
+                    "timestamp": int
+                }
+            ],
+            "earliestAvailableDate": str,
+            "timePeriod": str
+        }
+        """
+        return self.__call(
+            HttpMethod.POST,
+            Route.ACCOUNT_PERFORMANCE_CHART_PATH.value,
+            {
+                "scrambledAccountIds": url_parameters_ids, 
+                "timePeriod": time_period.value
+            }
+        )
+    
     def get_watchlists(self):
         """ Get your "Bevakningslistor"
 
