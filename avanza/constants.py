@@ -42,6 +42,7 @@ class TimePeriod(enum.Enum):
     FIVE_YEARS = 'FIVE_YEARS'
     THREE_YEARS_ROLLING = 'THREE_YEARS_ROLLING'
     FIVE_YEARS_ROLLING = 'FIVE_YEARS_ROLLING'
+    ALL_TIME = 'ALL_TIME'
 
 
 class Resolution(enum.Enum):
@@ -106,6 +107,7 @@ class HttpMethod(enum.Enum):
 
 class Route(enum.Enum):
     ACCOUNTS_POSITIONS_PATH = '/_api/position-data/positions'
+    ACCOUNT_PERFORMANCE_CHART_PATH = '/_api/account-performance/overview/chart/accounts/timeperiod'
     AUTHENTICATION_PATH = '/_api/authentication/sessions/usercredentials'
     CATEGORIZED_ACCOUNTS = '/_api/account-overview/overview/categorizedAccounts'
     CHARTDATA_PATH = '/_api/price-chart/stock/{}'
