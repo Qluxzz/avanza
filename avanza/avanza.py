@@ -2217,16 +2217,16 @@ class Avanza:
                 'accountId': account_id,
                 'orderBookId': order_book_id,
                 'stopLossTrigger': {
-                    'type': stop_loss_trigger.type,
+                    'type': stop_loss_trigger.type.value,
                     'value': stop_loss_trigger.value,
                     'validUntil': stop_loss_trigger.valid_until.isoformat()
                 },
                 'stopLossOrderEvent': {
-                    'type': stop_loss_order_event.type,
+                    'type': stop_loss_order_event.type.value,
                     'price': stop_loss_order_event.price,
                     'volume': stop_loss_order_event.volume,
                     'validDays': stop_loss_order_event.valid_days,
-                    'priceType': stop_loss_order_event.price_type,
+                    'priceType': stop_loss_order_event.price_type.value,
                     'shortSellingAllowed': stop_loss_order_event.short_selling_allowed
                 }
             }
