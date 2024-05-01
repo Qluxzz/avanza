@@ -12,5 +12,5 @@ from .constants import (
     OrderType,
     HttpMethod,
     Route,
-    Resolution
+    Resolution,
 )
