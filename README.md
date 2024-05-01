@@ -7,8 +7,10 @@ Please note that this is only a proof of concept, hence not meant to be used by 
 It might also be valuable to note that I am not affiliated with Avanza Bank AB in any way. The underlying API can be taken down or changed without warning at any point in time.
 
 ## Installation
+
 [![](https://img.shields.io/pypi/v/avanza-api?style=flat-square&logo=pypi "Shiprock, New Mexico by Beau Rogers")](https://pypi.org/project/avanza-api/)
-```python 
+
+```python
 pip install avanza-api
 ```
 
@@ -18,19 +20,22 @@ pip install avanza-api
 
 Here are the steps to get your TOTP Secret:
 
-1. Go to Profil > Inställningar > Sajtinställningar > Inloggning och utloggning > Användarnamn > Tvåfaktorsinloggning and click "Återaktivera". (*Only do this step if you have already set up two-factor auth.*)
+1. Go to Profil > Inställningar > Sajtinställningar > Inloggning och utloggning > Användarnamn > Tvåfaktorsinloggning and click "Återaktivera". (_Only do this step if you have already set up two-factor auth._)
 1. Click "Aktivera" on the next screen.
 1. Select "Annan app för tvåfaktorsinloggning".
 1. Click "Kan du inte scanna QR-koden?" to reveal your TOTP Secret.
 1. Generate the TOTP code using the python code below and paste the TOTP code in the field below where you found the TOTP Secret.
 1. Done! From now on all you have to do is supply your secret in the constructor as in the examples below.
+
 #### Generate TOTP code:
+
 ```Python
 import hashlib
 import pyotp
 totp = pyotp.TOTP('MY_TOTP_SECRET', digest=hashlib.sha1)
 print(totp.now())
 ```
+
 ## Example
 
 Authenticate and fetch account overview:
@@ -47,6 +52,7 @@ overview = avanza.get_overview()
 ```
 
 Get info about a certain account
+
 ```python
 from avanza import Avanza, TimePeriod
 
@@ -63,6 +69,7 @@ report = avanza.get_insights_report(
 ```
 
 Place an order
+
 ```python
 from avanza import Avanza, OrderType
 
@@ -83,6 +90,7 @@ result = avanza.place_order(
 ```
 
 Subscribe to real time data
+
 ```python
 import asyncio
 from avanza import Avanza, ChannelType
@@ -113,6 +121,26 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+## TESTING
+
+Tests are stored in [/tests](tests)
+
+The tests are using [Pydanctic](https://github.com/pydantic/pydantic) models which are used to validate that the response model is what's expected
+
+There are tests that call all available GET endpoints and validates that the response model of these endpoints are correct and that the endpoint still exists
+
+To run the tests you first need to create a `.env` file and have the following keys in it:
+
+```
+USERNAME=
+PASSWORD=
+TOTP_SECRET=
+ACCOUNT_ID=
+PRICE_ALERT_ORDER_BOOK_ID=
+```
+
+Then you can run the tests using `python -m unittest`
 
 ## LICENSE
 
