@@ -12,6 +12,7 @@ from .avanza_socket import AvanzaSocket
 from .constants import (
     ChannelType,
     HttpMethod,
+    InsightsReportTimePeriod,
     InstrumentType,
     ListType,
     OrderType,
@@ -381,7 +382,7 @@ class Avanza:
         )
 
     def get_insights_report(
-        self, account_id: str, time_period: TimePeriod
+        self, account_id: str, time_period: InsightsReportTimePeriod
     ) -> InsightsReport:
         """Get report about the development of your owned positions during the specified timeperiod"""
         return self.__call(

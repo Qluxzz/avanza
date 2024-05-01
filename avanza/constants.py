@@ -45,6 +45,13 @@ class TimePeriod(enum.Enum):
     ALL_TIME = "ALL_TIME"
 
 
+class InsightsReportTimePeriod(enum.Enum):
+    TODAY = "TODAY"
+    ONE_WEEK = "ONE_WEEK"
+    THIS_YEAR = "THIS_YEAR"
+    THREE_YEARS_ROLLING = "THREE_YEARS_ROLLING"
+
+
 class Resolution(enum.Enum):
     MINUTE = "MINUTE"
     TWO_MINUTES = "TWO_MINUTES"

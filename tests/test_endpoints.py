@@ -6,7 +6,12 @@ from dotenv import load_dotenv
 from pydantic import ValidationError
 
 from avanza import Avanza
-from avanza.constants import InstrumentType, ListType, TimePeriod
+from avanza.constants import (
+    InsightsReportTimePeriod,
+    InstrumentType,
+    ListType,
+    TimePeriod,
+)
 from avanza.models import *
 
 import json
@@ -230,14 +235,16 @@ class ReturnModelTest(unittest.TestCase):
         if account_id is None:
             raise Exception("Expected .env file to have a key named ACCOUNT_ID")
 
-        insights_report = get_or_cache(
-            self.avanza.get_insights_report, [account_id, TimePeriod.ONE_WEEK]
-        )
+        for time_period in InsightsReportTimePeriod:
+            with self.subTest(time_period=time_period):
+                insights_report = get_or_cache(
+                    self.avanza.get_insights_report, [account_id, time_period]
+                )
 
-        try:
-            InsightsReport.model_validate(insights_report, strict=True)
-        except ValidationError as e:
-            self.fail(e)
+                try:
+                    InsightsReport.model_validate(insights_report, strict=True)
+                except ValidationError as e:
+                    self.fail(e)
 
     def test_get_chart_data(self):
         chart_data = get_or_cache(

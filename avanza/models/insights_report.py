@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Literal, Union
 from pydantic import BaseModel
 
 
@@ -25,17 +25,17 @@ class PositionListItemOutcome(BaseModel):
     total: float
     development: float
     balanceDevelopments: List[Any]
-    totalDevelopmentInPercent: float
+    totalDevelopmentInPercent: Union[float, Literal["-"]]
     stake: float
-    totalTurnover: int
+    totalTurnover: float
     transactions: List[Any]
     transactionTotals: List[Any]
-    totalBuyAmount: int
-    totalSellAmount: int
-    totalOtherAmount: int
-    developmentPartOfTotalDevelopmentInPercent: float
-    dividendsPartOfTotalDevelopmentInPercent: float
-    dividends: int
+    totalBuyAmount: float
+    totalSellAmount: float
+    totalOtherAmount: float
+    developmentPartOfTotalDevelopmentInPercent: Union[float, Literal["-"]]
+    dividendsPartOfTotalDevelopmentInPercent: Union[float, Literal["-"]]
+    dividends: float
 
 
 class PositionSummaryListItem(BaseModel):
@@ -52,7 +52,7 @@ class PositionSummaryOutcome(BaseModel):
     total: float
     development: float
     balanceDevelopments: List[Any]
-    dividends: int
+    dividends: float
 
 
 class PositionSummary(BaseModel):
@@ -86,10 +86,10 @@ class ChartData(BaseModel):
 class TransactionsResponse(BaseModel):
     chartData: List[ChartData]
     allTransactions: List[Any]
-    totalAutogiro: int
-    totalAll: int
-    totalDeposits: int
-    totalWithdraws: int
+    totalAutogiro: float
+    totalAll: float
+    totalDeposits: float
+    totalWithdraws: float
 
 
 class TotalDevelopment(BaseModel):
@@ -100,7 +100,7 @@ class TotalDevelopment(BaseModel):
 
 class OtherTransactions(BaseModel):
     otherTransactionsGroups: List[Any]
-    total: int
+    total: float
 
 
 class InsightsReport(BaseModel):
@@ -112,4 +112,4 @@ class InsightsReport(BaseModel):
     """ YYYY-MM-DD """
     toDate: str
     """ YYYY-MM-DD """
-    aggregatedPerformance: float
+    aggregatedPerformance: Union[float, Literal["-"]]
