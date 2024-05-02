@@ -124,7 +124,7 @@ if __name__ == "__main__":
 
 ## TESTING
 
-Tests are stored in [/tests](tests)
+Tests are stored in [/tests](https://github.com/Qluxzz/avanza/tree/master/tests)
 
 The tests are using [Pydanctic](https://github.com/pydantic/pydantic) models which are used to validate that the response model is what's expected
 
