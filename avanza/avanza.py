@@ -1,8 +1,6 @@
-import hashlib
 from datetime import date
-from typing import Any, Callable, Dict, List, Optional, Sequence, TypedDict, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
-import pyotp
 import requests
 
 from avanza.entities import StopLossOrderEvent, StopLossTrigger
