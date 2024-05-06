@@ -31,7 +31,7 @@ class Avanza:
     def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
         """
         Args:
-            credentials: Login credentials. Can be mulitple variations
+            credentials: Login credentials. Can be multiple variations
                 Either an instance of TokenCredentials or of SecretCredentials
                 Or a dictionary as the following:
                 Using TOTP secret:
