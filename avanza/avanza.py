@@ -751,6 +751,27 @@ class Avanza:
         """
         return self.__call(HttpMethod.GET, Route.STOP_LOSS_PATH.value)
 
+    def delete_stop_loss_order(self, account_id: str, stop_loss_id: str):
+        """delete a stop loss order
+
+        Args:
+
+            stop_loss_id: The id of the stop loss order to delete.
+
+            account_id: A valid account id.
+
+        Returns:
+            Nothing
+        """
+
+        return self.__call(
+            HttpMethod.DELETE,
+            Route.ORDER_DELETE_STOP_LOSS_PATH.value.format(
+                account_id,
+                stop_loss_id,
+            ),
+        )
+
     def delete_order(self, account_id: str, order_id: str):
         """Delete an existing order
 
