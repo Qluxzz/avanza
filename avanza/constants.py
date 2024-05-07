@@ -138,6 +138,7 @@ class Route(enum.Enum):
     MONTHLY_SAVINGS_RESUME_PATH = "/_api/transfer/monthly-savings/{}/{}/resume"
     NOTE_PATH = "/_api/contract-notes/documents/{}/{}/note.pdf"
     ORDER_DELETE_PATH = "/_api/trading-critical/rest/order/delete"
+    ORDER_DELETE_STOP_LOSS_PATH = "/_api/trading-critical/rest/stoploss/{}/{}"
     ORDER_GET_PATH = "/_mobile/order/{}?accountId={}&orderId={}"
     ORDER_PLACE_PATH = "/_api/trading-critical/rest/order/new"
     ORDER_PLACE_STOP_LOSS_PATH = "/_api/trading-critical/rest/stoploss/new"
