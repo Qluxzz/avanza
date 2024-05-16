@@ -1,8 +1,6 @@
-import hashlib
 from datetime import date
-from typing import Any, Callable, Dict, List, Optional, Sequence, TypedDict, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
-import pyotp
 import requests
 
 from avanza.entities import StopLossOrderEvent, StopLossTrigger
@@ -21,23 +19,21 @@ from .constants import (
     TimePeriod,
     TransactionsDetailsType,
 )
+from .credentials import BaseCredentials, backwards_compatible_serialization
 
 BASE_URL = "https://www.avanza.se"
 MIN_INACTIVE_MINUTES = 30
 MAX_INACTIVE_MINUTES = 60 * 24
 
 
-class Credentials(TypedDict):
-    username: str
-    password: str
-    totpSecret: str
-
 
 class Avanza:
-    def __init__(self, credentials: Credentials):
+    def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
         """
         Args:
-            credentials: Login credentials.
+            credentials: Login credentials. Can be multiple variations
+                Either an instance of TokenCredentials or of SecretCredentials
+                Or a dictionary as the following:
                 Using TOTP secret:
                     {
                         'username': 'MY_USERNAME',
@@ -51,6 +47,9 @@ class Avanza:
                         'totpCode': 'MY_TOTP_CODE'
                     }
         """
+        if isinstance(credentials, dict):
+            credentials: BaseCredentials = backwards_compatible_serialization(credentials)
+
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
 
@@ -65,11 +64,11 @@ class Avanza:
             self._push_subscription_id, self._session.cookies.get_dict()
         )
 
-    def __authenticate(self, credentials: Credentials):
+    def __authenticate(self, credentials: BaseCredentials):
         if (
-            not MIN_INACTIVE_MINUTES
-            <= self._authenticationTimeout
-            <= MAX_INACTIVE_MINUTES
+                not MIN_INACTIVE_MINUTES
+                    <= self._authenticationTimeout
+                    <= MAX_INACTIVE_MINUTES
         ):
             raise ValueError(
                 f"Session timeout not in range {MIN_INACTIVE_MINUTES} - {MAX_INACTIVE_MINUTES} minutes"
@@ -77,8 +76,8 @@ class Avanza:
 
         data = {
             "maxInactiveMinutes": self._authenticationTimeout,
-            "username": credentials["username"],
-            "password": credentials["password"],
+            "username": credentials.username,
+            "password": credentials.password,
         }
 
         response = self._session.post(
@@ -101,16 +100,10 @@ class Avanza:
 
         return self.__validate_2fa(credentials)
 
-    def __validate_2fa(self, credentials: Credentials):
-        if "totpSecret" in credentials:
-            totp = pyotp.TOTP(credentials["totpSecret"], digest=hashlib.sha1)
-            totp_code = totp.now()
-        elif "totpCode" in credentials:
-            totp_code = credentials["totpCode"]
-
+    def __validate_2fa(self, credentials: BaseCredentials):
         response = self._session.post(
             f"{BASE_URL}{Route.TOTP_PATH.value}",
-            json={"method": "TOTP", "totpCode": totp_code},
+            json={"method": "TOTP", "totpCode": credentials.totp_code},
         )
 
         response.raise_for_status()
