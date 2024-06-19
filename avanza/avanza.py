@@ -26,6 +26,7 @@ MIN_INACTIVE_MINUTES = 30
 MAX_INACTIVE_MINUTES = 60 * 24
 
 
+
 class Avanza:
     def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
         """
@@ -47,9 +48,7 @@ class Avanza:
                     }
         """
         if isinstance(credentials, dict):
-            credentials: BaseCredentials = backwards_compatible_serialization(
-                credentials
-            )
+            credentials: BaseCredentials = backwards_compatible_serialization(credentials)
 
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
@@ -67,9 +66,9 @@ class Avanza:
 
     def __authenticate(self, credentials: BaseCredentials):
         if (
-            not MIN_INACTIVE_MINUTES
-            <= self._authenticationTimeout
-            <= MAX_INACTIVE_MINUTES
+                not MIN_INACTIVE_MINUTES
+                    <= self._authenticationTimeout
+                    <= MAX_INACTIVE_MINUTES
         ):
             raise ValueError(
                 f"Session timeout not in range {MIN_INACTIVE_MINUTES} - {MAX_INACTIVE_MINUTES} minutes"
