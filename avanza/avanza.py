@@ -26,7 +26,6 @@ MIN_INACTIVE_MINUTES = 30
 MAX_INACTIVE_MINUTES = 60 * 24
 
 
-
 class Avanza:
     def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
         """
@@ -48,7 +47,9 @@ class Avanza:
                     }
         """
         if isinstance(credentials, dict):
-            credentials: BaseCredentials = backwards_compatible_serialization(credentials)
+            credentials: BaseCredentials = backwards_compatible_serialization(
+                credentials
+            )
 
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
@@ -66,9 +67,9 @@ class Avanza:
 
     def __authenticate(self, credentials: BaseCredentials):
         if (
-                not MIN_INACTIVE_MINUTES
-                    <= self._authenticationTimeout
-                    <= MAX_INACTIVE_MINUTES
+            not MIN_INACTIVE_MINUTES
+            <= self._authenticationTimeout
+            <= MAX_INACTIVE_MINUTES
         ):
             raise ValueError(
                 f"Session timeout not in range {MIN_INACTIVE_MINUTES} - {MAX_INACTIVE_MINUTES} minutes"
@@ -301,7 +302,7 @@ class Avanza:
             ),
         )
 
-    def search_for_stock(self, query: str, limit: int = 10) -> SearchResults:
+    def search_for_stock(self, query: str, limit: int = 10) -> StockSearchResult:
         """Search for a stock
 
         Args:
@@ -313,7 +314,7 @@ class Avanza:
         """
         return self.search_for_instrument(InstrumentType.STOCK, query, limit)
 
-    def search_for_fund(self, query: str, limit: int = 10) -> SearchResults:
+    def search_for_fund(self, query: str, limit: int = 10) -> FundSearchResult:
         """Search for a fund
 
         Args:
@@ -326,7 +327,9 @@ class Avanza:
 
         return self.search_for_instrument(InstrumentType.FUND, query, limit)
 
-    def search_for_certificate(self, query: str, limit: int = 10) -> SearchResults:
+    def search_for_certificate(
+        self, query: str, limit: int = 10
+    ) -> CertificateSearchResult:
         """Search for a certificate
 
         Args:
@@ -337,7 +340,7 @@ class Avanza:
 
         return self.search_for_instrument(InstrumentType.CERTIFICATE, query, limit)
 
-    def search_for_warrant(self, query: str, limit: int = 10) -> SearchResults:
+    def search_for_warrant(self, query: str, limit: int = 10) -> WarrantSearchResult:
         """Search for a warrant
 
         Args:
@@ -350,7 +353,7 @@ class Avanza:
 
     def search_for_instrument(
         self, instrument_type: InstrumentType, query: str, limit: int = 10
-    ) -> SearchResults:
+    ):
         """Search for a specific instrument
 
         Args:

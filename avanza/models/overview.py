@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Optional
 from pydantic import BaseModel
 
 
@@ -63,8 +63,8 @@ class Account(BaseModel):
     overdrawn: bool
     performance: dict[str, Performance]
     settings: dict[str, bool]
-    clearingNumber: str
-    accountNumber: str
+    clearingNumber: Optional[str]
+    accountNumber: Optional[str]
     urlParameterId: str
     owner: bool
 

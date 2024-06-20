@@ -2,24 +2,25 @@ from typing import List
 from pydantic import BaseModel
 
 
-class SearchHit(BaseModel):
-    changePercent: float
+class CertificateTopHit(BaseModel):
     currency: str
     """ ISO 4217 """
+    changePercent: float
     lastPrice: float
+    name: str
+    id: str
     flagCode: str
     """ ISO 3166-1 alpha-2 """
     tradable: bool
     tickerSymbol: str
-    name: str
-    id: str
 
 
-class SearchResult(BaseModel):
+class CertificateHit(BaseModel):
     instrumentType: str
     numberOfHits: int
-    topHits: List[SearchHit]
+    topHits: List[CertificateTopHit]
 
 
-class SearchResults(BaseModel):
+class CertificateSearchResult(BaseModel):
     totalNumberOfHits: int
+    hits: List[CertificateHit]

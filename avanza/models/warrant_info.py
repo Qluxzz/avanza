@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 from .listing import Listing
@@ -39,4 +40,4 @@ class WarrantInfo(BaseModel):
     quote: Quote
     type: str
     """ WARRANT """
-    underlying: Underlying
+    underlying: Optional[Underlying] = None

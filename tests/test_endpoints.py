@@ -8,7 +8,6 @@ from pydantic import ValidationError
 from avanza import Avanza
 from avanza.constants import (
     InsightsReportTimePeriod,
-    InstrumentType,
     ListType,
     TimePeriod,
 )
@@ -133,7 +132,7 @@ class ReturnModelTest(unittest.TestCase):
 
     def test_warrant_info(self):
         warrant_info = get_or_cache(
-            self.avanza.get_warrant_info, ["1743960"]  # MFS NVDA VT744
+            self.avanza.get_warrant_info, ["1729386"]  # MFS NVDA VT697
         )
 
         try:
@@ -145,7 +144,7 @@ class ReturnModelTest(unittest.TestCase):
         stock_search_results = get_or_cache(self.avanza.search_for_stock, ["Ap"])
 
         try:
-            SearchResults.model_validate(stock_search_results, strict=True)
+            StockSearchResult.model_validate(stock_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 
@@ -153,7 +152,7 @@ class ReturnModelTest(unittest.TestCase):
         fund_search_results = get_or_cache(self.avanza.search_for_fund, ["Avanza"])
 
         try:
-            SearchResults.model_validate(fund_search_results, strict=True)
+            FundSearchResult.model_validate(fund_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 
@@ -163,7 +162,9 @@ class ReturnModelTest(unittest.TestCase):
         )
 
         try:
-            SearchResults.model_validate(certificate_search_results, strict=True)
+            CertificateSearchResult.model_validate(
+                certificate_search_results, strict=True
+            )
         except ValidationError as e:
             self.fail(e)
 
@@ -171,17 +172,7 @@ class ReturnModelTest(unittest.TestCase):
         warrant_search_results = get_or_cache(self.avanza.search_for_warrant, ["NVDA"])
 
         try:
-            SearchResults.model_validate(warrant_search_results, strict=True)
-        except ValidationError as e:
-            self.fail(e)
-
-    def test_search_for_instrument(self):
-        instrument_search_results = get_or_cache(
-            self.avanza.search_for_instrument, [InstrumentType.STOCK, "Ap"]
-        )
-
-        try:
-            SearchResults.model_validate(instrument_search_results, strict=True)
+            WarrantSearchResult.model_validate(warrant_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 
