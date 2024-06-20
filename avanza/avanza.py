@@ -29,7 +29,9 @@ MAX_INACTIVE_MINUTES = 60 * 24
 class Avanza:
     def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
         """
+
         Args:
+
             credentials: Login credentials. Can be multiple variations
                 Either an instance of TokenCredentials or of SecretCredentials
                 Or a dictionary as the following:
@@ -189,8 +191,10 @@ class Avanza:
         """Get performance chart for accounts.
 
         Args:
+
             url_parameters_ids: Scrambled account ids.
                 Can be found in the overview response.
+
             time_period: Time period to get chart data for
 
         """
@@ -306,9 +310,11 @@ class Avanza:
         """Search for a stock
 
         Args:
+
             query: can be a ISIN ('US0378331005'),
                 name ('Apple'),
                 tickerSymbol ('AAPL')
+
             limit: maximum number of results to return
 
         """
@@ -318,9 +324,11 @@ class Avanza:
         """Search for a fund
 
         Args:
+
             query: can be a ISIN ('SE0012454338'),
                 name ('Avanza'),
                 tickerSymbol ('Avanza Europa')
+
             limit: maximum number of results to return
 
         """
@@ -333,7 +341,9 @@ class Avanza:
         """Search for a certificate
 
         Args:
+
             query: can be a ISIN, name or tickerSymbol
+
             limit: maximum number of results to return
 
         """
@@ -344,7 +354,9 @@ class Avanza:
         """Search for a warrant
 
         Args:
+
             query: can be a ISIN, name or tickerSymbol
+
             limit: maximum number of results to return
 
         """
@@ -357,8 +369,11 @@ class Avanza:
         """Search for a specific instrument
 
         Args:
+
             instrument_type: can be STOCK, FUND, BOND etc
+
             query: can be a ISIN, name or tickerSymbol
+
             limit: maximum number of results to return
 
         """
@@ -927,6 +942,7 @@ class Avanza:
         """Create a monthly saving at Avanza
 
         Args:
+
             account_id: The Avanza account to which the withdrawn money should be transferred to
 
             amount: minimum amount 100 (SEK)
@@ -1010,6 +1026,7 @@ class Avanza:
         """Get transactions, optionally apply criteria.
 
         Args:
+
             transaction_types: One or more transaction types.
 
             transactions_from: Fetch transactions from this date.
