@@ -557,6 +557,8 @@ class Avanza:
                     "type": stop_loss_trigger.type.value,
                     "value": stop_loss_trigger.value,
                     "validUntil": stop_loss_trigger.valid_until.isoformat(),
+                    "valueType": stop_loss_trigger.value_type.value,
+                    "triggerOnMarketMakerQuote": stop_loss_trigger.trigger_on_market_maker_quote,
                 },
                 "stopLossOrderEvent": {
                     "type": stop_loss_order_event.type.value,

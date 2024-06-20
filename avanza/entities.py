@@ -5,10 +5,19 @@ from .constants import OrderType, StopLossPriceType, StopLossTriggerType
 
 
 class StopLossTrigger:
-    def __init__(self, type: StopLossTriggerType, value: float, valid_until: date):
+    def __init__(
+        self,
+        type: StopLossTriggerType,
+        value: float,
+        valid_until: date,
+        value_type: StopLossPriceType,
+        trigger_on_market_maker_quote: bool = False,
+    ):
         self.type = type
         self.value = value
         self.valid_until = valid_until
+        self.value_type = value_type
+        self.trigger_on_market_maker_quote = trigger_on_market_maker_quote
 
 
 class StopLossOrderEvent:
