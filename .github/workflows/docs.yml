@@ -18,10 +18,10 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
       - run: pip install -e .
       - run: pip install pdoc
-      - run: pdoc avanza -o docs/
+      - run: pdoc avanza -o docs/ -t templates/
 
       - uses: actions/upload-pages-artifact@v1
         with:
