@@ -405,6 +405,14 @@ class Avanza:
         """Get currently active deals and orders"""
         return self.__call(HttpMethod.GET, Route.DEALS_AND_ORDERS_PATH.value)
 
+    def get_deals(self):
+        """ Get currently active deals """
+        return self.__call(HttpMethod.GET, Route.DEALS_PATH.value)
+
+    def get_orders(self):
+    """ Get currently active orders """
+        return self.__call(HttpMethod.GET, Route.ORDERS_PATH.value)
+    
     def get_inspiration_lists(self) -> List[InspirationListItem]:
         """Get all available inspiration lists
 
