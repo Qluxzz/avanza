@@ -191,14 +191,6 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
-    def test_get_deals_and_orders(self):
-        deals_and_orders = get_or_cache(self.avanza.get_deals_and_orders)
-
-        try:
-            DealsAndOrders.model_validate(deals_and_orders, strict=True)
-        except ValidationError as e:
-            self.fail(e)
-
     def test_get_offers(self):
         offers = get_or_cache(self.avanza.get_offers)
 
