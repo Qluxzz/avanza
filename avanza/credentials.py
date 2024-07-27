@@ -32,7 +32,7 @@ class SecretCredentials(BaseCredentials):
     totp_secret: str = Field(..., alias="totpSecret")
 
     class Config:
-        allow_mutation = False
+        frozen = True
 
     @property
     def totp_code(self) -> str:
@@ -46,7 +46,7 @@ class TokenCredentials(BaseCredentials):
     totp_token: str = Field(..., alias="totpToken")
 
     class Config:
-        allow_mutation = False
+        frozen = True
 
     @property
     def totp_code(self):
