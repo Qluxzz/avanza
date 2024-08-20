@@ -96,6 +96,12 @@ class OrderType(enum.Enum):
     SELL = "SELL"
 
 
+class Condition(enum.Enum):
+    NORMAL = 'NORMAL'
+    FILL_OR_KILL ='FILL_OR_KILL'
+    FILL_AND_KILL = 'FILL_AND_KILL'
+
+
 class StopLossTriggerType(enum.Enum):
     FOLLOW_DOWNWARDS = "FOLLOW_DOWNWARDS"
     FOLLOW_UPWARDS = "FOLLOW_UPWARDS"

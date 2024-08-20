@@ -18,6 +18,7 @@ from .constants import (
     Route,
     TimePeriod,
     TransactionsDetailsType,
+    Condition
 )
 from .credentials import BaseCredentials, backwards_compatible_serialization
 
@@ -457,6 +458,7 @@ class Avanza:
         price: float,
         valid_until: date,
         volume: int,
+        condition: Condition = Condition.NORMAL,
     ):
         """Place an order
 
@@ -485,6 +487,7 @@ class Avanza:
                 "accountId": account_id,
                 "orderbookId": order_book_id,
                 "side": order_type.value,
+                'condition': condition.value,
                 "price": price,
                 "validUntil": valid_until.isoformat(),
                 "volume": volume,
