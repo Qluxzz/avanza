@@ -97,9 +97,9 @@ class OrderType(enum.Enum):
 
 
 class Condition(enum.Enum):
-    NORMAL = 'NORMAL'
-    FILL_OR_KILL ='FILL_OR_KILL'
-    FILL_AND_KILL = 'FILL_AND_KILL'
+    NORMAL = "NORMAL"
+    FILL_OR_KILL = "FILL_OR_KILL"
+    FILL_AND_KILL = "FILL_AND_KILL"
 
 
 class StopLossTriggerType(enum.Enum):

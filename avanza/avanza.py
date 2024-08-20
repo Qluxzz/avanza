@@ -18,7 +18,7 @@ from .constants import (
     Route,
     TimePeriod,
     TransactionsDetailsType,
-    Condition
+    Condition,
 )
 from .credentials import BaseCredentials, backwards_compatible_serialization
 
@@ -401,15 +401,15 @@ class Avanza:
             HttpMethod.GET,
             Route.INSIGHTS_PATH.value.format(time_period.value, account_id),
         )
-   
+
     def get_deals(self):
-        """ Get currently active deals """
+        """Get currently active deals"""
         return self.__call(HttpMethod.GET, Route.DEALS_PATH.value)
 
     def get_orders(self):
-        """ Get currently active orders """
+        """Get currently active orders"""
         return self.__call(HttpMethod.GET, Route.ORDERS_PATH.value)
-    
+
     def get_inspiration_lists(self) -> List[InspirationListItem]:
         """Get all available inspiration lists
 
@@ -487,7 +487,7 @@ class Avanza:
                 "accountId": account_id,
                 "orderbookId": order_book_id,
                 "side": order_type.value,
-                'condition': condition.value,
+                "condition": condition.value,
                 "price": price,
                 "validUntil": valid_until.isoformat(),
                 "volume": volume,
