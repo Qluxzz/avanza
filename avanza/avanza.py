@@ -378,12 +378,16 @@ class Avanza:
             limit: maximum number of results to return
 
         """
-        return self.__call(
-            HttpMethod.GET,
-            Route.INSTRUMENT_SEARCH_PATH.value.format(
-                instrument_type.value.upper(), query, limit
-            ),
+
+        options = {'query': query,
+                   'searchFilter': {'types': [instrument_type.value.upper()]},
+                   'pagination': {'from': 0, 'size': limit}}
+        result = self.__call(
+            HttpMethod.POST,
+            Route.INSTRUMENT_SEARCH_PATH.value,
+            options=options
         )
+        return result['hits']
 
     def get_order_books(self, order_book_ids: Sequence[str]) -> List[OrderBook]:
         """Get info about multiple order books"""

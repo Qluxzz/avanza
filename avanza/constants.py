@@ -137,7 +137,7 @@ class Route(enum.Enum):
     INSPIRATION_LIST_PATH = "/_mobile/marketing/inspirationlist/{}"
     INSTRUMENT_PATH = "/_api/market-guide/{}/{}"
     INSTRUMENT_DETAILS_PATH = "/_api/market-guide/{}/{}/details"
-    INSTRUMENT_SEARCH_PATH = "/_mobile/market/search/{}?query={}&limit={}"
+    INSTRUMENT_SEARCH_PATH = "/_api/search/filtered-search"
     MONTHLY_SAVINGS_CREATE_PATH = "/_api/transfer/monthly-savings/{}"
     MONTHLY_SAVINGS_PATH = "/_mobile/transfer/monthly-savings/{}"
     MONTHLY_SAVINGS_PAUSE_PATH = "/_api/transfer/monthly-savings/{}/{}/pause"
