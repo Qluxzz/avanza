@@ -177,7 +177,10 @@ class AvanzaSocket:
             # Use user subscribed action
             if action is None:
                 callback = self._subscriptions[message_channel]["callback"]
-                callback(message)
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(message)
+                else:
+                    callback(message)
             else:
                 await action(message)
 
