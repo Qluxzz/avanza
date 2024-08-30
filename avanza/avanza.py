@@ -220,8 +220,8 @@ class Avanza:
         verify this by calling get_watchlists()
         """
         return self.__call(
-            HttpMethod.PUT,
-            Route.WATCHLISTS_ADD_DELETE_PATH.value.format(watchlist_id, instrument_id),
+            HttpMethod.POST,
+            Route.WATCHLISTS_ADD_PATH.value.format(watchlist_id, instrument_id),
         )
 
     def remove_from_watchlist(self, instrument_id: str, watchlist_id: str) -> None:
@@ -232,8 +232,8 @@ class Avanza:
         verify this by calling get_watchlists()
         """
         return self.__call(
-            HttpMethod.DELETE,
-            Route.WATCHLISTS_ADD_DELETE_PATH.value.format(watchlist_id, instrument_id),
+            HttpMethod.POST,
+            Route.WATCHLISTS_REMOVE_PATH.value.format(watchlist_id, instrument_id),
         )
 
     def get_fund_info(self, fund_id: str) -> FundInfo:
