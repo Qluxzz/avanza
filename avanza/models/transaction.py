@@ -28,6 +28,11 @@ class Info(BaseModel):
     unitType: str
     decimalPrecision: int
 
+class CurrencyRate(BaseModel):
+    value: float
+    unit: str
+    unitType: str
+    decimalPrecision: int
 
 class Transaction(BaseModel):
     id: str
@@ -49,11 +54,11 @@ class Transaction(BaseModel):
     amount: Info
     onCreditAccount: bool
     comission: Optional[Info]
-    currencyRate: Optional[str]
+    currencyRate: Optional[CurrencyRate]
     noteId: Optional[str]
     priceInAccountCurrency: Optional[Info]
     intraday: bool
-    foreignTaxRate: Optional[str]
+    foreignTaxRate: Optional[CurrencyRate]
     isin: str
     result: Optional[Info]
     volumeFactor: Optional[float]

@@ -307,7 +307,7 @@ class Avanza:
             ),
         )
 
-    def search_for_stock(self, query: str, limit: int = 10) -> StockSearchResult:
+    def search_for_stock(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a stock
 
         Args:
@@ -321,7 +321,7 @@ class Avanza:
         """
         return self.search_for_instrument(InstrumentType.STOCK, query, limit)
 
-    def search_for_fund(self, query: str, limit: int = 10) -> FundSearchResult:
+    def search_for_fund(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a fund
 
         Args:
@@ -338,7 +338,7 @@ class Avanza:
 
     def search_for_certificate(
         self, query: str, limit: int = 10
-    ) -> CertificateSearchResult:
+    ) -> SearchResults:
         """Search for a certificate
 
         Args:
@@ -351,7 +351,7 @@ class Avanza:
 
         return self.search_for_instrument(InstrumentType.CERTIFICATE, query, limit)
 
-    def search_for_warrant(self, query: str, limit: int = 10) -> WarrantSearchResult:
+    def search_for_warrant(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a warrant
 
         Args:
