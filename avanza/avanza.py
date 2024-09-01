@@ -307,7 +307,7 @@ class Avanza:
             ),
         )
 
-    def search_for_stock(self, query: str, limit: int = 10) -> StockSearchResult:
+    def search_for_stock(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a stock
 
         Args:
@@ -321,7 +321,7 @@ class Avanza:
         """
         return self.search_for_instrument(InstrumentType.STOCK, query, limit)
 
-    def search_for_fund(self, query: str, limit: int = 10) -> FundSearchResult:
+    def search_for_fund(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a fund
 
         Args:
@@ -338,7 +338,7 @@ class Avanza:
 
     def search_for_certificate(
         self, query: str, limit: int = 10
-    ) -> CertificateSearchResult:
+    ) -> SearchResults:
         """Search for a certificate
 
         Args:
@@ -351,7 +351,7 @@ class Avanza:
 
         return self.search_for_instrument(InstrumentType.CERTIFICATE, query, limit)
 
-    def search_for_warrant(self, query: str, limit: int = 10) -> WarrantSearchResult:
+    def search_for_warrant(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a warrant
 
         Args:
@@ -378,12 +378,16 @@ class Avanza:
             limit: maximum number of results to return
 
         """
-        return self.__call(
-            HttpMethod.GET,
-            Route.INSTRUMENT_SEARCH_PATH.value.format(
-                instrument_type.value.upper(), query, limit
-            ),
+
+        options = {'query': query,
+                   'searchFilter': {'types': [instrument_type.value.upper()]},
+                   'pagination': {'from': 0, 'size': limit}}
+        result = self.__call(
+            HttpMethod.POST,
+            Route.INSTRUMENT_SEARCH_PATH.value,
+            options=options
         )
+        return result['hits']
 
     def get_order_books(self, order_book_ids: Sequence[str]) -> List[OrderBook]:
         """Get info about multiple order books"""

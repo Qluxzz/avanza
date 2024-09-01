@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Union
 import unittest
 import os
 from dotenv import load_dotenv
-from pydantic import ValidationError
+from pydantic import ValidationError, TypeAdapter
 
 from avanza import Avanza
 from avanza.constants import (
@@ -30,7 +30,7 @@ USE_CACHE = False
 class ReturnModelTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        load_dotenv()
+        load_dotenv(override=True)
 
         if USE_CACHE:
             # Create an instance of Avanza and skip __init__ function that logs in
@@ -132,7 +132,7 @@ class ReturnModelTest(unittest.TestCase):
 
     def test_warrant_info(self):
         warrant_info = get_or_cache(
-            self.avanza.get_warrant_info, ["1729386"]  # MFS NVDA VT697
+            self.avanza.get_warrant_info, ["1840863"]  # MFS NVDA VT1091
         )
 
         try:
@@ -144,7 +144,7 @@ class ReturnModelTest(unittest.TestCase):
         stock_search_results = get_or_cache(self.avanza.search_for_stock, ["Ap"])
 
         try:
-            StockSearchResult.model_validate(stock_search_results, strict=True)
+            SearchResults.validate_python(stock_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 
@@ -152,7 +152,7 @@ class ReturnModelTest(unittest.TestCase):
         fund_search_results = get_or_cache(self.avanza.search_for_fund, ["Avanza"])
 
         try:
-            FundSearchResult.model_validate(fund_search_results, strict=True)
+            SearchResults.validate_python(fund_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 
@@ -162,7 +162,7 @@ class ReturnModelTest(unittest.TestCase):
         )
 
         try:
-            CertificateSearchResult.model_validate(
+            SearchResults.validate_python(
                 certificate_search_results, strict=True
             )
         except ValidationError as e:
@@ -172,7 +172,7 @@ class ReturnModelTest(unittest.TestCase):
         warrant_search_results = get_or_cache(self.avanza.search_for_warrant, ["NVDA"])
 
         try:
-            WarrantSearchResult.model_validate(warrant_search_results, strict=True)
+            SearchResults.validate_python(warrant_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 
