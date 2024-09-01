@@ -17,7 +17,7 @@ DESCRIPTION = "A Python library for the unofficial Avanza API"
 URL = "https://github.com/Qluxzz/avanza"
 EMAIL = "andre.eric.andersson@gmail.com"
 AUTHOR = "André Andersson"
-REQUIRES_PYTHON = ">=3.7.0"
+REQUIRES_PYTHON = ">=3.9.0"
 VERSION = "12.1.0"
 
 REQUIRED = ["requests>=2", "pyotp>=2", "websockets>=8", "pydantic>=2"]
