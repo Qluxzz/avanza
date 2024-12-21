@@ -126,6 +126,7 @@ class Route(enum.Enum):
     ACCOUNT_PERFORMANCE_CHART_PATH = (
         "/_api/account-performance/overview/chart/accounts/timeperiod"
     )
+    ANALYSIS_PATH = '/_api/market-guide/stock/{}/analysis'
     AUTHENTICATION_PATH = "/_api/authentication/sessions/usercredentials"
     CATEGORIZED_ACCOUNTS = "/_api/account-overview/overview/categorizedAccounts"
     CHARTDATA_PATH = "/_api/price-chart/stock/{}"

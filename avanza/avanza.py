@@ -267,6 +267,15 @@ class Avanza:
         # Works when sending InstrumentType.STOCK, but not InstrumentType.INDEX
         return self.get_instrument(InstrumentType.STOCK, index_id)
 
+    def get_analysis(self,instrument_id: str ):
+         """Returns analysis data for an instrument """
+        return self.__call(
+            HttpMethod.GET,
+            Route.ANALYSIS_PATH.value.format(
+                instrument_id
+            )
+        )
+    
     def get_instrument(self, instrument_type: InstrumentType, instrument_id: str):
         """
         Get instrument info
