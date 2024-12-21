@@ -18,7 +18,7 @@ URL = "https://github.com/Qluxzz/avanza"
 EMAIL = "andre.eric.andersson@gmail.com"
 AUTHOR = "André Andersson"
 REQUIRES_PYTHON = ">=3.9.0"
-VERSION = "13.0.1"
+VERSION = "13.1.0"
 
 REQUIRED = ["requests>=2", "pyotp>=2", "websockets>=8", "pydantic>=2"]
 
