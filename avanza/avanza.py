@@ -267,15 +267,13 @@ class Avanza:
         # Works when sending InstrumentType.STOCK, but not InstrumentType.INDEX
         return self.get_instrument(InstrumentType.STOCK, index_id)
 
-    def get_analysis(self,instrument_id: str ):
-         """Returns analysis data for an instrument """
+    def get_analysis(self, instrument_id: str):
+        """Returns analysis data for an instrument"""
+
         return self.__call(
-            HttpMethod.GET,
-            Route.ANALYSIS_PATH.value.format(
-                instrument_id
-            )
+            HttpMethod.GET, Route.ANALYSIS_PATH.value.format(instrument_id)
         )
-    
+
     def get_instrument(self, instrument_type: InstrumentType, instrument_id: str):
         """
         Get instrument info
@@ -345,9 +343,7 @@ class Avanza:
 
         return self.search_for_instrument(InstrumentType.FUND, query, limit)
 
-    def search_for_certificate(
-        self, query: str, limit: int = 10
-    ) -> SearchResults:
+    def search_for_certificate(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a certificate
 
         Args:
@@ -388,15 +384,15 @@ class Avanza:
 
         """
 
-        options = {'query': query,
-                   'searchFilter': {'types': [instrument_type.value.upper()]},
-                   'pagination': {'from': 0, 'size': limit}}
+        options = {
+            "query": query,
+            "searchFilter": {"types": [instrument_type.value.upper()]},
+            "pagination": {"from": 0, "size": limit},
+        }
         result = self.__call(
-            HttpMethod.POST,
-            Route.INSTRUMENT_SEARCH_PATH.value,
-            options=options
+            HttpMethod.POST, Route.INSTRUMENT_SEARCH_PATH.value, options=options
         )
-        return result['hits']
+        return result["hits"]
 
     def get_order_books(self, order_book_ids: Sequence[str]) -> List[OrderBook]:
         """Get info about multiple order books"""
