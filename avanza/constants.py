@@ -160,4 +160,4 @@ class Route(enum.Enum):
     TRANSACTIONS_DETAILS_PATH = "/_api/transactions"
     WATCHLISTS_ADD_PATH = "/_api/watchlist/watchlist/add/{}/{}"
     WATCHLISTS_REMOVE_PATH = "/_api/watchlist/watchlist/remove/{}/{}"
-    WATCHLISTS_PATH = "/_mobile/usercontent/watchlist"
+    WATCHLISTS_PATH = "/_api/watchlist/watchlist"
