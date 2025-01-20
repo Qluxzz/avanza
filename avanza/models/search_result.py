@@ -19,17 +19,19 @@ class SearchInstrumentType(enum.Enum):
     EQUITY_LINKED_BOND = "EQUITY_LINKED_BOND"
     CONVERTIBLE = "CONVERTIBLE"
 
+
 class SearchPrice(BaseModel):
     # Most values are returned as strings.
     # null values are returned as "null"
-    last: str|None
-    currency: str|None
-    todayChangePercent: str|None
-    todayChangeValue: str|None
+    last: str | None
+    currency: str | None
+    todayChangePercent: str | None
+    todayChangeValue: str | None
     todayChangeDirection: int
-    threeMonthsAgoChangePercent: str|None
+    threeMonthsAgoChangePercent: str | None
     threeMonthsAgoChangeDirection: int
-    spread: str|None
+    spread: str | None
+
 
 class StockSector(BaseModel):
     # Most values are returned as strings.
@@ -38,21 +40,23 @@ class StockSector(BaseModel):
     level: int
     name: str
     englishName: str
-    highlightedName: str|None
+    highlightedName: str | None
+
 
 class FundTag(BaseModel):
     title: str
     category: str
     tagCategory: str
-    highlightedTitle: str|None
+    highlightedTitle: str | None
+
 
 class SearchResult(BaseModel):
-    #type_: SearchInstrumentType|str = Field(alias='type')
+    # type_: SearchInstrumentType|str = Field(alias='type')
     title: str
     highlightedTitle: str
     description: str
     highlightedDescription: str
-    path: str|None
+    path: str | None
     urlSlugName: str
     tradeable: bool
     sellable: bool
@@ -61,7 +65,8 @@ class SearchResult(BaseModel):
     stockSectors: List[StockSector]
     fundTags: List[FundTag]
     marketPlaceName: str
-    subType: Any|None
-    highlightedSubType: str|None
+    subType: Any | None
+    highlightedSubType: str | None
+
 
 SearchResults = TypeAdapter(List[SearchResult])

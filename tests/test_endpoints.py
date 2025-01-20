@@ -162,9 +162,7 @@ class ReturnModelTest(unittest.TestCase):
         )
 
         try:
-            SearchResults.validate_python(
-                certificate_search_results, strict=True
-            )
+            SearchResults.validate_python(certificate_search_results, strict=True)
         except ValidationError as e:
             self.fail(e)
 

@@ -28,11 +28,13 @@ class Info(BaseModel):
     unitType: str
     decimalPrecision: int
 
+
 class CurrencyRate(BaseModel):
     value: float
     unit: str
     unitType: str
     decimalPrecision: int
+
 
 class Transaction(BaseModel):
     id: str
