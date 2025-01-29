@@ -306,13 +306,18 @@ class Avanza:
             get_warrant_info()
         ]
         """
-
-        return self.__call(
-            HttpMethod.GET,
-            Route.INSTRUMENT_DETAILS_PATH.value.format(
-                instrument_type.value, instrument_id
-            ),
-        )
+        if instrument_type is InstrumentType.EXCHANGE_TRADED_FUND:
+            return self.__call(
+                HttpMethod.GET,
+                Route.ETF_DETAILS_PATH.value.format(instrument_id)
+            )
+        else:
+            return self.__call(
+                HttpMethod.GET,
+                Route.INSTRUMENT_DETAILS_PATH.value.format(
+                    instrument_type.value, instrument_id
+                ),
+            )
 
     def search_for_stock(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a stock
