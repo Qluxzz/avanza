@@ -8,7 +8,6 @@ from pydantic import ValidationError, TypeAdapter
 from avanza import Avanza
 from avanza.constants import (
     InsightsReportTimePeriod,
-    InstrumentType,
     ListType,
     TimePeriod,
 )
@@ -121,12 +120,6 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
-    def test_instrument_details(self):
-        get_or_cache(
-            self.avanza.get_instrument_details,
-            [InstrumentType.EXCHANGE_TRADED_FUND, "199532"]  # XACT BULL 2
-        )
-
     def test_certificate_details(self):
         certificate_details = get_or_cache(
             self.avanza.get_certificate_details, ["1489186"]  # BULL FACEBOOK X5 AVA 8
@@ -134,6 +127,15 @@ class ReturnModelTest(unittest.TestCase):
 
         try:
             CertificateDetails.model_validate(certificate_details, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
+    def test_etf_details(self):
+        etf_details = get_or_cache(
+            self.avanza.get_etf_details, ["199532"]  # XACT BULL 2
+        )
+        try:
+            EtfDetails.model_validate(etf_details, strict=True)
         except ValidationError as e:
             self.fail(e)
 
