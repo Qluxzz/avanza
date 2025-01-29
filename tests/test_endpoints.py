@@ -120,13 +120,22 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
-    def test_certificate_detail(self):
+    def test_certificate_details(self):
         certificate_details = get_or_cache(
             self.avanza.get_certificate_details, ["1489186"]  # BULL FACEBOOK X5 AVA 8
         )
 
         try:
             CertificateDetails.model_validate(certificate_details, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
+    def test_etf_details(self):
+        etf_details = get_or_cache(
+            self.avanza.get_etf_details, ["199532"]  # XACT BULL 2
+        )
+        try:
+            EtfDetails.model_validate(etf_details, strict=True)
         except ValidationError as e:
             self.fail(e)
 

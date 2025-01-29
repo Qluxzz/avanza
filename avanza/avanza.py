@@ -256,6 +256,9 @@ class Avanza:
 
         return self.get_instrument_details(InstrumentType.CERTIFICATE, certificate_id)
 
+    def get_etf_details(self, etf_id: str) -> EtfDetails:
+        return self.get_instrument_details(InstrumentType.EXCHANGE_TRADED_FUND, etf_id)
+
     def get_warrant_info(self, warrant_id: str) -> WarrantInfo:
         """Returns info about a warrant"""
 
@@ -297,22 +300,19 @@ class Avanza:
     ):
         """
         Get additional instrument info
-        For more info on return models for this function see functions
-        [
-            get_stock_info(),
-            get_fund_info(),
-            get_certificate_info(),
-            get_index_info(),
-            get_warrant_info()
-        ]
         """
-
-        return self.__call(
-            HttpMethod.GET,
-            Route.INSTRUMENT_DETAILS_PATH.value.format(
-                instrument_type.value, instrument_id
-            ),
-        )
+        if instrument_type is InstrumentType.EXCHANGE_TRADED_FUND:
+            return self.__call(
+                HttpMethod.GET,
+                Route.ETF_DETAILS_PATH.value.format(instrument_id)
+            )
+        else:
+            return self.__call(
+                HttpMethod.GET,
+                Route.INSTRUMENT_DETAILS_PATH.value.format(
+                    instrument_type.value, instrument_id
+                ),
+            )
 
     def search_for_stock(self, query: str, limit: int = 10) -> SearchResults:
         """Search for a stock
