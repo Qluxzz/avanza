@@ -118,6 +118,12 @@ class Avanza:
 
         return response_body, credentials
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.log_out()
+
     def __call(
         self, method: HttpMethod, path: str, options=None, return_content: bool = False
     ):
@@ -1154,3 +1160,24 @@ class Avanza:
         """Return current offers"""
 
         return self.__call(HttpMethod.GET, Route.CURRENT_OFFERS_PATH.value)
+
+    def log_out(self):
+        """Logs out by closing the session opened by the constructor.
+
+        Note:
+
+        - Upon return, the Avanza object is not useful as the session has been
+          closed.
+
+        - To ensure that log out happens (whether an exception was raised or
+          not), the context manager interface can be used:
+
+          from avanza import Avanza
+          with Avanza(credentials=...) as avanza:
+              <call API methods on avanza object>
+
+        Returns:
+            The JSON object {"Session": "Session closed"}.
+
+        """
+        return self.__call(HttpMethod.DELETE, Route.WEBTOKEN_PATH.value)

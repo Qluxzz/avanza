@@ -162,3 +162,4 @@ class Route(enum.Enum):
     WATCHLISTS_ADD_PATH = "/_api/watchlist/watchlist/add/{}/{}"
     WATCHLISTS_REMOVE_PATH = "/_api/watchlist/watchlist/remove/{}/{}"
     WATCHLISTS_PATH = "/_api/watchlist/watchlist"
+    WEBTOKEN_PATH = "/_api/authentication/sessions/webtoken"
