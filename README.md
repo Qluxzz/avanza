@@ -32,64 +32,60 @@ Here are the steps to get your TOTP Secret:
 ```Python
 import hashlib
 import pyotp
-totp = pyotp.TOTP('MY_TOTP_SECRET', digest=hashlib.sha1)
+totp = pyotp.TOTP("MY_TOTP_SECRET", digest=hashlib.sha1)
 print(totp.now())
 ```
 
-## Example
+## Examples
 
-Authenticate and fetch account overview:
+Note: The following examples all assume that you have defined a `credentials` object
+like this (fill in your own unique values):
+
+```python
+credentials = {
+    "username": "MY_USERNAME",
+    "password": "MY_PASSWORD",
+    "totpSecret": "MY_TOTP_SECRET"
+}
+```
+
+#### Example: Print account overview
+
+The following example
+1. logs in (as part of calling the Avanza constructor),
+1. retrieves and prints an account overview, and
+1. logs out (when the `with` block/context exits).
 
 ```python
 from avanza import Avanza
-avanza = Avanza({
-    'username': 'MY_USERNAME',
-    'password': 'MY_PASSWORD',
-    'totpSecret': 'MY_TOTP_SECRET'
-})
+import json
 
-overview = avanza.get_overview()
+credentials = ...
+
+with Avanza(credentials) as avanza:
+    overview = avanza.get_overview()
+    print(json.dumps(overview, indent=4))
 ```
 
-Get info about a certain account
-
-```python
-from avanza import Avanza, TimePeriod
-
-avanza = Avanza({
-    'username': 'MY_USERNAME',
-    'password': 'MY_PASSWORD',
-    'totpSecret': 'MY_TOTP_SECRET'
-})
-
-report = avanza.get_insights_report(
-    account_id='XXXXXXX',
-    time_period=TimePeriod.ONE_WEEK
-)
-```
-
-Place an order
+#### Example: Place an order
 
 ```python
 from avanza import Avanza, OrderType
 
-avanza = Avanza({
-    'username': 'MY_USERNAME',
-    'password': 'MY_PASSWORD',
-    'totpSecret': 'MY_TOTP_SECRET'
-})
+credentials = ...
 
-result = avanza.place_order(
-    account_id='XXXXXXX',
-    order_book_id='XXXXXX',
-    order_type=OrderType.BUY,
-    price=13.37,
-    valid_until=date.fromisoformat('2011-11-11'),
-    volume=42
-)
+with Avanza(credentials) as avanza:
+    result = avanza.place_order(
+        account_id="XXXXXXX",
+        order_book_id="XXXXXX",
+        order_type=OrderType.BUY,
+        price=13.37,
+        valid_until=date.fromisoformat("2011-11-11"),
+        volume=42
+    )
 ```
 
-Subscribe to real time data
+#### Example: Subscribe to real time data
 
 ```python
 import asyncio
@@ -106,20 +102,12 @@ async def subscribe_to_channel(avanza: Avanza):
         callback
     )
 
-def main():
-    avanza = Avanza({
-        'username': 'MY_USERNAME',
-        'password': 'MY_PASSWORD',
-        'totpSecret': 'MY_TOTP_SECRET'
-    })
-
+credentials = ...
+with Avanza(credentials) as avanza:
     asyncio.get_event_loop().run_until_complete(
         subscribe_to_channel(avanza)
     )
     asyncio.get_event_loop().run_forever()
-
-if __name__ == "__main__":
-    main()
 ```
 
 ## Testing
