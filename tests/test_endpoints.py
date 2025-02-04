@@ -58,6 +58,10 @@ class ReturnModelTest(unittest.TestCase):
             }
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.avanza.log_out()
+
     def test_overview(self):
         overview = get_or_cache(self.avanza.get_overview)
 

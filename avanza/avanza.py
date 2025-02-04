@@ -1,3 +1,4 @@
+import contextlib
 from datetime import date
 from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
@@ -28,6 +29,26 @@ MAX_INACTIVE_MINUTES = 60 * 24
 
 
 class Avanza:
+    @staticmethod
+    @contextlib.contextmanager
+    def open_session(
+            credentials: Union[BaseCredentials, Dict[str, str]]
+    ) -> ["Avanza", None, None]:
+        """Session manager which logs in/out when entering/exiting the context.
+
+        Example:
+
+            from avanza import Avanza
+
+            with Avanza.open_session(credentials=...) as avanza:
+                <call API methods on avanza object>
+        """
+        avanza = Avanza(credentials)
+        try:
+            yield avanza
+        finally:
+            avanza.log_out()
+
     def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
         """
 
@@ -1155,3 +1176,25 @@ class Avanza:
         """Return current offers"""
 
         return self.__call(HttpMethod.GET, Route.CURRENT_OFFERS_PATH.value)
+
+    def log_out(self):
+        """Logs out by closing the session opened by the constructor.
+
+        Note:
+        - Upon return, the Avanza object is not useful as the session has been
+          closed.
+
+        - If the Avanza object goes out of scope (for example, when the program
+          exits) without logging out, a new session/Avanza object cannot be
+          opened/created until 30s has passed (the server will respond with
+          401). Therefore, logging out is recommended.
+
+        - For the purpose of ensuring that log out happens (whether an
+          exception was raised or not), an Avanza.open_session context manager
+          is provided.
+
+        Returns:
+            The JSON object {"Session": "Session closed"}.
+
+        """
+        return self.__call(HttpMethod.DELETE, Route.WEBTOKEN_PATH.value)
