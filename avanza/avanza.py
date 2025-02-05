@@ -303,8 +303,7 @@ class Avanza:
         """
         if instrument_type is InstrumentType.EXCHANGE_TRADED_FUND:
             return self.__call(
-                HttpMethod.GET,
-                Route.ETF_DETAILS_PATH.value.format(instrument_id)
+                HttpMethod.GET, Route.ETF_DETAILS_PATH.value.format(instrument_id)
             )
         else:
             return self.__call(
