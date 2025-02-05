@@ -122,7 +122,7 @@ if __name__ == "__main__":
     main()
 ```
 
-## TESTING
+## Testing
 
 Tests are stored in [/tests](https://github.com/Qluxzz/avanza/tree/master/tests)
 
@@ -140,12 +140,42 @@ ACCOUNT_ID=
 PRICE_ALERT_ORDER_BOOK_ID=
 ```
 
-Then you can run the tests using `python -m unittest`
+Then you can do one of the following:
+- To run all tests: `python -m unittest`.
+- To run a single test, such as `test_overview`: `python3 -m unittest tests.test_endpoints.ReturnModelTest.test_overview`.
 
-## LICENSE
+## Extending/updating the API
+
+Suppose we want to add a new method `get_foo_bar` to the API defined by `avanza.py` along with a test that both
+- shows that the request sent by our new method yields a successful response from the server, and
+- starts failing whenever Avanza makes breaking changes (attribute removal or data type changes) to their API.
+
+The steps are then roughly these:
+
+1. Add the method to `avanza.py`, making it call a URI using a route that you add to `constants.py`.
+1. Add a simple test to `tests/test_endpoints.py` which calls the method using the `get_or_cache`
+   wrapper function (but does not yet validate the JSON response received).
+1. Run the test (see `Testing` above). As part of running the test, the said wrapper function will generate the file `get_foo_bar.json`.
+1. Generate Pydantic models corresponding to the JSON response using the tool `datamodel-code-generator`:
+   1. Install the tool into your virtual environment using `pip install datamodel-code-generator`.
+   1. Run
+      ```
+      datamodel-codegen --class-name=FooBar --enable-version-header --target-python-version=3.9 \
+        --input get_foo_bar.json --input-file-type=json \
+        --output avanza/models/foo_bar.py --output-model-type=pydantic_v2.BaseModel
+      ```
+      to generate a tree of models corresponding to the JSON response to the module
+      `avanza/models/foo_bar.py`. Note: The `--target-python-version` should match whatever
+      version `REQUIRES_PYTHON` in `setup.py` indicates.
+   1. Add the necessary import to `avanza/models/__init__.py`.
+1. Update the test to validate the JSON response against the newly created model by adding the
+   appropriate `model_validate` call. This way, the test will fail if Avanza updates their API (by default,
+   attribute removals and data type changes will cause a test failure, but not addition of new attributes).
+
+## License
 
 MIT license. See the LICENSE file for details.
 
-## RESPONSIBILITIES
+## Responsibilities
 
 The author of this software is not responsible for any indirect damages (foreseeable or unforeseeable), such as, if necessary, loss or alteration of or fraudulent access to data, accidental transmission of viruses or of any other harmful element, loss of profits or opportunities, the cost of replacement goods and services or the attitude and behavior of a third party.

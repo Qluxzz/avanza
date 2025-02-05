@@ -7,6 +7,7 @@ from .certificate_details import CertificateDetails
 from .certificate_info import CertificateInfo
 from .chart_data import ChartData
 from .deals_and_orders import DealsAndOrders
+from .etf_details import EtfDetails
 from .fund_info import FundInfo
 from .index_info import IndexInfo
 from .insights_report import InsightsReport
