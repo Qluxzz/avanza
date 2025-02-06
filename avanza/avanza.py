@@ -58,7 +58,6 @@ class Avanza:
         self._session = requests.Session()
 
         response_body = self.__authenticate(credentials)
-        self._credentials = credentials
         self._authentication_session = response_body["authenticationSession"]
         self._push_subscription_id = response_body["pushSubscriptionId"]
         self._customer_id = response_body["customerId"]
