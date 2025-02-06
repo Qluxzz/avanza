@@ -1,4 +1,6 @@
-from datetime import date
+from datetime import date, datetime
+import math
+import time
 from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 
 import requests
@@ -20,7 +22,11 @@ from .constants import (
     TransactionsDetailsType,
     Condition,
 )
-from .credentials import BaseCredentials, backwards_compatible_serialization
+from .credentials import (
+    backwards_compatible_serialization,
+    BaseCredentials,
+    SecretCredentials,
+)
 
 BASE_URL = "https://www.avanza.se"
 MIN_INACTIVE_MINUTES = 30
@@ -28,7 +34,12 @@ MAX_INACTIVE_MINUTES = 60 * 24
 
 
 class Avanza:
-    def __init__(self, credentials: Union[BaseCredentials, Dict[str, str]]):
+    def __init__(
+        self,
+        credentials: Union[BaseCredentials, Dict[str, str]],
+        retry_with_next_otp: bool = True,
+        quiet: bool = False,
+    ):
         """
 
         Args:
@@ -48,16 +59,58 @@ class Avanza:
                         'password': 'MY_PASSWORD',
                         'totpCode': 'MY_TOTP_CODE'
                     }
+
+            retry_with_next_otp: If
+
+                a) the server responded with 401 Unauthorized when trying to
+                   log in, and
+                b) the TOTP code used for logging in was generated from a TOTP
+                   secret provided in credentials,
+
+                then wait until the next TOTP time-step window and try again
+                with the new OTP. Re-retrying with a new OTP prevents a program
+                using avanza-api from crashing with a 401 HTTP error if, for
+                example, the program is run a second time shortly after it was
+                previously run.
+
+            quiet: Do not print a status message if waiting for the next TOTP
+                time-step window.
+
         """
         if isinstance(credentials, dict):
             credentials: BaseCredentials = backwards_compatible_serialization(
                 credentials
             )
+        self._retry_with_next_otp = retry_with_next_otp
+        self._quiet = quiet
 
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
 
-        response_body = self.__authenticate(credentials)
+        try:
+            response_body = self.__authenticate(credentials)
+        except requests.exceptions.HTTPError as http_error:
+            if (
+                http_error.response.status_code == 401
+                and isinstance(credentials, SecretCredentials)
+                and self._retry_with_next_otp
+            ):
+                # Wait for the next TOTP time-step window and try with the new OTP
+                default_otp_interval: int = 30  # We use this pyotp/RFC 6238 default
+                now: float = datetime.now().timestamp()
+                time_to_wait: int = math.ceil(
+                    (default_otp_interval - now) % default_otp_interval
+                )
+                if not self._quiet:
+                    print(
+                        "Server returned 401 when trying to log in. "
+                        f"Will retry with the next OTP in {time_to_wait}s..."
+                    )
+                time.sleep(time_to_wait)
+                response_body = self.__authenticate(credentials)
+            else:
+                raise
+
         self._authentication_session = response_body["authenticationSession"]
         self._push_subscription_id = response_body["pushSubscriptionId"]
         self._customer_id = response_body["customerId"]
