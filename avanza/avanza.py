@@ -57,8 +57,7 @@ class Avanza:
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
         self._session = requests.Session()
 
-        response_body, credentials = self.__authenticate(credentials)
-
+        response_body = self.__authenticate(credentials)
         self._credentials = credentials
         self._authentication_session = response_body["authenticationSession"]
         self._push_subscription_id = response_body["pushSubscriptionId"]
@@ -95,7 +94,7 @@ class Avanza:
         # No second factor required, continue with normal login
         if response_body.get("twoFactorLogin") is None:
             self._security_token = response.headers.get("X-SecurityToken")
-            return response_body["successfulLogin"], credentials
+            return response_body["successfulLogin"]
 
         tfa_method = response_body["twoFactorLogin"].get("method")
 
@@ -116,7 +115,7 @@ class Avanza:
 
         response_body = response.json()
 
-        return response_body, credentials
+        return response_body
 
     def __call(
         self, method: HttpMethod, path: str, options=None, return_content: bool = False
