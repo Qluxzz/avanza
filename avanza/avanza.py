@@ -617,10 +617,10 @@ class Avanza:
         Returns:
 
             {
-                messages: List[str],
-                orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: str,
+                message: str,
+                parameters: List[str],
+                orderId: str
             }
         """
 
