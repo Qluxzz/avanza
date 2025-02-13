@@ -153,7 +153,7 @@ class Route(enum.Enum):
     ORDER_PLACE_STOP_LOSS_PATH = "/_api/trading/stoploss/new"
     ORDER_PLACE_PATH_BUY_FUND = "/_api/fund-guide/fund-order-page/buy"
     ORDER_PLACE_PATH_SELL_FUND = "/_api/fund-guide/fund-order-page/sell"
-    ORDER_EDIT_PATH = "/_api/order/{}/{}"
+    ORDER_EDIT_PATH = "/_api/trading-critical/rest/order/modify"
     ORDERBOOK_LIST_PATH = "/_mobile/market/orderbooklist/{}"
     PRICE_ALERT_PATH = "/_cqbe/marketing/service/alert/{}"
     STOP_LOSS_PATH = "/_api/trading/stoploss"

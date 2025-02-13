@@ -606,11 +606,8 @@ class Avanza:
 
     def edit_order(
         self,
-        instrument_type: InstrumentType,
         order_id: str,
         account_id: str,
-        order_book_id: str,
-        order_type: OrderType,
         price: float,
         valid_until: date,
         volume: int,
@@ -620,20 +617,24 @@ class Avanza:
         Returns:
 
             {
-                messages: List[str],
-                orderId: str,
-                requestId: str,
-                status: str
+                orderRequestStatus: str,
+                message: str,
+                parameters: List[str],
+                orderId: str
             }
         """
 
         return self.__call(
-            HttpMethod.PUT,
-            Route.ORDER_EDIT_PATH.value.format(instrument_type.value, order_id),
+            HttpMethod.POST,
+            Route.ORDER_EDIT_PATH.value,
             {
                 "accountId": account_id,
-                "orderbookId": order_book_id,
-                "orderType": order_type.value,
+                "metadata":
+                    {
+                        "orderEntryMode": "STANDARD"
+                    },
+                "openVolume": None,
+                "orderId": order_id,
                 "price": price,
                 "validUntil": valid_until.isoformat(),
                 "volume": volume,
