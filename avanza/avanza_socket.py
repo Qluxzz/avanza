@@ -44,7 +44,7 @@ class AvanzaSocket:
 
     async def __create_socket(self):
         async with websockets.connect(
-            WEBSOCKET_URL, extra_headers={"Cookie": self._cookies}
+            WEBSOCKET_URL, additional_headers={"Cookie": self._cookies}
         ) as self._socket:
             await self.__send_handshake_message()
             await self.__socket_message_handler()
