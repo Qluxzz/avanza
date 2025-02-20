@@ -1,7 +1,9 @@
 import asyncio
 import logging
 import json
-import websockets
+
+import websockets.legacy.client as websockets
+
 from typing import Any, Callable, Sequence
 
 from .constants import ChannelType
