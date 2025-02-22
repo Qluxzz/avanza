@@ -1,0 +1,17 @@
+{% extends "default/module.html.jinja2" %}
+{% block inherited_members scoped %}{% endblock %}
+{% macro inherited(cls) %}{% endmacro %}
+
+{# Hides inherited members from Pydantic #}
+{% macro member(doc) %}
+    {% if "model" not in doc.qualname %}
+        {{ default_member(doc) }}
+    {% endif %}
+{% endmacro %}
+
+{# Don't print docstring if it includes pydantic, that means it's the inherited docstring #}
+{% macro docstring(var) %}
+    {% if 'pydantic' not in var.docstring %}
+        {{ default_docstring(var) }}
+    {% endif %}
+{% endmacro %}

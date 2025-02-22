@@ -1,3 +1,7 @@
+"""
+.. include:: ../README.md
+"""
+
 from .avanza import Avanza
 from .constants import (
     TransactionType,
@@ -8,5 +12,5 @@ from .constants import (
     OrderType,
     HttpMethod,
     Route,
-    Resolution
+    Resolution,
 )
