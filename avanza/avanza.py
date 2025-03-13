@@ -451,6 +451,13 @@ class Avanza:
             HttpMethod.GET,
             Route.ORDERBOOK_LIST_PATH.value.format(",".join(order_book_ids)),
         )
+    
+    def get_orderbook(self, order_book_id: str ):
+
+        return self.__call(
+            HttpMethod.GET,
+            Route.ORDERBOOK_PATH.value.format(order_book_id)
+        )
 
     def get_insights_report(
         self, account_id: str, time_period: InsightsReportTimePeriod
