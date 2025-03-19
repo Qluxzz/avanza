@@ -209,15 +209,20 @@ class Avanza:
         return response.json()
 
     async def subscribe_to_id(
-        self, channel: ChannelType, id: str, callback: Callable[[str, dict], Any]
+        self,
+        channel: ChannelType,
+        id: str,
+        callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds = None
     ):
-        await self.subscribe_to_ids(channel, [id], callback)
+        await self.subscribe_to_ids(channel, [id], callback, wait_for_reply_timeout_seconds)
 
     async def subscribe_to_ids(
         self,
         channel: ChannelType,
         ids: Sequence[str],
         callback: Callable[[str, dict], Any],
+        wait_for_reply_timeout_seconds = None
     ):
         if not callable(callback):
             raise ValueError("callback parameter has to be a function!")
@@ -225,7 +230,12 @@ class Avanza:
         if not self._socket._connected:
             await self._socket.init()
 
-        await self._socket.subscribe_to_ids(channel, ids, callback)
+        await self._socket.subscribe_to_ids(
+            channel,
+            ids,
+            callback,
+            wait_for_reply_timeout_seconds
+        )
 
     def get_overview(self) -> Overview:
         """Get account and category overviews"""
