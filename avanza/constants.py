@@ -158,7 +158,7 @@ class Route(enum.Enum):
     PRICE_ALERT_PATH = "/_cqbe/marketing/service/alert/{}"
     STOP_LOSS_PATH = "/_api/trading/stoploss"
     TOTP_PATH = "/_api/authentication/sessions/totp"
-    TRANSACTIONS_DETAILS_PATH = "/_api/transactions"
+    TRANSACTIONS_DETAILS_PATH = "/_api/transactions/list"
     WATCHLISTS_ADD_PATH = "/_api/watchlist/watchlist/add/{}/{}"
     WATCHLISTS_REMOVE_PATH = "/_api/watchlist/watchlist/remove/{}/{}"
     WATCHLISTS_PATH = "/_api/watchlist/watchlist"
