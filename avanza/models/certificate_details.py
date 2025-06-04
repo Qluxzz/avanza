@@ -24,6 +24,14 @@ class OrderDepthLevels(BaseModel):
     sellSide: Order
 
 
+class OrderDepth(BaseModel):
+    levels: List[OrderDepthLevels]
+    receivedTime: int
+    """ Unix timestamp (milliseconds) """
+    marketMakerLevelInBid: int
+    marketMakerLevelInAsk: int
+
+
 class CertificateDetails(BaseModel):
     underlying: Underlying
     assetCategory: str
@@ -34,7 +42,7 @@ class CertificateDetails(BaseModel):
     leverage: float
     documents: Documents
     fee: Fee
-    trades: List[dict]
-    orderDepthLevels: List[OrderDepthLevels]
+    trades: List[Any]
+    orderDepth: OrderDepth
     brokerTradeSummaries: List[Any]
     collateralValue: float
