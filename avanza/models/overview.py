@@ -28,14 +28,11 @@ class Balance(BaseModel):
 
 
 class Category(BaseModel):
+    id: str
     name: str
     totalValue: Balance
-    buyingPower: Balance
-    id: str
-    profit: Performance
     performance: dict[str, Performance]
     savingsGoalView: SavingsGoalView | None
-    sortOrder: int
 
 
 class Name(BaseModel):
@@ -48,35 +45,25 @@ class Account(BaseModel):
     categoryId: str
     balance: Balance
     profit: Performance
-    totalAcquiredValue: Balance
     type: str
     totalValue: Balance
     buyingPower: Balance
     buyingPowerWithoutCredit: Balance
-    interestRate: Balance | None
     depositInterestRate: Balance | None
     loanInterestRate: Balance | None
     name: Name
     status: str
     errorStatus: str
-    overmortgaged: bool
-    overdrawn: bool
+    overmortgaged: Optional[bool]
+    overdrawn: List[Any]
     performance: dict[str, Performance]
     settings: dict[str, bool]
-    clearingNumber: Optional[str]
-    accountNumber: Optional[str]
+    clearingAccountNumber: Optional[str]
     urlParameterId: str
     owner: bool
-
-
-class AccountsSummary(BaseModel):
-    performance: dict[str, Performance]
-    buyingPower: Balance
-    totalValue: Balance
 
 
 class Overview(BaseModel):
     categories: List[Category]
     accounts: List[Account]
     loans: List[Any]
-    accountsSummary: AccountsSummary

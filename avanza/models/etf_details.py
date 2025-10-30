@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel
 
@@ -90,17 +90,6 @@ class AccountAndPositionsViewItem(BaseModel):
     averageAcquiredPriceOrderbookCurrency: float
 
 
-class Holdings(BaseModel):
-    totalVolume: int
-    totalMarketValue: float
-    totalDevelopmentPercent: float
-    totalDevelopmentAmount: float
-    averageAcquiredPriceOrderbookCurrency: float
-    acquiredPrice: float
-    accountAndPositionsView: List[AccountAndPositionsViewItem]
-    acquiredValue: float
-
-
 class BrokerTradeSummary(BaseModel):
     brokerCode: str
     sellVolume: int
@@ -134,13 +123,6 @@ class Account(BaseModel):
     accountTypeName: str
 
 
-class OrdersAndDeals(BaseModel):
-    orders: List
-    deals: List
-    hasStoplossOrders: bool
-    accounts: List[Account]
-
-
 class PastEvent(BaseModel):
     exDate: str
     paymentDate: str
@@ -150,7 +132,7 @@ class PastEvent(BaseModel):
 
 
 class Dividends(BaseModel):
-    events: List
+    events: List[Any]
     pastEvents: List[PastEvent]
 
 
@@ -164,11 +146,11 @@ class FundExposure(BaseModel):
 
 
 class CountryExposures(BaseModel):
-    exposures: List
+    exposures: List[Any]
 
 
 class SectorExposures(BaseModel):
-    exposures: List
+    exposures: List[Any]
 
 
 class SustainabilityDevelopmentGoal(BaseModel):
@@ -192,15 +174,12 @@ class EtfDetails(BaseModel):
     description: str
     documents: Documents
     orderDepth: OrderDepth
-    orderDepthLevels: List[OrderDepthLevel]
-    holdings: Holdings
     brokerTradeSummaries: List[BrokerTradeSummary]
     fee: Fee
     trades: List[Trade]
     tradingUnit: int
     collateralValue: float
     introDate: str
-    ordersAndDeals: OrdersAndDeals
     dividends: Dividends
     fundExposures: List[FundExposure]
     riskScore: str

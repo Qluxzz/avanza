@@ -6,13 +6,9 @@ class CustomerId(BaseModel):
     id: int
 
 
-class UserId(BaseModel):
-    customerId: CustomerId
-
-
 class WatchList(BaseModel):
     watchListId: str
-    userId: UserId
+    customerId: CustomerId
     orderbookIds: List[str]
     created: str
     """ ISO 8601 """

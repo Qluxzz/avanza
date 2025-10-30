@@ -79,7 +79,7 @@ class FundInfo(BaseModel):
     prospectusLink: str
     """ Relative API URL """
     aumCoveredCarbon: Optional[bool]
-    fossilFuelInvolvement: float
+    fossilFuelInvolvement: Optional[float]
     carbonRiskScore: float
     categories: List[str]
     fundTypeName: str
@@ -89,14 +89,14 @@ class FundInfo(BaseModel):
     recommendedHoldingPeriod: str
     portfolioDate: str
     """ YYYY-MM-DD """
-    ppmCode: str
+    ppmCode: Optional[str]
     superloanOrderbook: bool
     esgScore: float
     environmentalScore: float
     socialScore: float
     governanceScore: float
     controversyScore: Optional[float]
-    carbonSolutionsInvolvement: float
+    carbonSolutionsInvolvement: Optional[float]
     productInvolvements: List[ProductInvolvement]
     sustainabilityRating: int
     sustainabilityRatingCategoryName: str

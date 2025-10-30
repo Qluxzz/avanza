@@ -53,12 +53,12 @@ class Transaction(BaseModel):
     type: str
     volume: Optional[Info]
     priceInTradedCurrency: Optional[Info]
-    amount: Info
+    priceInTransactionCurrency: Optional[Info]
+    amount: Optional[Info]
     onCreditAccount: bool
-    comission: Optional[Info]
+    commission: Optional[Info]
     currencyRate: Optional[CurrencyRate]
     noteId: Optional[str]
-    priceInAccountCurrency: Optional[Info]
     intraday: bool
     foreignTaxRate: Optional[CurrencyRate]
     isin: str

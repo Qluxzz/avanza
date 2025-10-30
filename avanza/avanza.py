@@ -191,7 +191,6 @@ class Avanza:
         response = method_call(
             f"{BASE_URL}{path}",
             headers={
-                "X-AuthenticationSession": self._authentication_session,
                 "X-SecurityToken": self._security_token,
             },
             **data,
@@ -687,10 +686,7 @@ class Avanza:
             Route.ORDER_EDIT_PATH.value,
             {
                 "accountId": account_id,
-                "metadata":
-                    {
-                        "orderEntryMode": "STANDARD"
-                    },
+                "metadata": {"orderEntryMode": "STANDARD"},
                 "openVolume": None,
                 "orderId": order_id,
                 "price": price,
