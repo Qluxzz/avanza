@@ -22,3 +22,5 @@ from .stock_info import StockInfo
 from .transaction import Transactions
 from .warrant_info import WarrantInfo
 from .watch_list import WatchList
+from .news import News
+from .forum_posts import ForumPosts

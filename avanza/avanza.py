@@ -327,19 +327,15 @@ class Avanza:
             HttpMethod.GET, Route.ANALYSIS_PATH.value.format(instrument_id)
         )
 
-    def get_news(self, instrument_id: str):
+    def get_news(self, instrument_id: str) -> News:
         """Returns latest news data for an instrument"""
 
-        return self.__call(
-            HttpMethod.GET, Route.NEWS_PATH.value.format(instrument_id)
-        )
+        return self.__call(HttpMethod.GET, Route.NEWS_PATH.value.format(instrument_id))
 
-    def get_forum_posts(self, instrument_id: str):
+    def get_forum_posts(self, instrument_id: str) -> ForumPosts:
         """Returns latest forum posts for an instrument"""
 
-        return self.__call(
-            HttpMethod.GET, Route.FORUM_PATH.value.format(instrument_id)
-        )
+        return self.__call(HttpMethod.GET, Route.FORUM_PATH.value.format(instrument_id))
 
     def get_instrument(self, instrument_type: InstrumentType, instrument_id: str):
         """
