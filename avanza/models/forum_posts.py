@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -13,5 +13,5 @@ class Post(BaseModel):
 
 
 class ForumPosts(BaseModel):
-    url: Optional[str]
-    posts: Optional[Post]
+    url: Optional[str] = None
+    posts: Optional[List[Post]] = None
