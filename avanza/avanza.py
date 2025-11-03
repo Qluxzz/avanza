@@ -453,16 +453,9 @@ class Avanza:
         )
         return result["hits"]
 
-    def get_order_books(self, order_book_ids: Sequence[str]) -> List[OrderBook]:
-        """Get info about multiple order books"""
 
-        return self.__call(
-            HttpMethod.GET,
-            Route.ORDERBOOK_LIST_PATH.value.format(",".join(order_book_ids)),
-        )
-    
-    def get_orderbook(self, order_book_id: str ):
-
+    def get_order_book(self, order_book_id: str )-> OrderBook:
+        """Get info about an orderbook """
         return self.__call(
             HttpMethod.GET,
             Route.ORDERBOOK_PATH.value.format(order_book_id)

@@ -1,22 +1,41 @@
 from pydantic import BaseModel
+from typing import List
+from datetime import date
 
+class TickSizeEntry(BaseModel):
+    min: float
+    max: float
+    tick: float
+
+class TickSizeList(BaseModel):
+    tickSizeEntries: List[TickSizeEntry]
+
+class FeatureSupport(BaseModel):
+    stopLoss: bool
+    fillAndOrKill: bool
+    openVolume: bool
+    marketTrades: bool
+    marketTradesSummary: bool
+    nordicAtMid: bool
+    stopLossMarketMakerQuote: bool
+    routingStrategies: bool
 
 class OrderBook(BaseModel):
-    highestPrice: float
-    lowestPrice: float
-    change: float
-    totalVolumeTraded: int
-    updated: str
-    """ Example 2011-11-11T11:11:11.504+0200 """
-    currency: str
-    """ ISO 4217 """
-    priceThreeMonthsAgo: float
-    flagCode: str
-    """ ISO 3166-1 alpha-2 """
-    lastPrice: float
-    name: str
     id: str
-    sellable: bool
-    buyable: bool
-    tradable: bool
+    name: str
+    isin: str
+    instrumentId: str
+    marketPlace: str
+    countryCode: str
+    tickSizeList: TickSizeList
+    collateralValue: float
+    currency: str
+    orderbookStatus: str
+    minValidUntil: date
+    maxValidUntil: date
     instrumentType: str
+    volumeFactor: float
+    featureSupport: FeatureSupport
+    priceType: str
+    tradingUnit: int
+    tickerSymbol: str
