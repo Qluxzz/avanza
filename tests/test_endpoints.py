@@ -3,7 +3,7 @@ from typing import Any, Callable, List, Union
 import unittest
 import os
 from dotenv import load_dotenv
-from pydantic import ValidationError, TypeAdapter
+from pydantic import ValidationError
 
 from avanza import Avanza
 from avanza.constants import (
@@ -24,7 +24,7 @@ It does not however validate that the response model has only these fields, more
 
 # Skips login to Avanza and defaults to using cached response models,
 # will fail if no cached response model exists for given test
-USE_CACHE = False
+USE_CACHE = True
 
 
 class ReturnModelTest(unittest.TestCase):
@@ -289,6 +289,30 @@ class ReturnModelTest(unittest.TestCase):
 
         try:
             InspirationList.model_validate(inspiration_list, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
+    def test_forum_post(self):
+        instrument_id = "5447"  # ABB
+
+        posts = get_or_cache(self.avanza.get_forum_posts, [instrument_id])
+
+        try:
+            ForumPosts.model_validate(posts, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
+    def test_get_news(self):
+        instrument_id = os.getenv("PRICE_ALERT_ORDER_BOOK_ID")
+        if instrument_id is None:
+            self.fail(
+                "No PRICE_ALERT_ORDER_BOOK_ID set in .env file, create a price alert and then add that instrument id as PRICE_ALERT_ORDER_BOOK_ID to the .env file"
+            )
+
+        news = get_or_cache(self.avanza.get_news, [instrument_id])
+
+        try:
+            News.model_validate(news, strict=True)
         except ValidationError as e:
             self.fail(e)
 
