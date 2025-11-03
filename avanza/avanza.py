@@ -454,7 +454,7 @@ class Avanza:
         return result["hits"]
 
 
-    def get_order_book(self, order_book_id: str )-> OrderBook:
+    def get_order_book(self, order_book_id: str)-> OrderBook:
         """Get info about an orderbook """
         return self.__call(
             HttpMethod.GET,
