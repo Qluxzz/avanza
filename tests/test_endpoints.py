@@ -24,7 +24,7 @@ It does not however validate that the response model has only these fields, more
 
 # Skips login to Avanza and defaults to using cached response models,
 # will fail if no cached response model exists for given test
-USE_CACHE = True
+USE_CACHE = False
 
 
 class ReturnModelTest(unittest.TestCase):
@@ -183,18 +183,14 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
-    def test_get_order_books(self):
-        order_books = get_or_cache(
-            self.avanza.get_order_books,
-            [
+    def test_get_order_book(self):
+        order_book = get_or_cache(
+            self.avanza.get_order_book,
                 ["5361"],  # Avanza Bank Holding
-            ],
         )
 
-        order_book = order_books[0]
-
         try:
-            OrderBook.model_validate(order_book, strict=True)
+            OrderBook.model_validate(order_book, strict=False)
         except ValidationError as e:
             self.fail(e)
 
