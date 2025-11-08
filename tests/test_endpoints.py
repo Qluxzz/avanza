@@ -190,7 +190,7 @@ class ReturnModelTest(unittest.TestCase):
         )
 
         try:
-            OrderBook.model_validate(order_book, strict=False)
+            OrderBook.model_validate(order_book, strict=True)
         except ValidationError as e:
             self.fail(e)
 

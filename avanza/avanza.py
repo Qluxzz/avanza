@@ -455,7 +455,7 @@ class Avanza:
 
 
     def get_order_book(self, order_book_id: str)-> OrderBook:
-        """Get info about an orderbook """
+        """Get info about an orderbook"""
         return self.__call(
             HttpMethod.GET,
             Route.ORDERBOOK_PATH.value.format(order_book_id)
