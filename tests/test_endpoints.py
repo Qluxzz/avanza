@@ -24,7 +24,7 @@ It does not however validate that the response model has only these fields, more
 
 # Skips login to Avanza and defaults to using cached response models,
 # will fail if no cached response model exists for given test
-USE_CACHE = False
+USE_CACHE = True
 
 
 class ReturnModelTest(unittest.TestCase):
@@ -190,7 +190,7 @@ class ReturnModelTest(unittest.TestCase):
         )
 
         try:
-            OrderBook.model_validate(order_book, strict=False)
+            OrderBook.model_validate(order_book, strict=True)
         except ValidationError as e:
             self.fail(e)
 

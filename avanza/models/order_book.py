@@ -30,9 +30,12 @@ class OrderBook(BaseModel):
     tickSizeList: TickSizeList
     collateralValue: float
     currency: str
+    """ ISO 4217 """
     orderbookStatus: str
-    minValidUntil: date
-    maxValidUntil: date
+    minValidUntil: str
+    """ Example 2025-11-08 """
+    maxValidUntil: str
+    """ Example 2025-11-08 """
     instrumentType: str
     volumeFactor: float
     featureSupport: FeatureSupport

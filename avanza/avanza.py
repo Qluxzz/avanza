@@ -8,8 +8,8 @@ import requests
 from avanza.entities import StopLossOrderEvent, StopLossTrigger
 from avanza.models import *
 
-from .avanza_socket import AvanzaSocket
-from .constants import (
+from avanza_socket import AvanzaSocket
+from constants import (
     ChannelType,
     HttpMethod,
     InsightsReportTimePeriod,
@@ -22,7 +22,7 @@ from .constants import (
     TransactionsDetailsType,
     Condition,
 )
-from .credentials import (
+from credentials import (
     backwards_compatible_serialization,
     BaseCredentials,
     SecretCredentials,
@@ -454,8 +454,8 @@ class Avanza:
         return result["hits"]
 
 
-    def get_order_book(self, order_book_id: str )-> OrderBook:
-        """Get info about an orderbook """
+    def get_order_book(self, order_book_id: str)-> OrderBook:
+        """Get info about an orderbook"""
         return self.__call(
             HttpMethod.GET,
             Route.ORDERBOOK_PATH.value.format(order_book_id)
