@@ -183,15 +183,11 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
-    def test_get_order_books(self):
-        order_books = get_or_cache(
-            self.avanza.get_order_books,
-            [
+    def test_get_order_book(self):
+        order_book = get_or_cache(
+            self.avanza.get_order_book,
                 ["5361"],  # Avanza Bank Holding
-            ],
         )
-
-        order_book = order_books[0]
 
         try:
             OrderBook.model_validate(order_book, strict=True)
