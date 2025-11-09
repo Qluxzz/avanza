@@ -20,6 +20,11 @@ class TransactionsDetailsType(enum.Enum):
     UNKNOWN = "UNKNOWN"
 
 
+class CreditType(enum.Enum):
+    UNCREDITED = "uncredited"
+    CREDITED = "credited"
+
+
 class ChannelType(enum.Enum):
     ACCOUNTS = "accounts"
     QUOTES = "quotes"
@@ -130,6 +135,7 @@ class Route(enum.Enum):
     AUTHENTICATION_PATH = "/_api/authentication/sessions/usercredentials"
     CATEGORIZED_ACCOUNTS = "/_api/account-overview/overview/categorizedAccounts"
     CHARTDATA_PATH = "/_api/price-chart/stock/{}"
+    CREDITINFO_PATH = "/_api/superloan/creditinfo/{}"
     CURRENT_OFFERS_PATH = "/_api/customer-offer/currentoffers/"
     DEALS_PATH = "/_api/trading/rest/deals"
     ETF_DETAILS_PATH = "/_api/market-etf/{}/details"
