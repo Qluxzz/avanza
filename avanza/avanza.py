@@ -264,7 +264,6 @@ class Avanza:
         CreditType->credited for accounts with credit
         CreditType->uncredited for accounts with no credit
         """
-        print("KÖR=",Route.CREDITINFO_PATH.value.format(credit_type))
         return self.__call(
             HttpMethod.GET, Route.CREDITINFO_PATH.value.format(credit_type)
         )
