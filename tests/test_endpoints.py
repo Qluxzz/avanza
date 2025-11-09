@@ -10,6 +10,7 @@ from avanza.constants import (
     InsightsReportTimePeriod,
     ListType,
     TimePeriod,
+    CreditType,
 )
 from avanza.models import *
 
@@ -24,7 +25,7 @@ It does not however validate that the response model has only these fields, more
 
 # Skips login to Avanza and defaults to using cached response models,
 # will fail if no cached response model exists for given test
-USE_CACHE = True
+USE_CACHE = False
 
 
 class ReturnModelTest(unittest.TestCase):
@@ -93,6 +94,20 @@ class ReturnModelTest(unittest.TestCase):
             IndexInfo.model_validate(index_info, strict=True)
         except ValidationError as e:
             self.fail(e)
+
+    def test_credit_info(self):
+        credit_info = get_or_cache(self.avanza.get_credit_info, ["credited"])  # credited
+
+        for credittype in CreditType:
+            credit_info = get_or_cache(
+                self.avanza.get_credit_info, [credittype.value]
+            )
+
+            try:
+                CreditInfo.model_validate(credit_info, strict=True)
+
+            except ValidationError as e:
+                self.fail(e)
 
     def test_fund_info(self):
         fund_info = get_or_cache(self.avanza.get_fund_info, ["878733"])  # Avanza Global
