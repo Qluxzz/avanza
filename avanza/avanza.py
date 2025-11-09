@@ -21,6 +21,7 @@ from .constants import (
     TimePeriod,
     TransactionsDetailsType,
     Condition,
+    CreditType,
 )
 from .credentials import (
     backwards_compatible_serialization,
@@ -256,6 +257,15 @@ class Avanza:
                 "scrambledAccountIds": url_parameters_ids,
                 "timePeriod": time_period.value,
             },
+        )
+
+    def get_credit_info(self, credit_type : CreditType) -> CreditInfo:
+        """Returns creditinfo for accounts
+        CreditType->credited for accounts with credit
+        CreditType->uncredited for accounts with no credit
+        """
+        return self.__call(
+            HttpMethod.GET, Route.CREDITINFO_PATH.value.format(credit_type)
         )
 
     def get_watchlists(self) -> List[WatchList]:
