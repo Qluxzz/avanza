@@ -6,6 +6,7 @@ from .account_posititions import AccountPositions
 from .certificate_details import CertificateDetails
 from .certificate_info import CertificateInfo
 from .chart_data import ChartData
+from .credit_info import CreditInfo
 from .deals_and_orders import DealsAndOrders
 from .etf_details import EtfDetails
 from .fund_info import FundInfo
