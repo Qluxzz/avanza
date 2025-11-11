@@ -1,16 +1,14 @@
 from datetime import date, datetime
 import math
 import time
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 import requests
 
 from avanza.entities import StopLossOrderEvent, StopLossTrigger
 from avanza.models import *
 
-from .avanza_socket import AvanzaSocket
 from .constants import (
-    ChannelType,
     HttpMethod,
     InsightsReportTimePeriod,
     InstrumentType,
@@ -116,10 +114,6 @@ class Avanza:
         self._push_subscription_id = response_body["pushSubscriptionId"]
         self._customer_id = response_body["customerId"]
 
-        self._socket = AvanzaSocket(
-            self._push_subscription_id, self._session.cookies.get_dict()
-        )
-
     def __authenticate(self, credentials: BaseCredentials):
         if (
             not MIN_INACTIVE_MINUTES
@@ -208,25 +202,6 @@ class Avanza:
             return response.content
 
         return response.json()
-
-    async def subscribe_to_id(
-        self, channel: ChannelType, id: str, callback: Callable[[str, dict], Any]
-    ):
-        await self.subscribe_to_ids(channel, [id], callback)
-
-    async def subscribe_to_ids(
-        self,
-        channel: ChannelType,
-        ids: Sequence[str],
-        callback: Callable[[str, dict], Any],
-    ):
-        if not callable(callback):
-            raise ValueError("callback parameter has to be a function!")
-
-        if not self._socket._connected:
-            await self._socket.init()
-
-        await self._socket.subscribe_to_ids(channel, ids, callback)
 
     def get_overview(self) -> Overview:
         """Get account and category overviews"""

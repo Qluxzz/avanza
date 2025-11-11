@@ -5,7 +5,6 @@
 from .avanza import Avanza
 from .constants import (
     TransactionType,
-    ChannelType,
     TimePeriod,
     ListType,
     InstrumentType,
