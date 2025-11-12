@@ -21,7 +21,6 @@ from .constants import (
     TimePeriod,
     TransactionsDetailsType,
     Condition,
-    CreditType,
 )
 from .credentials import (
     backwards_compatible_serialization,
@@ -257,15 +256,6 @@ class Avanza:
                 "scrambledAccountIds": url_parameters_ids,
                 "timePeriod": time_period.value,
             },
-        )
-
-    def get_credit_info(self, credit_type: CreditType) -> CreditInfo:
-        """Returns creditinfo for accounts
-        CreditType->credited for accounts with credit
-        CreditType->uncredited for accounts with no credit
-        """
-        return self.__call(
-            HttpMethod.GET, Route.CREDITINFO_PATH.value.format(credit_type)
         )
 
     def get_watchlists(self) -> List[WatchList]:
@@ -706,100 +696,6 @@ class Avanza:
                 "validUntil": valid_until.isoformat(),
                 "volume": volume,
             },
-        )
-
-    def get_order(self, account_id: str, order_id: str):
-        """Get an existing order
-
-        Returns:
-
-            {
-                'account': {
-                    'buyingPower': float,
-                    'id': str,
-                    'name': str,
-                    'totalBalance': float,
-                    'type': str
-                },
-                'brokerTradeSummary': {
-                    'items': [{
-                        'brokerCode': str,
-                        'buyVolume': int,
-                        'netBuyVolume': int,
-                        'sellVolume': int
-                    }],
-                    'orderbookId': str
-                },
-                'customer': {
-                    'courtageClass': str,
-                    'showCourtageClassInfoOnOrderPage': bool
-                },
-                'firstTradableDate': str,
-                'hasInstrumentKnowledge': bool,
-                'hasInvestmentFees': {'buy': bool, 'sell': bool},
-                'hasShortSellKnowledge': bool,
-                'lastTradableDate': str,
-                'latestTrades': [{
-                    'buyer': str,
-                    'cancelled': bool,
-                    'dealTime': str,
-                    'matchedOnMarket': bool,
-                    'price': float,
-                    'seller': str,
-                    'volume': int
-                }],
-                'marketMakerExpected': bool,
-                'marketTrades': bool,
-                'order': {
-                    'orderCondition': str,
-                    'orderType': str,
-                    'price': float,
-                    'validUntil': str,
-                    'volume': int
-                },
-                'orderDepthLevels': List,
-                'orderDepthReceivedTime': str,
-                'orderbook': {
-                    'change': float,
-                    'changePercent': float,
-                    'currency': str,
-                    'exchangeRate': float,
-                    'flagCode': str,
-                    'highestPrice': float,
-                    'id': str,
-                    'lastPrice': float,
-                    'lastPriceUpdated': str,
-                    'lowestPrice': float,
-                    'name': str,
-                    'positionVolume': float,
-                    'tickerSymbol': str,
-                    'totalValueTraded': float,
-                    'totalVolumeTraded': float,
-                    'tradable': bool,
-                    'tradingUnit': int,
-                    'type': str,
-                    'volumeFactor': float
-                },
-                'tickSizeRules': [{
-                    'maxPrice': int,
-                    'minPrice': int,
-                    'tickSize': int
-                }],
-                'untradableDates': List[str]
-            }
-        """
-
-        return self.__call(
-            HttpMethod.GET,
-            Route.ORDER_GET_PATH.value.format(
-                # Have tried this with three different instrument types
-                # (STOCK, FUND, CERTIFICATE)
-                # and it only seems to work when sending the instrument type
-                # as STOCK
-                InstrumentType.STOCK.value,
-                account_id,
-                order_id,
-            ),
         )
 
     def get_all_stop_losses(self):

@@ -20,11 +20,6 @@ class TransactionsDetailsType(enum.Enum):
     UNKNOWN = "UNKNOWN"
 
 
-class CreditType(enum.Enum):
-    UNCREDITED = "uncredited"
-    CREDITED = "credited"
-
-
 class ChannelType(enum.Enum):
     ACCOUNTS = "accounts"
     QUOTES = "quotes"
@@ -135,7 +130,6 @@ class Route(enum.Enum):
     AUTHENTICATION_PATH = "/_api/authentication/sessions/usercredentials"
     CATEGORIZED_ACCOUNTS = "/_api/account-overview/overview/categorizedAccounts"
     CHARTDATA_PATH = "/_api/price-chart/stock/{}"
-    CREDITINFO_PATH = "/_api/superloan/creditinfo/{}"
     CURRENT_OFFERS_PATH = "/_api/customer-offer/currentoffers/"
     DEALS_PATH = "/_api/trading/rest/deals"
     ETF_DETAILS_PATH = "/_api/market-etf/{}/details"
@@ -156,7 +150,6 @@ class Route(enum.Enum):
     NOTE_PATH = "/_api/contract-notes/documents/{}/{}/note.pdf"
     ORDER_DELETE_PATH = "/_api/trading-critical/rest/order/delete"
     ORDER_DELETE_STOP_LOSS_PATH = "/_api/trading/stoploss/{}/{}"
-    ORDER_GET_PATH = "/_mobile/order/{}?accountId={}&orderId={}"
     ORDER_PLACE_PATH = "/_api/trading-critical/rest/order/new"
     ORDER_PLACE_STOP_LOSS_PATH = "/_api/trading/stoploss/new"
     ORDER_PLACE_PATH_BUY_FUND = "/_api/fund-guide/fund-order-page/buy"
