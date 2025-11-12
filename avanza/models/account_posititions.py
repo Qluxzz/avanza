@@ -20,11 +20,15 @@ class Turnover(BaseModel):
 
 
 class Quote(BaseModel):
-    highest: QuoteInfo
-    lowest: QuoteInfo
+    highest: Optional[QuoteInfo]
+    lowest: Optional[QuoteInfo]
+    buy: Optional[QuoteInfo]
+    sell: Optional[QuoteInfo]
     latest: QuoteInfo
     change: QuoteInfo
     changePercent: QuoteInfo
+    updated: str
+    """ Example 2025-11-11T17:29:57.436 """
 
 
 class Orderbook(BaseModel):
@@ -40,6 +44,7 @@ class Orderbook(BaseModel):
 
 
 class Instrument(BaseModel):
+    id: str
     type: str
     name: str
     orderbook: Optional[Orderbook]
@@ -55,6 +60,7 @@ class Account(BaseModel):
     name: str
     urlParameterId: str
     hasCredit: bool
+    hasAutoDistribution: bool
 
 
 class Volume(BaseModel):
@@ -79,10 +85,14 @@ class Performance(BaseModel):
 class WithOrderbook(BaseModel):
     account: Account
     instrument: Instrument
+    lastTradingDayPerformance: Performance
+    superInterestApproved: bool
     volume: Volume
     value: Value
     averageAcquiredPrice: Value
+    averageAcquiredPriceInstrumentCurrency: QuoteInfo
     acquiredValue: Value
+    collateralFactor: QuoteInfo
     lastTradingDayPerformance: Performance
     id: str
 
@@ -108,3 +118,4 @@ class AccountPositions(BaseModel):
     withOrderbook: List[WithOrderbook]
     withoutOrderbook: List[WithoutOrderbook]
     cashPositions: List[CashPosition]
+    withCreditAccount: bool
