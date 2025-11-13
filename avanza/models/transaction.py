@@ -61,7 +61,7 @@ class Transaction(BaseModel):
     noteId: Optional[str]
     intraday: bool
     foreignTaxRate: Optional[CurrencyRate]
-    isin: str
+    isin:  Optional[str]
     result: Optional[Info]
     volumeFactor: Optional[float]
 
