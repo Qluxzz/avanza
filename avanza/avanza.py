@@ -714,91 +714,28 @@ class Avanza:
         Returns:
 
             {
-                'account': {
-                    'buyingPower': float,
-                    'id': str,
-                    'name': str,
-                    'totalBalance': float,
-                    'type': str
-                },
-                'brokerTradeSummary': {
-                    'items': [{
-                        'brokerCode': str,
-                        'buyVolume': int,
-                        'netBuyVolume': int,
-                        'sellVolume': int
-                    }],
-                    'orderbookId': str
-                },
-                'customer': {
-                    'courtageClass': str,
-                    'showCourtageClassInfoOnOrderPage': bool
-                },
-                'firstTradableDate': str,
-                'hasInstrumentKnowledge': bool,
-                'hasInvestmentFees': {'buy': bool, 'sell': bool},
-                'hasShortSellKnowledge': bool,
-                'lastTradableDate': str,
-                'latestTrades': [{
-                    'buyer': str,
-                    'cancelled': bool,
-                    'dealTime': str,
-                    'matchedOnMarket': bool,
-                    'price': float,
-                    'seller': str,
-                    'volume': int
-                }],
-                'marketMakerExpected': bool,
-                'marketTrades': bool,
-                'order': {
-                    'orderCondition': str,
-                    'orderType': str,
-                    'price': float,
-                    'validUntil': str,
-                    'volume': int
-                },
-                'orderDepthLevels': List,
-                'orderDepthReceivedTime': str,
-                'orderbook': {
-                    'change': float,
-                    'changePercent': float,
-                    'currency': str,
-                    'exchangeRate': float,
-                    'flagCode': str,
-                    'highestPrice': float,
-                    'id': str,
-                    'lastPrice': float,
-                    'lastPriceUpdated': str,
-                    'lowestPrice': float,
-                    'name': str,
-                    'positionVolume': float,
-                    'tickerSymbol': str,
-                    'totalValueTraded': float,
-                    'totalVolumeTraded': float,
-                    'tradable': bool,
-                    'tradingUnit': int,
-                    'type': str,
-                    'volumeFactor': float
-                },
-                'tickSizeRules': [{
-                    'maxPrice': int,
-                    'minPrice': int,
-                    'tickSize': int
-                }],
-                'untradableDates': List[str]
+                "orderId": str,
+                "orderbookId": str,
+                "side": str,
+                "state": str,
+                "marketReference": str,
+                "price": float,
+                "message": str,
+                "volume": int,
+                "originalVolume": int,
+                "accountId": str,
+                "condition": str,
+                "validUntil": str,
+                "modifiable": bool,
+                "deletable": bool,
             }
         """
 
         return self.__call(
             HttpMethod.GET,
             Route.ORDER_GET_PATH.value.format(
-                # Have tried this with three different instrument types
-                # (STOCK, FUND, CERTIFICATE)
-                # and it only seems to work when sending the instrument type
-                # as STOCK
-                InstrumentType.STOCK.value,
-                account_id,
                 order_id,
+                account_id,
             ),
         )
 
