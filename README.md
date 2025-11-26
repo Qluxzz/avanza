@@ -89,39 +89,6 @@ result = avanza.place_order(
 )
 ```
 
-Subscribe to real time data
-
-```python
-import asyncio
-from avanza import Avanza, ChannelType
-
-def callback(data):
-    # Do something with the quotes data here
-    print(data)
-
-async def subscribe_to_channel(avanza: Avanza):
-    await avanza.subscribe_to_id(
-        ChannelType.QUOTES,
-        "19002", # OMX Stockholm 30
-        callback
-    )
-
-def main():
-    avanza = Avanza({
-        'username': 'MY_USERNAME',
-        'password': 'MY_PASSWORD',
-        'totpSecret': 'MY_TOTP_SECRET'
-    })
-
-    asyncio.get_event_loop().run_until_complete(
-        subscribe_to_channel(avanza)
-    )
-    asyncio.get_event_loop().run_forever()
-
-if __name__ == "__main__":
-    main()
-```
-
 ## Testing
 
 Tests are stored in [/tests](https://github.com/Qluxzz/avanza/tree/master/tests)
@@ -141,12 +108,14 @@ PRICE_ALERT_ORDER_BOOK_ID=
 ```
 
 Then you can do one of the following:
+
 - To run all tests: `python -m unittest`.
 - To run a single test, such as `test_overview`: `python3 -m unittest tests.test_endpoints.ReturnModelTest.test_overview`.
 
 ## Extending/updating the API
 
 Suppose we want to add a new method `get_foo_bar` to the API defined by `avanza.py` along with a test that both
+
 - shows that the request sent by our new method yields a successful response from the server, and
 - starts failing whenever Avanza makes breaking changes (attribute removal or data type changes) to their API.
 
