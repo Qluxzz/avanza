@@ -208,6 +208,17 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
+    def test_get_market_data(self):
+        market_data = get_or_cache(
+            self.avanza.get_market_data,
+            ["5361"],  # Avanza Bank Holding
+        )
+
+        try:
+            MarketData.model_validate(market_data, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
     def test_get_offers(self):
         offers = get_or_cache(self.avanza.get_offers)
 

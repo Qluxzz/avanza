@@ -14,6 +14,7 @@ from .index_info import IndexInfo
 from .insights_report import InsightsReport
 from .inspiration_list import InspirationList
 from .list_inspiration_lists import InspirationListItem
+from .market_data import MarketData
 from .offer import Offer
 from .order_book import OrderBook
 from .overview import Overview
