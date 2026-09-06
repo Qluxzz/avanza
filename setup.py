@@ -20,7 +20,7 @@ AUTHOR = "André Andersson"
 REQUIRES_PYTHON = ">=3.9.0"
 VERSION = "16.2.0"
 
-REQUIRED = ["requests>=2", "pyotp>=2", "pydantic>=2"]
+REQUIRED = ["requests>=2", "pyotp>=2", "pydantic>=2", "curl-cffi>=0.13.0"]
 
 EXTRAS = {}
 
