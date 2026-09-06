@@ -208,6 +208,17 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
+    def test_get_insider_transactions(self):
+        insider_transactions = get_or_cache(
+            self.avanza.get_insider_transactions,
+            ["5255"],
+        )
+
+        try:
+            InsiderTransactions.model_validate(insider_transactions, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+            
     def test_get_market_data(self):
         market_data = get_or_cache(
             self.avanza.get_market_data,

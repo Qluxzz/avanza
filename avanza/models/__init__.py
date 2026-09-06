@@ -26,3 +26,4 @@ from .warrant_info import WarrantInfo
 from .watch_list import WatchList
 from .news import News
 from .forum_posts import ForumPosts
+from .insider_transactions import InsiderTransactions

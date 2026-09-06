@@ -438,6 +438,13 @@ class Avanza:
         )
         return result["hits"]
 
+    def get_insider_transactions(self, order_book_id: str) -> InsiderTransactions:
+
+        """Get insider transactions for an orderbook"""
+        return self.__call(
+            HttpMethod.GET,
+            Route.INSIDER_TRANSACTIONS_PATH.value.format(order_book_id)
+        )
 
     def get_order_book(self, order_book_id: str)-> OrderBook:
         """Get info about an orderbook"""
