@@ -18,7 +18,7 @@ class InsiderTransaction(BaseModel):
     ticker: str | None
     marketCountryCode: str | None
     instrumentType: str
-    instrumentDescription: str
+    instrumentDescription: str | None
     owner: str | None
 
 
