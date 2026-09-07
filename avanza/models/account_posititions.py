@@ -20,11 +20,13 @@ class Turnover(BaseModel):
 
 
 class Quote(BaseModel):
-    highest: QuoteInfo
-    lowest: QuoteInfo
-    latest: QuoteInfo
-    change: QuoteInfo
-    changePercent: QuoteInfo
+    buy: QuoteInfo | None = None
+    sell: QuoteInfo | None = None
+    highest: QuoteInfo | None = None
+    lowest: QuoteInfo | None = None
+    latest: QuoteInfo | None = None
+    change: QuoteInfo | None = None
+    changePercent: QuoteInfo | None = None
 
 
 class Orderbook(BaseModel):
@@ -76,27 +78,21 @@ class Performance(BaseModel):
     relative: QuoteInfo
 
 
-class WithOrderbook(BaseModel):
+class PositionData(BaseModel):
     account: Account
     instrument: Instrument
     volume: Volume
     value: Value
     averageAcquiredPrice: Value
+    averageAcquiredPriceInstrumentCurrency: Value
     acquiredValue: Value
+    id: str
+
+class WithOrderbook(PositionData):
     lastTradingDayPerformance: Performance
-    id: str
 
-
-class WithoutOrderbook(BaseModel):
-    account: Account
-    instrument: Instrument
-    volume: Volume
-    value: Value
-    averageAcquiredPrice: Value
-    acquiredValue: Value
+class WithoutOrderbook(PositionData):
     lastTradingDayPerformance: Optional[Performance]
-    id: str
-
 
 class CashPosition(BaseModel):
     account: Account
