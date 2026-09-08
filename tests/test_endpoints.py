@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from pydantic import ValidationError
 
-from avanza import Avanza
+from avanza import Avanza, InstrumentType
 from avanza.constants import (
     InsightsReportTimePeriod,
     ListType,
@@ -162,6 +162,15 @@ class ReturnModelTest(unittest.TestCase):
             WarrantInfo.model_validate(warrant_info, strict=True)
         except ValidationError as e:
             self.fail(e)
+
+    def test_search_for_instrument_type_any(self):
+        search_results = get_or_cache(self.avanza.search_for_instrument, [InstrumentType.ANY, "MFL Guld"])
+
+        try:
+            SearchResults.validate_python(search_results, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
 
     def test_search_for_stock(self):
         stock_search_results = get_or_cache(self.avanza.search_for_stock, ["Ap"])
