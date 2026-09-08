@@ -1,6 +1,10 @@
+import os
+import pickle
 from datetime import date, datetime
 import math
 import time
+from pathlib import Path
+from tempfile import gettempdir
 from typing import Dict, List, Optional, Sequence, Union
 
 import requests
@@ -84,35 +88,44 @@ class Avanza:
         self._quiet = quiet
 
         self._authenticationTimeout = MAX_INACTIVE_MINUTES
-        self._session = requests.Session()
 
-        try:
-            response_body = self.__authenticate(credentials)
-        except requests.exceptions.HTTPError as http_error:
-            if (
-                http_error.response.status_code == 401
-                and isinstance(credentials, SecretCredentials)
-                and self._retry_with_next_otp
-            ):
-                # Wait for the next TOTP time-step window and try with the new OTP
-                default_otp_interval: int = 30  # We use this pyotp/RFC 6238 default
-                now: float = datetime.now().timestamp()
-                time_to_wait: int = math.ceil(
-                    (default_otp_interval - now) % default_otp_interval
-                )
-                if not self._quiet:
-                    print(
-                        "Server returned 401 when trying to log in. "
-                        f"Will retry with the next OTP in {time_to_wait}s..."
-                    )
-                time.sleep(time_to_wait)
+        self._session_file_path = Path(gettempdir(), f"{credentials.username}.session.pkl")
+        self._session: requests.Session|None = None
+        self._security_token: str|None = None
+
+        self.__load_session_data()
+        if not self._session or not self._security_token:
+            self._session = requests.Session()
+
+            try:
                 response_body = self.__authenticate(credentials)
-            else:
-                raise
+            except requests.exceptions.HTTPError as http_error:
+                if (
+                    http_error.response.status_code == 401
+                    and isinstance(credentials, SecretCredentials)
+                    and self._retry_with_next_otp
+                ):
+                    # Wait for the next TOTP time-step window and try with the new OTP
+                    default_otp_interval: int = 30  # We use this pyotp/RFC 6238 default
+                    now: float = datetime.now().timestamp()
+                    time_to_wait: int = math.ceil(
+                        (default_otp_interval - now) % default_otp_interval
+                    )
+                    if not self._quiet:
+                        print(
+                            "Server returned 401 when trying to log in. "
+                            f"Will retry with the next OTP in {time_to_wait}s..."
+                        )
+                    time.sleep(time_to_wait)
+                    response_body = self.__authenticate(credentials)
+                else:
+                    raise
 
-        self._authentication_session = response_body["authenticationSession"]
-        self._push_subscription_id = response_body["pushSubscriptionId"]
-        self._customer_id = response_body["customerId"]
+            self._authentication_session = response_body["authenticationSession"]
+            self._push_subscription_id = response_body["pushSubscriptionId"]
+            self._customer_id = response_body["customerId"]
+
+            self.__store_session_data()
 
     def __authenticate(self, credentials: BaseCredentials):
         if (
@@ -149,6 +162,57 @@ class Avanza:
             raise ValueError(f"Unsupported two factor method {tfa_method}")
 
         return self.__validate_2fa(credentials)
+
+
+    def __delete_session_data(self) -> None:
+        """
+        Delete the session file, in case the session is invalid for some reason
+        (such as it being expired), we should delete the session file before next request.
+        """
+        self._session_file_path.unlink()
+
+    def __store_session_data(self) -> None:
+        """
+        Write session data to a file in the temp folder.
+        This file can be loaded to make requests to the API without the need
+        to go through the authentication pipeline.
+
+        """
+        def opener(path, flags):
+            return os.open(path, flags, 0o600)
+
+        with open(self._session_file_path, "wb", opener=opener) as file:
+            pickle.dump(
+                {
+                    "session": self._session,
+                    "security_token": self._security_token,
+                },
+                file,
+            )
+
+    def __load_session_data(self) -> None:
+        """
+        Load stored session data from a file in the temp folder into `self._session` and
+        `self._security_token`.
+
+        This allows to make multiple requests without authenticating before each request.
+
+        If the file is missing or invalid, an error message is printed and the instance level
+        session object is not set.
+
+        """
+
+        try:
+            with open(self._session_file_path, "rb") as file:
+                session_data = pickle.load(file)
+                self._session = session_data["session"]
+                self._security_token = session_data["security_token"]
+
+        except FileNotFoundError:
+            print(f"Session file {self._session_file_path} not found, it will be created")
+        except Exception as e:
+            print(f"Error loading session file {self._session_file_path}: {e}")
+
 
     def __validate_2fa(self, credentials: BaseCredentials):
         response = self._session.post(
@@ -190,6 +254,9 @@ class Avanza:
             },
             **data,
         )
+
+        if response.status_code == 401:
+            self.__delete_session_data()
 
         response.raise_for_status()
 
