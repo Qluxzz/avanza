@@ -299,6 +299,87 @@ class Avanza:
 
         return self.get_instrument(InstrumentType.WARRANT, warrant_id)
 
+    def get_warrant_filter(
+        self,
+        underlying_instruments: Optional[List[str]] = None,
+        sub_types: Optional[List[str]] = None,
+        issuers: Optional[List[str]] = None,
+        directions: Optional[List[str]] = None,
+        categories: Optional[List[str]] = None,
+        end_dates: Optional[List[str]] = None,
+        exposures: Optional[List[str]] = None,
+        is_avanza_branded: Optional[bool] = None,
+        offset: int = 0,
+        limit: int = 20,
+        sort_by_field: str = "leverage",
+        sort_order: str = "desc",
+    ) -> WarrantFilterResult:
+        """Search warrants by filter
+
+        Every filter is optional. Omitting one means "do not filter on this",
+        which the endpoint expects as an empty list rather than an absent key.
+
+        The accepted values for each filter are returned in `filterOptions` on
+        the response, so a call with no arguments enumerates them.
+
+        Args:
+
+            underlying_instruments: orderbook ids of the underlying instruments,
+                e.g. ["18986"] for Guld
+
+            sub_types: one or more of "plain_vanilla", "turbo", "knock_out",
+                "mini_future"
+
+            issuers: lowercase issuer names, e.g. ["morgan stanley"]
+
+            directions: "long" and/or "short"
+
+            categories: pipe-delimited category paths, e.g.
+                ["warrant_asset|equity|root"]
+
+            end_dates: ISO dates, e.g. ["2026-09-08"]
+
+            exposures: e.g. "sweden", "usa", "germany", "denmark", "other"
+
+            is_avanza_branded: restrict to Avanza-branded (AVA) warrants.
+                Omitted from the request entirely when None.
+
+            offset: index of the first result, for paging through
+                `totalNumberOfOrderbooks`
+
+            limit: maximum number of results to return
+
+            sort_by_field: field to sort on, e.g. "leverage"
+
+            sort_order: "asc" or "desc"
+        """
+
+        options = {
+            "filter": {
+                "underlyingInstruments": underlying_instruments or [],
+                "subTypes": sub_types or [],
+                "issuers": issuers or [],
+                "directions": directions or [],
+                "categories": categories or [],
+                "endDates": end_dates or [],
+                "exposures": exposures or [],
+            },
+            "sortBy": {"field": sort_by_field, "order": sort_order},
+        }
+
+        if is_avanza_branded is not None:
+            options["filter"]["isAvanzaBranded"] = is_avanza_branded
+
+        if offset is not None:
+            options["offset"] = offset
+
+        if limit is not None:
+            options["limit"] = limit
+
+        return self.__call(
+            HttpMethod.POST, Route.WARRANT_FILTER_PATH.value, options=options
+        )
+
     def get_index_info(self, index_id: str) -> IndexInfo:
         """Returns info about an index"""
 
