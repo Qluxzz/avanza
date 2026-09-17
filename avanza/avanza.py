@@ -42,6 +42,7 @@ class Avanza:
         credentials: Union[BaseCredentials, Dict[str, str]],
         retry_with_next_otp: bool = True,
         quiet: bool = False,
+        reset_session: bool = False,
     ):
         """
 
@@ -79,6 +80,9 @@ class Avanza:
             quiet: Do not print a status message if waiting for the next TOTP
                 time-step window.
 
+            reset_session: Delete the stored session file so that a new login
+                can be performed and a new session file created.
+
         """
         if isinstance(credentials, dict):
             credentials: BaseCredentials = backwards_compatible_serialization(
@@ -93,7 +97,11 @@ class Avanza:
         self._session: requests.Session|None = None
         self._security_token: str|None = None
 
-        self.__load_session_data()
+        if reset_session:
+            self.__delete_session_data()
+        else:
+            self.__load_session_data()
+
         if not self._session or not self._security_token:
             self._session = requests.Session()
 
@@ -169,7 +177,9 @@ class Avanza:
         Delete the session file, in case the session is invalid for some reason
         (such as it being expired), we should delete the session file before next request.
         """
-        self._session_file_path.unlink()
+        self._session = None
+        self._security_token = None
+        self._session_file_path.unlink(missing_ok=True)
 
     def __store_session_data(self) -> None:
         """
