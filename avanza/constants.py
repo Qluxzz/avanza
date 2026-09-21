@@ -158,6 +158,7 @@ class Route(enum.Enum):
     STOP_LOSS_PATH = "/_api/trading/stoploss"
     TOTP_PATH = "/_api/authentication/sessions/totp"
     TRANSACTIONS_DETAILS_PATH = "/_api/transactions/list"
+    WARRANT_FILTER_PATH = "/_api/market-warrant-filter/"
     WATCHLISTS_ADD_PATH = "/_api/watchlist/watchlist/add/{}/{}"
     WATCHLISTS_REMOVE_PATH = "/_api/watchlist/watchlist/remove/{}/{}"
     WATCHLISTS_PATH = "/_api/watchlist/watchlist"

@@ -163,6 +163,22 @@ class ReturnModelTest(unittest.TestCase):
         except ValidationError as e:
             self.fail(e)
 
+    def test_warrant_filter(self):
+        warrant_filter = self.avanza.get_warrant_filter(
+            underlying_instruments=["18986"],  # Guld
+            sub_types=["knock_out"],
+            is_avanza_branded=True,
+        )
+
+        self.assertGreater(
+            len(warrant_filter["warrants"]), 0, "expected the filter to match some warrants"
+        )
+
+        try:
+            WarrantFilterResult.model_validate(warrant_filter, strict=True)
+        except ValidationError as e:
+            self.fail(e)
+
     def test_search_for_stock(self):
         stock_search_results = get_or_cache(self.avanza.search_for_stock, ["Ap"])
 
